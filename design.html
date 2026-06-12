@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Добродошли — 5 дизайн-китов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Oswald:wght@500;600;700&family=Nunito:wght@600;700;800;900&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#EBE3D6;color:#2A2521;padding:40px}
+  h1{font-family:'Playfair Display',serif;font-weight:600;font-size:32px;margin-bottom:4px;color:#342C24}
+  .sub{color:#79705F;margin-bottom:30px;font-size:15px;max-width:980px;line-height:1.5}
+  .grid{display:flex;gap:40px;flex-wrap:wrap}
+  .col{width:340px}
+  .ptitle{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;margin-bottom:2px}
+  .badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;vertical-align:middle;margin-left:8px;color:#fff}
+  .pdesc{font-size:12.5px;color:#79705F;margin:6px 0 12px;min-height:64px;line-height:1.45}
+  .sw{display:flex;gap:8px;margin-bottom:10px}
+  .sw i{width:40px;height:40px;border-radius:12px;display:block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);position:relative}
+  .sw i.alt::after{content:attr(data-f);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .sw i.alt{outline:2px dashed rgba(0,0,0,.25);outline-offset:2px}
+  .spec{display:flex;gap:8px;margin-bottom:18px;align-items:stretch}
+  .spec .chipx{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:7px 11px;font-size:10.5px;color:#79705F;display:flex;flex-direction:column;justify-content:center;gap:1px}
+  .spec .chipx b{font-size:15px;color:#2A2521;font-weight:700}
+
+  /* ── телефон ── */
+  .phone{width:330px;height:680px;border-radius:46px;padding:14px;position:relative;
+        box-shadow:0 24px 60px rgba(50,30,15,.18), inset 0 0 0 2px rgba(0,0,0,.04);background:var(--bg)}
+  .screen{width:100%;height:100%;border-radius:34px;overflow:hidden;display:flex;flex-direction:column;background:var(--bg);position:relative}
+  .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#241f1b;border-radius:16px;z-index:30}
+  .statusbar{display:flex;justify-content:space-between;padding:14px 24px 2px;font-size:13px;font-weight:600;color:var(--ink)}
+
+  /* верхняя панель приложения */
+  .m-top{display:flex;align-items:center;gap:8px;padding:12px 14px 6px}
+  .m-flag{font-size:15px;background:var(--card);border:1.5px solid var(--line);border-radius:9px;padding:2px 6px}
+  .m-goal{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .m-goal i{display:block;height:100%;width:62%;background:var(--gold);border-radius:99px}
+  .m-stat{font-size:11px;font-weight:700;background:var(--card);border:1.5px solid var(--line);border-radius:9px;padding:3px 7px;color:var(--ink);white-space:nowrap}
+
+  .m-content{flex:1;overflow:hidden;position:relative}
+
+  /* баннер юнита */
+  .m-banner{display:flex;align-items:center;gap:9px;margin:10px 14px 4px;padding:12px 13px;border-radius:var(--r);
+    background:var(--banner-bg);color:var(--banner-ink);box-shadow:var(--card-sh);border:var(--banner-bd)}
+  .m-banner .be{font-size:22px}
+  .m-banner .bt{font-family:var(--display);font-weight:800;font-size:15px}
+  .m-banner .bs{font-size:10.5px;opacity:.85}
+  .m-banner .bp{margin-left:auto;font-size:11px;font-weight:800;background:var(--banner-pill);padding:2px 9px;border-radius:99px}
+
+  /* узлы пути */
+  .m-row{display:flex;align-items:center;gap:10px;margin:16px 18px;position:relative}
+  .m-row.r{padding-left:33%}
+  .m-node{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;flex:none;border:var(--node-bd)}
+  .m-node.done{background:var(--gold);box-shadow:var(--node-sh-done)}
+  .m-node.cur{background:var(--acc);box-shadow:var(--node-sh);outline:4px solid var(--acc-soft)}
+  .m-node.lock{background:var(--lock);color:var(--soft);box-shadow:var(--node-sh-lock);font-size:16px;border:var(--node-bd-lock)}
+  .m-nl b{font-size:12.5px;display:block;color:var(--ink);font-family:var(--display)}
+  .m-nl small{font-size:10px;color:var(--soft)}
+  .m-nl .st{color:var(--gold);letter-spacing:.12em;font-size:10px}
+  .m-mascot{position:absolute;right:6px;top:-10px;display:flex;gap:5px;align-items:flex-start;z-index:2}
+  .m-bubble{background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:6px 8px;font-size:9.5px;color:var(--ink);max-width:108px;box-shadow:var(--card-sh)}
+
+  /* карточка повторов + кнопка */
+  .m-review{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--line);
+    border-radius:var(--r);padding:11px 13px;margin:8px 14px;box-shadow:var(--card-sh)}
+  .m-review .rt{font-size:11.5px;font-weight:700;color:var(--ink)}
+  .m-review .rs{font-size:9.5px;color:var(--soft)}
+  .m-btn{margin-left:auto;background:var(--acc);color:var(--btn-ink,#fff);border-radius:calc(var(--r) - 6px);
+    padding:8px 13px;font-size:11px;font-weight:800;box-shadow:var(--btn-sh);border:var(--btn-bd);font-family:var(--display)}
+
+  /* таббар */
+  .m-tabbar{display:flex;border-top:1.5px solid var(--line);background:var(--tab-bg,var(--card));padding:8px 4px 16px}
+  .m-tab{flex:1;text-align:center;font-size:8.5px;font-weight:700;color:var(--soft)}
+  .m-tab i{display:block;font-style:normal;font-size:16px;margin-bottom:2px}
+  .m-tab.on{color:var(--acc-deep)}
+  .cap{font-family:'Playfair Display',serif;text-align:center;margin-top:14px;color:#5f564c;font-size:13px}
+  .mascot-svg{filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}
+
+  /* ════ 1 · СУНЦЕ — как сейчас, причёсано ════ */
+  .k1{
+    --bg:#FFF7EE;--card:#fff;--ink:#2B2026;--soft:#8A7D84;--line:#F0E2D3;
+    --acc:#FF7A3D;--acc-deep:#E25D20;--acc-soft:rgba(255,122,61,.22);--gold:#FFB703;--lock:#EAE0D3;
+    --r:18px;--display:'Rubik',sans-serif;
+    --banner-bg:linear-gradient(135deg,#FF7A3D,#E25D20);--banner-ink:#fff;--banner-bd:none;--banner-pill:rgba(255,255,255,.25);
+    --btn-sh:0 3px 0 var(--acc-deep);--btn-bd:none;
+    --node-sh:0 5px 0 var(--acc-deep);--node-sh-done:0 5px 0 #D99A02;--node-sh-lock:0 5px 0 #D6C9B8;
+    --node-bd:none;--node-bd-lock:none;--card-sh:0 4px 14px rgba(43,32,38,.06);
+  }
+
+  /* ════ 2 · КАФАНА — quiet luxury, плоско ════ */
+  .k2{
+    --bg:#F3EDE3;--card:#FBF8F2;--ink:#241D17;--soft:#7C7164;--line:#E4D9C7;
+    --acc:#AD5B41;--acc-deep:#8C4631;--acc-soft:rgba(173,91,65,.16);--gold:#C99A4B;--lock:#E9E0D1;
+    --r:14px;--display:'Playfair Display',serif;
+    --banner-bg:var(--card);--banner-ink:var(--ink);--banner-bd:1.5px solid var(--line);--banner-pill:#EFE6D7;
+    --btn-sh:none;--btn-bd:none;
+    --node-sh:none;--node-sh-done:none;--node-sh-lock:none;
+    --node-bd:none;--node-bd-lock:1.5px solid var(--line);--card-sh:none;
+  }
+  .k2 .m-banner .bs{letter-spacing:.05em;text-transform:uppercase;font-size:8.5px;font-family:'Inter',sans-serif}
+  .k2 .m-nl b{font-weight:600}
+
+  /* ════ 3 · БЕТОН — юго-модернизм, плакат ════ */
+  .k3{
+    --bg:#FAF7F0;--card:#fff;--ink:#141414;--soft:#5C5851;--line:#141414;
+    --acc:#E2362F;--acc-deep:#B5251F;--acc-soft:rgba(226,54,47,.16);--gold:#F7C948;--lock:#E9E4DA;
+    --r:10px;--display:'Oswald',sans-serif;
+    --banner-bg:#E2362F;--banner-ink:#fff;--banner-bd:2px solid #141414;--banner-pill:#F7C948;
+    --btn-sh:3px 3px 0 #141414;--btn-bd:2px solid #141414;
+    --node-sh:3px 3px 0 #141414;--node-sh-done:3px 3px 0 #141414;--node-sh-lock:3px 3px 0 #B9B2A6;
+    --node-bd:2px solid #141414;--node-bd-lock:2px solid #B9B2A6;--card-sh:3px 3px 0 rgba(20,20,20,.9);
+  }
+  .k3 .m-banner .bt,.k3 .m-nl b,.k3 .m-btn,.k3 .m-tab{text-transform:uppercase;letter-spacing:.04em}
+  .k3 .m-banner .bp{color:#141414}
+  .k3 .m-node{border-radius:14px}
+  .k3 .m-bubble{border:2px solid #141414;border-radius:8px;box-shadow:2px 2px 0 #141414}
+  .k3 .m-review,.k3 .m-flag,.k3 .m-stat{border-width:2px}
+
+  /* ════ 4 · ЈАДРАН — море и стекло ════ */
+  .k4{
+    --bg:#EAF6FA;--card:rgba(255,255,255,.78);--ink:#16323F;--soft:#5E7D8C;--line:#D6E9F1;
+    --acc:#1899C2;--acc-deep:#0E6E8C;--acc-soft:rgba(24,153,194,.2);--gold:#FFC94D;--lock:#DCEBF2;
+    --r:24px;--display:'Nunito',sans-serif;
+    --banner-bg:linear-gradient(135deg,#27A8D0,#0E6E8C);--banner-ink:#fff;--banner-bd:none;--banner-pill:rgba(255,255,255,.28);
+    --btn-sh:0 8px 18px rgba(14,110,140,.35);--btn-bd:none;
+    --node-sh:0 8px 18px rgba(14,110,140,.3);--node-sh-done:0 8px 18px rgba(255,159,28,.35);--node-sh-lock:none;
+    --node-bd:none;--node-bd-lock:none;--card-sh:0 10px 24px rgba(20,90,120,.1);
+  }
+  .k4 .screen{background:linear-gradient(180deg,#F4FBFD 0%,#EAF6FA 55%,#DDF0F7 100%)}
+  .k4 .m-bubble,.k4 .m-review{backdrop-filter:blur(6px)}
+  .k4 .m-banner .bt{font-weight:900}
+
+  /* ════ 5 · НОЋНА СМЕНА — тёмная ════ */
+  .k5{
+    --bg:#1B1622;--card:#262031;--ink:#F2EAE1;--soft:#9A8CA8;--line:#382F47;
+    --acc:#FF9651;--acc-deep:#FFB454;--acc-soft:rgba(255,150,81,.22);--gold:#FFC163;--lock:#2E2639;
+    --r:18px;--display:'Manrope',sans-serif;
+    --banner-bg:#262031;--banner-ink:#F2EAE1;--banner-bd:1.5px solid rgba(255,150,81,.45);--banner-pill:rgba(255,150,81,.2);
+    --btn-sh:0 0 18px rgba(255,150,81,.45);--btn-bd:none;--btn-ink:#1B1622;
+    --node-sh:0 0 20px rgba(255,150,81,.5);--node-sh-done:0 0 16px rgba(255,193,99,.4);--node-sh-lock:none;
+    --node-bd:none;--node-bd-lock:none;--card-sh:0 6px 18px rgba(0,0,0,.35);
+  }
+  .k5 .notch{background:#000}
+  .k5 .m-node.lock{color:#6E6180}
+  .k5 .m-banner .bp{color:#FFC163}
+</style>
+</head>
+<body>
+  <h1>«Добродошли» — 5 дизайн-китов</h1>
+  <div class="sub">Один и тот же экран «Путь» в пяти характерах: палитра + шрифт + форма (скругления, тени, рамки). Пунктирный свотч — акцент второго режима страны (🇲🇪 или 🇷🇸): он перекрашивает приложение при переключении флага. Скажи номер — применю кит к приложению целиком; можно миксовать («палитра 2 + кнопки 1»).</div>
+
+  <div class="grid">
+
+    <!-- ════ 1 · СУНЦЕ ════ -->
+    <div class="col k1">
+      <div class="ptitle">1 · Сунце <span class="badge" style="background:#8A7D84">сейчас в приложении</span></div>
+      <div class="pdesc">Тёплый и игривый: энергия Duolingo, но по-балкански — крем, закатный оранжевый, объёмные кнопки. Безопасный дефолт, лучше всех дружит с маскотом и конфетти. В 🇲🇪-режиме уходит в адриатический синий.</div>
+      <div class="sw"><i style="background:#FFF7EE"></i><i style="background:#FF7A3D"></i><i style="background:#FFB703"></i><i style="background:#3FAE4C"></i><i style="background:#2B2026"></i><i class="alt" data-f="🇲🇪" style="background:#1F9BBF" title="акцент черногорского режима"></i></div>
+      <div class="spec">
+        <div class="chipx"><b style="font-family:'Rubik'">Аа čšđ</b>Rubik · круглый гротеск</div>
+        <div class="chipx"><b style="border:2px solid #FF7A3D;border-radius:18px;width:44px;height:24px;display:block"></b>радиус 18 · 3D-тени</div>
+      </div>
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+        <div class="m-top"><span class="m-flag">🇷🇸</span><div class="m-goal"><i></i></div><span class="m-stat">🔥 5</span><span class="m-stat">⚡ 120</span></div>
+        <div class="m-content">
+          <div class="m-banner"><span class="be">☕</span><div><div class="bt">Кафана</div><div class="bs">Главный институт страны</div></div><span class="bp">1/2</span></div>
+          <div class="m-row"><div class="m-node done">✓</div><div class="m-nl"><b>Напитки</b><small class="st">★★★</small></div></div>
+          <div class="m-row r"><div class="m-node cur">★</div><div class="m-nl"><b>Еда и счёт</b><small>сейчас</small></div>
+            <div class="m-mascot">
+              <div class="m-bubble">Полако! Никто никуда не спешит.</div>
+              <svg viewBox="0 0 80 84" width="44" height="46" class="mascot-svg"><path d="M16 28 L10 8 L30 17 Z" fill="#6d6875"/><path d="M64 28 L70 8 L50 17 Z" fill="#6d6875"/><path d="M18 25 L14 12 L26 18 Z" fill="#ffb4a2"/><path d="M62 25 L66 12 L54 18 Z" fill="#ffb4a2"/><circle cx="40" cy="42" r="26" fill="#6d6875"/><circle cx="40" cy="47" r="16" fill="#857f8f" opacity=".5"/><circle cx="30" cy="38" r="3.5" fill="#2b2026"/><circle cx="50" cy="38" r="3.5" fill="#2b2026"/><path d="M37 45 L43 45 L40 49 Z" fill="#ffb4a2"/><path d="M32 50 Q40 57 48 50" stroke="#2b2026" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M22 62 Q40 74 58 62 L58 70 Q40 80 22 70 Z" fill="var(--acc)"/></svg>
+            </div></div>
+          <div class="m-row"><div class="m-node lock">🔒</div><div class="m-nl"><b>Раз-два-три</b><small>дальше</small></div></div>
+          <div class="m-review"><span>⏰</span><div><div class="rt">6 слов ждут повторения</div><div class="rs">интервальный метод</div></div><span class="m-btn">Повторить</span></div>
+        </div>
+        <div class="m-tabbar"><div class="m-tab on"><i>🗺️</i>Путь</div><div class="m-tab"><i>🧠</i>Повторы</div><div class="m-tab"><i>📖</i>Словарь</div><div class="m-tab"><i>🐈</i>Профиль</div></div>
+      </div></div>
+      <div class="cap">солнечный · как сейчас, но причёсан</div>
+    </div>
+
+    <!-- ════ 2 · КАФАНА ════ -->
+    <div class="col k2">
+      <div class="ptitle">2 · Кафана <span class="badge" style="background:#AD5B41">★ моя ставка</span></div>
+      <div class="pdesc">Взрослый ритуал, как утренний кофе: костяной фон, эспрессо-текст, терракота, серифные заголовки, всё плоско. Премиально и «не игрушка» — сильная отстройка от конфетного Duolingo. Дофамин добираем анимациями, не цветом.</div>
+      <div class="sw"><i style="background:#F3EDE3"></i><i style="background:#AD5B41"></i><i style="background:#7C8A63"></i><i style="background:#C99A4B"></i><i style="background:#241D17"></i><i class="alt" data-f="🇲🇪" style="background:#3E7A93" title="акцент черногорского режима"></i></div>
+      <div class="spec">
+        <div class="chipx"><b style="font-family:'Playfair Display'">Аа čšđ</b>Playfair Display + Inter</div>
+        <div class="chipx"><b style="border:2px solid #AD5B41;border-radius:14px;width:44px;height:24px;display:block"></b>радиус 14 · плоско</div>
+      </div>
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+        <div class="m-top"><span class="m-flag">🇷🇸</span><div class="m-goal"><i></i></div><span class="m-stat">🔥 5</span><span class="m-stat">⚡ 120</span></div>
+        <div class="m-content">
+          <div class="m-banner"><span class="be">☕</span><div><div class="bt">Кафана</div><div class="bs">Главный институт страны</div></div><span class="bp">1/2</span></div>
+          <div class="m-row"><div class="m-node done">✓</div><div class="m-nl"><b>Напитки</b><small class="st">★★★</small></div></div>
+          <div class="m-row r"><div class="m-node cur">★</div><div class="m-nl"><b>Еда и счёт</b><small>сейчас</small></div>
+            <div class="m-mascot">
+              <div class="m-bubble">Полако! Никто никуда не спешит.</div>
+              <svg viewBox="0 0 80 84" width="44" height="46" class="mascot-svg"><path d="M16 28 L10 8 L30 17 Z" fill="#6d6875"/><path d="M64 28 L70 8 L50 17 Z" fill="#6d6875"/><path d="M18 25 L14 12 L26 18 Z" fill="#ffb4a2"/><path d="M62 25 L66 12 L54 18 Z" fill="#ffb4a2"/><circle cx="40" cy="42" r="26" fill="#6d6875"/><circle cx="40" cy="47" r="16" fill="#857f8f" opacity=".5"/><circle cx="30" cy="38" r="3.5" fill="#2b2026"/><circle cx="50" cy="38" r="3.5" fill="#2b2026"/><path d="M37 45 L43 45 L40 49 Z" fill="#ffb4a2"/><path d="M32 50 Q40 57 48 50" stroke="#2b2026" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M22 62 Q40 74 58 62 L58 70 Q40 80 22 70 Z" fill="var(--acc)"/></svg>
+            </div></div>
+          <div class="m-row"><div class="m-node lock">🔒</div><div class="m-nl"><b>Раз-два-три</b><small>дальше</small></div></div>
+          <div class="m-review"><span>⏰</span><div><div class="rt">6 слов ждут повторения</div><div class="rs">интервальный метод</div></div><span class="m-btn">Повторить</span></div>
+        </div>
+        <div class="m-tabbar"><div class="m-tab on"><i>🗺️</i>Путь</div><div class="m-tab"><i>🧠</i>Повторы</div><div class="m-tab"><i>📖</i>Словарь</div><div class="m-tab"><i>🐈</i>Профиль</div></div>
+      </div></div>
+      <div class="cap">эспрессо и терракота · quiet luxury</div>
+    </div>
+
+    <!-- ════ 3 · БЕТОН ════ -->
+    <div class="col k3">
+      <div class="ptitle">3 · Бетон <span class="badge" style="background:#E2362F">дерзкий</span></div>
+      <div class="pdesc">Юго-модернизм и плакат: жирная узкая типографика, красный, чёрные рамки, жёсткие тени без размытия. Максимально узнаваемо, мемно для эмигрантских сторис, лёгкая юго-ностальгия. Риск: ежедневно может утомлять.</div>
+      <div class="sw"><i style="background:#FAF7F0"></i><i style="background:#E2362F"></i><i style="background:#F7C948"></i><i style="background:#1D6FB8"></i><i style="background:#141414"></i><i class="alt" data-f="🇲🇪" style="background:#155A96" title="акцент черногорского режима"></i></div>
+      <div class="spec">
+        <div class="chipx"><b style="font-family:'Oswald'">Аа čšđ</b>Oswald + Inter · плакат</div>
+        <div class="chipx"><b style="border:2px solid #141414;border-radius:10px;width:44px;height:24px;display:block;box-shadow:3px 3px 0 #141414"></b>радиус 10 · жёсткие тени</div>
+      </div>
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+        <div class="m-top"><span class="m-flag">🇷🇸</span><div class="m-goal"><i></i></div><span class="m-stat">🔥 5</span><span class="m-stat">⚡ 120</span></div>
+        <div class="m-content">
+          <div class="m-banner"><span class="be">☕</span><div><div class="bt">Кафана</div><div class="bs">Главный институт страны</div></div><span class="bp">1/2</span></div>
+          <div class="m-row"><div class="m-node done" style="color:#141414">✓</div><div class="m-nl"><b>Напитки</b><small class="st">★★★</small></div></div>
+          <div class="m-row r"><div class="m-node cur">★</div><div class="m-nl"><b>Еда и счёт</b><small>сейчас</small></div>
+            <div class="m-mascot">
+              <div class="m-bubble">Полако! Никто никуда не спешит.</div>
+              <svg viewBox="0 0 80 84" width="44" height="46" class="mascot-svg"><path d="M16 28 L10 8 L30 17 Z" fill="#6d6875"/><path d="M64 28 L70 8 L50 17 Z" fill="#6d6875"/><path d="M18 25 L14 12 L26 18 Z" fill="#ffb4a2"/><path d="M62 25 L66 12 L54 18 Z" fill="#ffb4a2"/><circle cx="40" cy="42" r="26" fill="#6d6875"/><circle cx="40" cy="47" r="16" fill="#857f8f" opacity=".5"/><circle cx="30" cy="38" r="3.5" fill="#2b2026"/><circle cx="50" cy="38" r="3.5" fill="#2b2026"/><path d="M37 45 L43 45 L40 49 Z" fill="#ffb4a2"/><path d="M32 50 Q40 57 48 50" stroke="#2b2026" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M22 62 Q40 74 58 62 L58 70 Q40 80 22 70 Z" fill="var(--acc)"/></svg>
+            </div></div>
+          <div class="m-row"><div class="m-node lock">🔒</div><div class="m-nl"><b>Раз-два-три</b><small>дальше</small></div></div>
+          <div class="m-review"><span>⏰</span><div><div class="rt">6 слов ждут повторения</div><div class="rs">интервальный метод</div></div><span class="m-btn">Повторить</span></div>
+        </div>
+        <div class="m-tabbar"><div class="m-tab on"><i>🗺️</i>Путь</div><div class="m-tab"><i>🧠</i>Повторы</div><div class="m-tab"><i>📖</i>Словарь</div><div class="m-tab"><i>🐈</i>Профиль</div></div>
+      </div></div>
+      <div class="cap">плакат и бетон · смело</div>
+    </div>
+
+    <!-- ════ 4 · ЈАДРАН ════ -->
+    <div class="col k4">
+      <div class="ptitle">4 · Јадран <span class="badge" style="background:#1899C2">курортный</span></div>
+      <div class="pdesc">Средиземноморская открытка: морские градиенты, стеклянные карточки, солнечный жёлтый, всё очень округлое и лёгкое. Идеален, если ядро аудитории — Черногория и побережье. В 🇷🇸-режиме акцент — коралл заката (логика флага переворачивается).</div>
+      <div class="sw"><i style="background:#EAF6FA"></i><i style="background:#1899C2"></i><i style="background:#FFC94D"></i><i style="background:#FF8A5C"></i><i style="background:#16323F"></i><i class="alt" data-f="🇷🇸" style="background:#FF8A5C" title="акцент сербского режима"></i></div>
+      <div class="spec">
+        <div class="chipx"><b style="font-family:'Nunito';font-weight:900">Аа čšđ</b>Nunito · мягкий и круглый</div>
+        <div class="chipx"><b style="border:2px solid #1899C2;border-radius:24px;width:44px;height:24px;display:block"></b>радиус 24 · стекло</div>
+      </div>
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+        <div class="m-top"><span class="m-flag">🇲🇪</span><div class="m-goal"><i></i></div><span class="m-stat">🔥 5</span><span class="m-stat">⚡ 120</span></div>
+        <div class="m-content">
+          <div class="m-banner"><span class="be">☕</span><div><div class="bt">Кафана</div><div class="bs">Главный институт страны</div></div><span class="bp">1/2</span></div>
+          <div class="m-row"><div class="m-node done">✓</div><div class="m-nl"><b>Напитки</b><small class="st">★★★</small></div></div>
+          <div class="m-row r"><div class="m-node cur">★</div><div class="m-nl"><b>Еда и счёт</b><small>сейчас</small></div>
+            <div class="m-mascot">
+              <div class="m-bubble">Полако! Никто никуда не спешит.</div>
+              <svg viewBox="0 0 80 84" width="44" height="46" class="mascot-svg"><path d="M16 28 L10 8 L30 17 Z" fill="#6d6875"/><path d="M64 28 L70 8 L50 17 Z" fill="#6d6875"/><path d="M18 25 L14 12 L26 18 Z" fill="#ffb4a2"/><path d="M62 25 L66 12 L54 18 Z" fill="#ffb4a2"/><circle cx="40" cy="42" r="26" fill="#6d6875"/><circle cx="40" cy="47" r="16" fill="#857f8f" opacity=".5"/><circle cx="30" cy="38" r="3.5" fill="#2b2026"/><circle cx="50" cy="38" r="3.5" fill="#2b2026"/><path d="M37 45 L43 45 L40 49 Z" fill="#ffb4a2"/><path d="M32 50 Q40 57 48 50" stroke="#2b2026" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M22 62 Q40 74 58 62 L58 70 Q40 80 22 70 Z" fill="var(--acc)"/></svg>
+            </div></div>
+          <div class="m-row"><div class="m-node lock">🔒</div><div class="m-nl"><b>Раз-два-три</b><small>дальше</small></div></div>
+          <div class="m-review"><span>⏰</span><div><div class="rt">6 слов ждут повторения</div><div class="rs">интервальный метод</div></div><span class="m-btn">Повторить</span></div>
+        </div>
+        <div class="m-tabbar"><div class="m-tab on"><i>🗺️</i>Путь</div><div class="m-tab"><i>🧠</i>Повторы</div><div class="m-tab"><i>📖</i>Словарь</div><div class="m-tab"><i>🐈</i>Профиль</div></div>
+      </div></div>
+      <div class="cap">море и стекло · лето</div>
+    </div>
+
+    <!-- ════ 5 · НОЋНА СМЕНА ════ -->
+    <div class="col k5">
+      <div class="ptitle">5 · Ноћна смена <span class="badge" style="background:#1B1622">тёмная тема</span></div>
+      <div class="pdesc">Кафана после полуночи: глубокий сливовый, янтарный неон вывесок, мягкое свечение вместо теней. OLED-friendly, для тех, кто занимается вечером. Может быть и самостоятельным китом, и ночным режимом поверх любого из четырёх.</div>
+      <div class="sw"><i style="background:#1B1622"></i><i style="background:#FF9651"></i><i style="background:#FFC163"></i><i style="background:#45BBD4"></i><i style="background:#F2EAE1"></i><i class="alt" data-f="🇲🇪" style="background:#3FC8E0" title="акцент черногорского режима"></i></div>
+      <div class="spec">
+        <div class="chipx"><b style="font-family:'Manrope'">Аа čšđ</b>Manrope · современный</div>
+        <div class="chipx"><b style="border:2px solid #FF9651;border-radius:18px;width:44px;height:24px;display:block;box-shadow:0 0 12px rgba(255,150,81,.6)"></b>радиус 18 · свечение</div>
+      </div>
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+        <div class="m-top"><span class="m-flag">🇷🇸</span><div class="m-goal"><i></i></div><span class="m-stat">🔥 5</span><span class="m-stat">⚡ 120</span></div>
+        <div class="m-content">
+          <div class="m-banner"><span class="be">☕</span><div><div class="bt">Кафана</div><div class="bs">Главный институт страны</div></div><span class="bp">1/2</span></div>
+          <div class="m-row"><div class="m-node done" style="color:#1B1622">✓</div><div class="m-nl"><b>Напитки</b><small class="st">★★★</small></div></div>
+          <div class="m-row r"><div class="m-node cur" style="color:#1B1622">★</div><div class="m-nl"><b>Еда и счёт</b><small>сейчас</small></div>
+            <div class="m-mascot">
+              <div class="m-bubble">Полако! Никто никуда не спешит.</div>
+              <svg viewBox="0 0 80 84" width="44" height="46" class="mascot-svg"><path d="M16 28 L10 8 L30 17 Z" fill="#8d87a0"/><path d="M64 28 L70 8 L50 17 Z" fill="#8d87a0"/><path d="M18 25 L14 12 L26 18 Z" fill="#ffb4a2"/><path d="M62 25 L66 12 L54 18 Z" fill="#ffb4a2"/><circle cx="40" cy="42" r="26" fill="#8d87a0"/><circle cx="40" cy="47" r="16" fill="#a59fb5" opacity=".5"/><circle cx="30" cy="38" r="3.5" fill="#1B1622"/><circle cx="50" cy="38" r="3.5" fill="#1B1622"/><path d="M37 45 L43 45 L40 49 Z" fill="#ffb4a2"/><path d="M32 50 Q40 57 48 50" stroke="#1B1622" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M22 62 Q40 74 58 62 L58 70 Q40 80 22 70 Z" fill="var(--acc)"/></svg>
+            </div></div>
+          <div class="m-row"><div class="m-node lock">🔒</div><div class="m-nl"><b>Раз-два-три</b><small>дальше</small></div></div>
+          <div class="m-review"><span>⏰</span><div><div class="rt">6 слов ждут повторения</div><div class="rs">интервальный метод</div></div><span class="m-btn">Повторить</span></div>
+        </div>
+        <div class="m-tabbar"><div class="m-tab on"><i>🗺️</i>Путь</div><div class="m-tab"><i>🧠</i>Повторы</div><div class="m-tab"><i>📖</i>Словарь</div><div class="m-tab"><i>🐈</i>Профиль</div></div>
+      </div></div>
+      <div class="cap">ночная кафана · неон</div>
+    </div>
+
+  </div>
+</body>
+</html>
