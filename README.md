@@ -33,15 +33,18 @@
 2. Вкладка **SQL Editor** → вставь целиком и нажми **Run**:
 
 ```sql
-create table public.progress (
+create table if not exists public.progress (
   user_id uuid primary key references auth.users(id) on delete cascade,
   data jsonb not null,
   updated_at timestamptz not null default now()
 );
 alter table public.progress enable row level security;
+drop policy if exists "own row" on public.progress;
 create policy "own row" on public.progress
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 ```
+
+(Этот запрос можно запускать сколько угодно раз — он не ругается на «already exists».)
 
 3. **Project Settings → API**: скопируй **Project URL** и **anon (publishable) key** — вставь их в файл `js/config.js` (поле `window.DOBRODOSLI_SUPABASE`) и снова запусти `publish.sh`. Эти два значения публичные, их можно показывать кому угодно — доступ к данным ограничивает политика из шага 2.
 
