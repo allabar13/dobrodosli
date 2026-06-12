@@ -20,6 +20,8 @@ const State = (() => {
       name: 'Ученик', cloudId: null,
       createdAt: Date.now(), updatedAt: Date.now(),
       settings: { variant: 'rs', script: 'lat', goal: 20, sound: true, motivation: null, theme: 'auto' },
+      level: 1,           // выбранный уровень курса (1–5)
+      unlockedExtra: {},  // уроки, открытые «через голову» по явному решению
       xp: 0,
       streak: { count: 0, best: 0, last: null, freezes: 1 }, // легаси: стрики больше не показываем
       lessons: {},   // lessonId → { stars, times, ts }
@@ -38,6 +40,10 @@ const State = (() => {
     if (!u.mistakes) u.mistakes = {};
     if (!u.flags) u.flags = {};
     if (!u.settings.theme) u.settings.theme = 'auto';
+    if (!u.level) u.level = 1;
+    if (!u.unlockedExtra) u.unlockedExtra = {};
+    // алфавит и вариант языка связаны: кириллица — сербский, латиница — черногорский
+    u.settings.variant = u.settings.script === 'cyr' ? 'rs' : 'me';
     delete u.email; // персональные данные не храним даже локально
     return u;
   }
@@ -133,7 +139,25 @@ const State = (() => {
     isUnlocked(lessonId){
       const idx = ALL_LESSONS.findIndex(l => l.id === lessonId);
       if (idx <= 0) return true;
+      const lesson = ALL_LESSONS[idx];
+      const unit = unitById(lesson.unitId);
+      // выбран уровень выше — всё предыдущее открыто автоматически
+      if (unit && (unit.level || 1) < (api.U.level || 1)) return true;
+      if (api.U.unlockedExtra && api.U.unlockedExtra[lessonId]) return true;
       return !!api.U.lessons[ALL_LESSONS[idx - 1].id];
+    },
+    forceUnlock(lessonId){
+      api.U.unlockedExtra[lessonId] = true;
+      api.save();
+    },
+    // ── статистика для профиля ──
+    totalAccuracy(){
+      let ok = 0, seen = 0;
+      for (const id of Object.keys(api.U.words)) { const r = api.U.words[id]; ok += r.ok; seen += r.seen; }
+      return seen ? Math.round(ok / seen * 100) : null;
+    },
+    strongWords(){
+      return Object.keys(api.U.words).filter(id => WORDS[id] && api.U.words[id].s >= 4).length;
     },
     resetProgress(){
       const u = api.U;

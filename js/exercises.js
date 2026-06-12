@@ -68,6 +68,9 @@ const Ex = (() => {
     const queue = items.concat(shuf(extras));
     if (lesson.situation) queue.push({ type: 'sit', sit: lesson.situation });
     if (lesson.tip) queue.splice(Math.min(4, queue.length), 0, { type: 'tip', tip: lesson.tip });
+    // добрый факт о Балканах — передышка ближе к концу урока
+    const f = FACTS[Math.floor(Math.random() * FACTS.length)];
+    queue.splice(Math.max(5, Math.floor(queue.length * 0.7)), 0, { type: 'tip', kicker: 'Балканский факт 🪶', tip: { title: f.t, text: f.x } });
     queue.forEach((it, i) => { it.uid = i; it.retries = 0; });
     return queue;
   }
@@ -116,7 +119,7 @@ const Ex = (() => {
 
   function rTip(item, ctx){
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Жарко советует</p>
+      <p class="ex-kicker">${esc(item.kicker || 'Жарко советует')}</p>
       <div class="card tip-card pop-in">
         <div class="tip-mascot">${mascotSvg('happy', 64)}</div>
         <h3>${esc(item.tip.title)}</h3>

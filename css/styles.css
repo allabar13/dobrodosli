@@ -6,6 +6,8 @@
 :root{
   --bg:#EAF6FA; --bg2:#DCEFF6; --card:#FFFFFF; --ink:#16323F; --muted:#5E7D8C; --line:#D6E9F1;
   --primary:#EF7856; --primary-deep:#D05636; --primary-soft:#FCE5DD; --glow:rgba(239,120,86,.32);
+  /* цвет «выбрано» — всегда спокойный морской, не путается с «неверно» */
+  --select:#1899C2; --select-soft:#D9EFF7;
   --green:#2FA56C; --green-deep:#1F7A4D; --green-soft:#DDF3E7;
   --red:#E5484D; --red-deep:#C43338; --red-soft:#FDE8E8;
   --gold:#FFC94D; --gold-deep:#C8941B;
@@ -20,6 +22,7 @@ html[data-variant="me"]{
 html[data-theme="dark"]{
   --bg:#0E2330; --bg2:#0A1B26; --card:#16313F; --ink:#EAF4F8; --muted:#8FB0BE; --line:#264656;
   --primary:#FF8E63; --primary-deep:#E66A3E; --primary-soft:rgba(255,142,99,.16); --glow:rgba(255,142,99,.34);
+  --select:#39BFE3; --select-soft:rgba(57,191,227,.16);
   --green:#46C98B; --green-deep:#9FE7C4; --green-soft:rgba(70,201,139,.16);
   --red:#FF6B6F; --red-deep:#FFA3A5; --red-soft:rgba(255,107,111,.15);
   --gold:#FFC94D; --gold-deep:#FFDB85;
@@ -163,12 +166,39 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
   padding:15px; cursor:pointer; box-shadow:var(--shadow); transition:border-color .15s, transform .08s;
 }
 .ob-card:active{ transform:scale(.98); }
-.ob-card.sel{ border-color:var(--primary); background:var(--primary-soft); }
+.ob-card.sel{ border-color:var(--select); background:var(--select-soft); }
 .ob-emoji{ font-size:30px; flex:none; }
 .ob-card small{ color:var(--muted); display:block; margin-top:2px; }
 
 /* ── путь ── */
 .path{ position:relative; padding-bottom:30px; }
+.level-banner{
+  background:var(--card); border:1.5px solid var(--line); border-radius:var(--radius);
+  padding:14px 16px; margin:6px 0 4px; box-shadow:var(--shadow);
+}
+.level-banner small{ color:var(--muted); font-weight:800; letter-spacing:.06em; font-size:11px; }
+.level-banner h3{ margin:2px 0; font-size:20px; }
+.level-banner p{ margin:0; color:var(--muted); font-size:13.5px; }
+.unit-theme{
+  display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.04em;
+  background:rgba(255,255,255,.22); border-radius:99px; padding:2px 8px; margin-bottom:4px;
+}
+.level-next{
+  display:flex; align-items:center; gap:12px; margin:26px 0 8px;
+  border:2px dashed var(--line); border-radius:var(--radius); padding:14px 16px; color:var(--muted);
+}
+.level-next .ln-lock{ font-size:24px; }
+.level-next b{ color:var(--ink); display:block; }
+.level-next small{ font-size:12.5px; }
+.pwa-card{
+  display:flex; align-items:center; gap:14px; background:var(--card);
+  border:1.5px solid var(--line); border-radius:var(--radius); padding:14px 16px; margin-bottom:4px; box-shadow:var(--shadow);
+}
+.pwa-card small{ display:block; color:var(--muted); margin-top:2px; }
+.pwa-ico{
+  display:inline-flex; align-items:center; justify-content:center; flex:none;
+  width:48px; height:48px; border-radius:14px; background:var(--select-soft); color:var(--select); font-size:24px; font-weight:900;
+}
 .unit-banner{
   display:flex; align-items:center; gap:12px; margin:22px 0 14px;
   background:linear-gradient(135deg, var(--primary), var(--primary-deep));
@@ -285,7 +315,7 @@ html.no-tts .spk{ display:none; }
   transition:border-color .12s, background .12s, transform .08s;
 }
 .opt:active{ transform:scale(.985); }
-.opt.sel{ border-color:var(--primary); background:var(--primary-soft); }
+.opt.sel{ border-color:var(--select); background:var(--select-soft); }
 .opt.right{ border-color:var(--green); background:var(--green-soft); }
 .opt.wrong{ border-color:var(--red); background:var(--red-soft); }
 .opt:disabled{ cursor:default; opacity:.92; }
@@ -322,7 +352,7 @@ html.no-tts .spk{ display:none; }
 .bank-pool{ display:flex; flex-wrap:wrap; gap:8px; }
 .bank-chip:active{ transform:scale(.96); }
 .bank-chip.used{ opacity:.22; pointer-events:none; }
-.bank-chip.in-ans{ border-color:var(--primary); background:var(--primary-soft); }
+.bank-chip.in-ans{ border-color:var(--select); background:var(--select-soft); }
 .pairs{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .pairs-col{ display:flex; flex-direction:column; gap:10px; }
 .pair{ text-align:center; font-size:15.5px; padding:13px 8px; }

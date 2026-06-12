@@ -141,9 +141,9 @@ const App = (() => {
   // ── онбординг / регистрация профиля ──
   function startOnboarding(seed){
     bare(true);
-    const data = { variant: 'rs', script: 'lat', goal: 20, motivation: null, name: seed.suggestedName || '', cloudId: seed.cloudId || null };
+    const data = { script: 'lat', level: 1, goal: 20, motivation: null, name: seed.suggestedName || '', cloudId: seed.cloudId || null };
     let step = 0;
-    const TOTAL = 6;
+    const TOTAL = 7;
 
     function dots(){ return `<div class="ob-dots">${Array.from({ length: TOTAL }, (_, i) => `<i class="${i <= step ? 'on' : ''}"></i>`).join('')}</div>`; }
     function shell(inner){
@@ -164,43 +164,53 @@ const App = (() => {
     function render(){
       if (step === 0) {
         shell(`
-          <div class="gate-hero">${mascotSvg('happy', 120)}<h1>Добродошли!</h1>
-            <p class="tagline">Это Жарко, адриатический галеб. Научит тебя сербскому — и, так и быть, не унесёт твой бурек.</p></div>
+          <div class="gate-hero">${mascotSvg('happy', 120)}<h1>Добродо́шли!</h1>
+            <p class="tagline">Это Жа́рко, адриатический галеб. Научит тебя сербскому — и, так и быть, не унесёт твой бурек.</p></div>
           <ul class="ob-list">
             <li>🎯 Короткие уроки из реальной балканской жизни</li>
             <li>📚 Считаем выученные слова, а не стрики — без давления</li>
             <li>🔁 Ошибки добиваются отдельным блоком, есть карточки</li>
-            <li>🌙 Ночной режим и 🇲🇪-режим в один тап</li>
+            <li>🌙 Ночной режим и добрые факты о Балканах по пути</li>
           </ul>
           <button class="btn primary big" id="ob-go">Идемо! (поехали)</button>`);
         $('#ob-go').onclick = () => { step++; render(); };
       } else if (step === 1) {
-        shell(`<h2>Где живёшь (или будешь)?</h2><p class="muted">Это практически один язык — переключаться можно в любой момент, в один тап.</p>
+        shell(`<h2>Какой алфавит?</h2><p class="muted">Язык один — сербский. Алфавит задаёт «акцент», различия покажем по ходу. Ответы принимаются любым, переключить можно в любой момент.</p>
           ${cards([
-            { k:'rs', emoji:'🇷🇸', t:'Сербия', d:'Екавица, динары, Белград. «Lepo» и «mleko».' },
-            { k:'me', emoji:'🇲🇪', t:'Черногория', d:'Иекавица, евро, море. «Lijepo» и «mlijeko».' },
-          ])}`);
-        wireCards(k => data.variant = k);
-      } else if (step === 2) {
-        shell(`<h2>Какой алфавит показывать?</h2><p class="muted">Ответы принимаются любым алфавитом — это только настройка показа.</p>
-          ${cards([
-            { k:'lat', emoji:'🅰️', t:'Latinica', d:'Как в мессенджерах и на большинстве вывесок.' },
-            { k:'cyr', emoji:'Ж', t:'Ћирилица', d:'Официальная: документы, МУП, таблички.' },
+            { k:'lat', emoji:'🌊', t:'Latinica', d:'Черногорский вариант: lijepo, mlijeko, евро. Так пишут на побережье и в интернете.' },
+            { k:'cyr', emoji:'Ж', t:'Ћирилица', d:'Сербский вариант: лепо, млеко, динары. Так — в документах и на табличках Белграда.' },
           ])}`);
         wireCards(k => data.script = k);
+      } else if (step === 2) {
+        shell(`<h2>Какой у тебя уровень?</h2><p class="muted">Полностью готов уровень 1, остальные — в производстве. Выберешь выше — всё предыдущее откроется автоматически.</p>
+          ${cards(LEVELS.map(l => ({ k: String(l.n), emoji: ['🐣','☕','🌊','🧺','🏔️'][l.n - 1], t: `${l.name} · ${l.code}`, d: l.desc + (l.ready ? '' : ' Скоро!') })))}`);
+        wireCards(k => data.level = +k);
       } else if (step === 3) {
         shell(`<h2>Какой темп?</h2><p class="muted">Психологи за реалистичные цели: лучше маленькая, но каждый день.</p>
           ${cards(GOALS.map(g => ({ k: String(g.xp), emoji: g.xp === 10 ? '🐌' : g.xp === 20 ? '☕' : '🚀', t: `${g.name} · ${g.xp} XP в день`, d: g.desc })))}`);
         wireCards(k => data.goal = +k);
       } else if (step === 4) {
-        shell(`<h2>Зачем тебе сербский?</h2><p class="muted">Вопрос-якорь: когда мотивация просядет, Жарко напомнит, ради чего всё это.</p>
+        shell(`<h2>Зачем тебе сербский?</h2><p class="muted">Подстроим акценты в лексике под твою цель. А когда мотивация просядет — Жарко напомнит, ради чего всё это.</p>
           ${cards([
-            { k:'docs', emoji:'📋', t:'Документы и бюрократия', d:'Боравак, МУП, шалтеры — без паники.' },
-            { k:'live', emoji:'🏠', t:'Жить и общаться', d:'Комшии, пияца, кафана, своя жизнь.' },
-            { k:'work', emoji:'💼', t:'Работа и учёба', d:'Коллеги, клиенты, бумаги.' },
-            { k:'love', emoji:'❤️', t:'Любовь', d:'Самая быстрая методика из существующих.' },
+            { k:'docs',   emoji:'📋', t:'Документы и быт', d:'Лексика выживания: МУП, аренда, банк, справки.' },
+            { k:'live',   emoji:'🗣️', t:'Общение и друзья', d:'Смолток, кафана, комшии — живая разговорная база.' },
+            { k:'work',   emoji:'💼', t:'Работа и клиенты', d:'Деловые слова, переписка, созвоны.' },
+            { k:'travel', emoji:'✈️', t:'Путешествия по Балканам', d:'Дорога, жильё, заказ еды и «как пройти».' },
+            { k:'love',   emoji:'❤️', t:'Любовь', d:'Самая быстрая методика из существующих.' },
           ])}`);
         wireCards(k => data.motivation = k);
+      } else if (step === 5) {
+        shell(`<h2>Поставь как приложение</h2><p class="muted">«Добродошли» живёт на экране телефона как обычное приложение — без сторов. Это необязательно: в браузере тоже всё работает.</p>
+          <div class="pwa-card">
+            <span class="pwa-ico"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg></span>
+            <div><b>iPhone · Safari</b><small>Кнопка «Поделиться» внизу → «На экран “Домой”» → Добавить</small></div>
+          </div>
+          <div class="pwa-card">
+            <span class="pwa-ico"><svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></span>
+            <div><b>Android · Chrome</b><small>Меню ⋮ справа сверху → «Добавить на главный экран»</small></div>
+          </div>
+          <button class="btn primary big" id="ob-pwa">Понятно, дальше</button>`);
+        $('#ob-pwa').onclick = () => { step++; render(); };
       } else {
         shell(`<h2>Как тебя зовут?</h2>
           <label>Имя — для приветствий и профиля<input id="ob-name" maxlength="30" placeholder="Ана" value="${escAttr(data.name || '')}" autocomplete="off"></label>
@@ -221,8 +231,8 @@ const App = (() => {
     }
     function finish(){
       State.create({
-        name: data.name, cloudId: data.cloudId,
-        settings: { variant: data.variant, script: data.script, goal: data.goal, sound: true, motivation: data.motivation },
+        name: data.name, cloudId: data.cloudId, level: data.level,
+        settings: { variant: data.script === 'cyr' ? 'rs' : 'me', script: data.script, goal: data.goal, sound: true, motivation: data.motivation },
       });
       State.save();
       applySound();
@@ -250,20 +260,12 @@ const App = (() => {
   function renderTopbar(){
     const u = State.U, goal = u.settings.goal, today = State.xpToday();
     $('#topbar').innerHTML = `
-      <button class="flag-chip" id="flag" title="Переключить вариант языка">${V() === 'me' ? '🇲🇪' : '🇷🇸'}</button>
       <div class="goal-wrap">
         <div class="goal-bar"><i style="width:${Math.min(100, Math.round(today / goal * 100))}%"></i></div>
         <small>${today}/${goal} XP сегодня${today >= goal ? ' ✓' : ''}</small>
       </div>
       <span class="chip-stat" title="слов в копилке — главная метрика">📚 ${State.knownWords().length}</span>
       <span class="chip-stat" title="всего XP">⚡ ${u.xp}</span>`;
-    $('#flag').onclick = () => {
-      u.settings.variant = V() === 'rs' ? 'me' : 'rs';
-      State.save();
-      applyVariant();
-      toast(V() === 'me' ? 'Пребачено: 🇲🇪 иекавица, евро, море' : 'Назад: 🇷🇸 екавица, динары, Белград');
-      selectTab(tab);
-    };
   }
 
   function updateTabbar(){
@@ -282,6 +284,7 @@ const App = (() => {
     const u = State.U;
     if (State.xpToday() >= u.settings.goal) return 'Цель дня закрыта! Кофе — с чистой совестью.';
     if (u.settings.motivation === 'docs' && Math.random() < 0.3) return 'Боравак сам себя не продлит. Идемо!';
+    if (u.settings.motivation === 'travel' && Math.random() < 0.25) return 'Следующая поездка сама себя не закажет. Учим!';
     if (u.settings.motivation === 'love' && Math.random() < 0.2) return 'Любовь любовью, а падежи по расписанию.';
     return MASCOT_LINES[Math.floor(Math.random() * MASCOT_LINES.length)];
   }
@@ -289,9 +292,15 @@ const App = (() => {
     const u = State.U;
     let html = '<div class="path">';
     let idx = 0;
+    const userLvl = LEVELS[(u.level || 1) - 1] || LEVELS[0];
+    html += `<div class="level-banner"><small>УРОВЕНЬ 1 · ${LEVELS[0].code}</small><h3>${esc(LEVELS[0].name)}</h3>
+      ${(u.level || 1) > 1
+        ? `<p>Твой уровень — «${esc(userLvl.name)}», поэтому здесь всё открыто сразу. Контент уровней 2–5 в производстве.</p>`
+        : `<p>${esc(LEVELS[0].desc)}</p>`}</div>`;
     for (const unit of UNITS) {
       const doneCount = unit.lessons.filter(l => u.lessons[l.id]).length;
-      html += `<div class="unit-banner"><span class="unit-emoji">${unit.emoji}</span><div><h3>${esc(unit.title)}</h3><p>${esc(unit.sub)}</p></div><span class="unit-progress">${doneCount}/${unit.lessons.length}</span></div>`;
+      const th = THEMES[unit.theme] || { emoji: '', name: '' };
+      html += `<div class="unit-banner"><span class="unit-emoji">${unit.emoji}</span><div><span class="unit-theme">${th.emoji} ${esc(th.name)}</span><h3>${esc(unit.title)}</h3><p>${esc(unit.sub)}</p></div><span class="unit-progress">${doneCount}/${unit.lessons.length}</span></div>`;
       for (const l of unit.lessons) {
         const done = !!u.lessons[l.id];
         const unlocked = State.isUnlocked(l.id);
@@ -311,12 +320,18 @@ const App = (() => {
         idx++;
       }
     }
-    html += `<div class="path-end">${mascotSvg('wow', 64)}<p>Дальше — больше: юниты будут добавляться. Скажи, чего не хватает для жизни. Полако!</p></div></div>`;
+    const next = LEVELS[1];
+    html += `<div class="level-next"><span class="ln-lock">🔒</span><div><b>Уровень 2 · ${esc(next.name)}</b><small>Те же темы — глубже: вкусы (кисло/сладко/солёно), покупки списком, первые мини-диалоги. Скоро!</small></div></div>`;
+    html += `<div class="path-end">${mascotSvg('wow', 64)}<p>Скажи, какой темы не хватает для жизни, — добавим. Полако!</p></div></div>`;
     $('#screen').innerHTML = html;
     $$('.node').forEach(b => b.onclick = () => {
       const l = lessonById(b.dataset.l);
-      if (!State.isUnlocked(l.id)) { toast('Полако! Сначала предыдущий урок 😉'); return; }
-      startLesson(l);
+      if (State.isUnlocked(l.id)) { startLesson(l); return; }
+      // перепрыгнуть можно — но осознанно
+      const m = modal(`<h3>Перепрыгнуть вперёд?</h3><p>Ты точно подумал(а)? 😏 По порядку — полако — обычно надёжнее. Но решать тебе: можно открыть этот урок прямо сейчас.</p>
+        <div class="row-btns"><button class="btn ghost" id="m-ord">Вернусь по порядку</button><button class="btn primary" id="m-skip">Открыть всё равно</button></div>`);
+      m.querySelector('#m-ord').onclick = () => m.remove();
+      m.querySelector('#m-skip').onclick = () => { m.remove(); State.forceUnlock(l.id); startLesson(l); };
     });
   }
 
@@ -326,7 +341,7 @@ const App = (() => {
     const mist = State.mistakeWords();
     const known = State.knownWords();
     const seen = Object.keys(State.U.words).filter(id => WORDS[id] && State.U.words[id].seen > 0);
-    const unitChips = UNITS.filter(un => seen.some(id => WORDS[id].unit === un.id));
+    const themeChips = Object.keys(THEMES).filter(t => seen.some(id => (unitById(WORDS[id].unit) || {}).theme === t));
     $('#screen').innerHTML = `
       <div class="page">
         <h2>Тренировка</h2>
@@ -356,10 +371,10 @@ const App = (() => {
         <div class="card review-card">
           <h3>🃏 Карточки</h3>
           ${seen.length ? `
-            <p class="muted small">Выбери колоду и листай: «знаю / ещё учу». Спокойный режим — без проверок.</p>
+            <p class="muted small">Колоды — по темам. Листай и отвечай себе честно: «знаю / ещё учу».</p>
             <div class="due-chips">
               <button class="chip unit-chip" data-u="all">📚 Все мои слова</button>
-              ${unitChips.map(un => `<button class="chip unit-chip" data-u="${un.id}">${un.emoji} ${esc(un.title)}</button>`).join('')}
+              ${themeChips.map(t => `<button class="chip unit-chip" data-u="${t}">${THEMES[t].emoji} ${esc(THEMES[t].name)}</button>`).join('')}
             </div>`
           : `<p class="muted">Карточки появятся после первого урока.</p>`}
         </div>
@@ -367,7 +382,7 @@ const App = (() => {
     if ($('#btn-review')) $('#btn-review').onclick = () => startLesson({ id: 'review', title: 'Повторение', wordIds: State.dueWords(10) }, 'review');
     if ($('#btn-mist')) $('#btn-mist').onclick = () => startLesson({ id: 'mistakes', title: 'Ошибки', wordIds: pickN(State.mistakeWords(), 10) }, 'mistakes');
     $$('.unit-chip').forEach(b => b.onclick = () => {
-      const scope = b.dataset.u === 'all' ? seen : seen.filter(id => WORDS[id].unit === b.dataset.u);
+      const scope = b.dataset.u === 'all' ? seen : seen.filter(id => (unitById(WORDS[id].unit) || {}).theme === b.dataset.u);
       startLesson({ id: 'cards', title: 'Карточки', wordIds: pickN(scope, 15) }, 'cards');
     });
   }
@@ -381,10 +396,10 @@ const App = (() => {
       html += `<div class="card empty">${mascotSvg('happy', 80)}<p>Здесь появятся выученные слова — с озвучкой и «силой» запоминания.</p></div>`;
     } else {
       html += '<input id="dict-q" class="type-in dict-q" placeholder="Поиск: kafa, кафа или кофе…">';
-      for (const unit of UNITS) {
-        const us = ids.filter(id => WORDS[id].unit === unit.id);
+      for (const tid of Object.keys(THEMES)) {
+        const us = ids.filter(id => (unitById(WORDS[id].unit) || {}).theme === tid);
         if (!us.length) continue;
-        html += `<h4 class="dict-unit">${unit.emoji} ${esc(unit.title)}</h4>`;
+        html += `<h4 class="dict-unit">${THEMES[tid].emoji} ${esc(THEMES[tid].name)}</h4>`;
         html += us.map(id => {
           const w = WORDS[id], r = u.words[id];
           const due = r.due <= Date.now();
@@ -452,9 +467,13 @@ const App = (() => {
         </div>
         <div class="stat-grid">
           <div class="stat-cell key"><b>📚 ${State.knownWords().length}</b><small>слов в копилке — главная метрика</small></div>
+          <div class="stat-cell"><b>💪 ${State.strongWords()}</b><small>крепких слов (почти не забываются)</small></div>
+          <div class="stat-cell"><b>🎯 ${State.totalAccuracy() === null ? '—' : State.totalAccuracy() + '%'}</b><small>точность ответов</small></div>
           <div class="stat-cell"><b>⚡ ${u.xp}</b><small>всего XP</small></div>
-          <div class="stat-cell"><b>📅 ${State.daysStudied()}</b><small>${dayWord(State.daysStudied())} занятий — не подряд, и это ок</small></div>
           <div class="stat-cell"><b>✅ ${Object.keys(u.lessons).length}</b><small>уроков пройдено</small></div>
+          <div class="stat-cell"><b>🧠 ${u.reviews || 0}</b><small>сессий повторения</small></div>
+          <div class="stat-cell"><b>📅 ${State.daysStudied()}</b><small>${dayWord(State.daysStudied())} занятий — не подряд, и это ок</small></div>
+          <div class="stat-cell"><b>🪜 ${u.level || 1}/5</b><small>уровень «${esc((LEVELS[(u.level || 1) - 1] || LEVELS[0]).name)}»</small></div>
         </div>
         <p class="muted small">Здесь нет стриков и сердечек: пропустить день — нормально, ничего не сгорает. Слова дождутся, повторения перестроятся. «Полако» — это тоже методика.</p>
         <h4>Календарь занятий · 4 недели</h4>
@@ -466,11 +485,9 @@ const App = (() => {
         }).join('')}</div>
         <h4>Настройки</h4>
         <div class="card settings">
-          <div class="set-row"><span>Вариант языка</span>
-            <span class="seg sm"><button class="${V() === 'rs' ? 'on' : ''}" data-v="rs">🇷🇸 Српски</button><button class="${V() === 'me' ? 'on' : ''}" data-v="me">🇲🇪 Crnogorski</button></span></div>
-          <p class="muted small">Черногорский режим: иекавица вместо екавицы, евро вместо динаров, Подгорица вместо Белграда. Это практически один язык — но не говори это вслух ни там, ни там 😉</p>
           <div class="set-row"><span>Алфавит</span>
             <span class="seg sm"><button class="${SC() === 'lat' ? 'on' : ''}" data-s="lat">Latinica</button><button class="${SC() === 'cyr' ? 'on' : ''}" data-s="cyr">Ћирилица</button></span></div>
+          <p class="muted small">Latinica — черногорский вариант (lijepo, евро, Подгорица), Ћирилица — сербский (лепо, динары, Белград). Язык и логика одни, ответы принимаются любым алфавитом. Это практически один язык — но не говори это вслух ни там, ни там 😉</p>
           <div class="set-row"><span>Тема</span>
             <span class="seg sm"><button class="${u.settings.theme === 'auto' ? 'on' : ''}" data-th="auto">Авто</button><button class="${u.settings.theme === 'light' ? 'on' : ''}" data-th="light">☀️ День</button><button class="${u.settings.theme === 'dark' ? 'on' : ''}" data-th="dark">🌙 Ночь</button></span></div>
           <div class="set-row"><span>Цель дня</span>
@@ -488,8 +505,12 @@ const App = (() => {
       </div>`;
 
     const reSet = () => { State.save(); renderTopbar(); renderProfile(); };
-    $$('[data-v]').forEach(b => b.onclick = () => { u.settings.variant = b.dataset.v; applyVariant(); reSet(); });
-    $$('[data-s]').forEach(b => b.onclick = () => { u.settings.script = b.dataset.s; reSet(); });
+    $$('[data-s]').forEach(b => b.onclick = () => {
+      u.settings.script = b.dataset.s;
+      u.settings.variant = b.dataset.s === 'cyr' ? 'rs' : 'me'; // алфавит и вариант связаны
+      applyVariant();
+      reSet();
+    });
     $$('[data-th]').forEach(b => b.onclick = () => { u.settings.theme = b.dataset.th; applyTheme(); reSet(); });
     $$('[data-g]').forEach(b => b.onclick = () => { u.settings.goal = +b.dataset.g; reSet(); });
     $$('[data-snd]').forEach(b => b.onclick = () => { u.settings.sound = b.dataset.snd === '1'; applySound(); reSet(); });
