@@ -1,12 +1,8 @@
 // ── Добродошли! · настройки облака ──────────────────────────────────────────
-// Чтобы включить облачные аккаунты (вход с любого устройства), вставь сюда
-// данные своего проекта Supabase — пошаговая инструкция в README.md.
-// Пример:
-// window.DOBRODOSLI_SUPABASE = {
-//   url: "https://abcdefgh.supabase.co",
-//   key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-// };
-//
-// Можно и без этого файла: те же два поля есть в приложении —
-// «Профиль → Облако».
-window.DOBRODOSLI_SUPABASE = null;
+// Эти два значения ПУБЛИЧНЫЕ (их видит любой посетитель сайта) — доступ к
+// данным ограничивает RLS-политика в базе («каждый видит только свою строку»).
+// Секретный service_role ключ сюда вставлять НЕЛЬЗЯ никогда.
+window.DOBRODOSLI_SUPABASE = {
+  url: "https://unwveirymrpsuurcppvm.supabase.co",
+  key: "sb_publishable_g9x3uZphLlQBlHuSCnzelQ_H1YB296_",
+};
