@@ -11,6 +11,10 @@ if [ ! -x "$GH" ] && ! command -v gh >/dev/null 2>&1; then
 fi
 "$GH" auth status >/dev/null 2>&1 || { echo "Сначала войди в GitHub: $GH auth login"; exit 1; }
 
+# чтобы git push никогда не спрашивал логин/пароль — пускаем его через gh
+GH_ABS="$GH"; command -v "$GH" >/dev/null 2>&1 && GH_ABS="$(command -v "$GH")"
+git config --global "credential.https://github.com.helper" "!$GH_ABS auth git-credential" 2>/dev/null || true
+
 git add -A
 git commit -m "update $(date '+%Y-%m-%d %H:%M')" >/dev/null 2>&1 || echo "(изменений нет — публикую текущее)"
 
