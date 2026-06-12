@@ -137,7 +137,7 @@ const State = (() => {
     },
     resetProgress(){
       const u = api.U;
-      const keep = { id: u.id, name: u.name, email: u.email, cloudId: u.cloudId, settings: u.settings, createdAt: u.createdAt };
+      const keep = { id: u.id, name: u.name, cloudId: u.cloudId, settings: u.settings, createdAt: u.createdAt };
       users[u.id] = Object.assign(blank(), keep);
       api.U = users[u.id];
       api.save();
