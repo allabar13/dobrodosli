@@ -65,6 +65,7 @@ const App = (() => {
   async function boot(){
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     wireChrome();
+    wireSync();
     State.init();
     applySound();
     applyVariant();
@@ -75,34 +76,63 @@ const App = (() => {
     showGate();
   }
 
+  // надёжная синхронизация: при сворачивании — дослать, при возврате — подтянуть
+  function wireSync(){
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') { if (window.Cloud) Cloud.flush(); }
+      else { syncFromCloud(); }
+    });
+    window.addEventListener('pagehide', () => { if (window.Cloud) Cloud.flush(); });
+  }
+
   async function enterCloudUser(){
     const uid = Cloud.user().id;
     const linkId = Cloud.takeLinkRequest();
     let u = State.users().find(x => x.cloudId === uid);
+    // явная привязка локального профиля кнопкой «Войти через Google»
+    if (!u && linkId) u = State.users().find(x => x.id === linkId) || null;
     let remote = null;
     try { remote = await Cloud.pull(); } catch (e) {}
-    // пользователь нажал «Войти через Google» ради привязки локального профиля
-    if (!u && linkId) {
-      const local = State.users().find(x => x.id === linkId);
-      if (local && (!remote || (local.updatedAt || 0) >= (remote.updatedAt || 0))) {
-        local.cloudId = uid;
-        State.login(local.id);
-        State.save();
-        showApp();
-        toast(`☁️ Профиль привязан к Google: <b>${esc(Cloud.email() || '')}</b>`);
-        return;
-      }
+
+    if (u && remote) {
+      // оба есть — сливаем без потерь, заливаем обратно
+      const merged = State.mergeProgress(JSON.parse(JSON.stringify(u)), remote);
+      merged.id = u.id; merged.cloudId = uid; delete merged.email;
+      State.adopt(merged); State.login(u.id);
+      State.save();
+      showApp();
+      if (linkId) toast(`☁️ Профиль привязан к Google: <b>${esc(Cloud.email() || '')}</b>`);
+      return;
     }
-    if (remote && (!u || (remote.updatedAt || 0) > u.updatedAt)) {
-      remote.cloudId = uid;
-      remote.id = u ? u.id : 'c_' + uid.slice(0, 8);
-      delete remote.email; // гигиена: в старых записях могла остаться почта
-      State.adopt(remote);
-      u = remote;
+    if (u && !remote) {
+      // в облаке пусто — заливаем локальный профиль
+      u.cloudId = uid; State.login(u.id); State.save(); showApp();
+      if (linkId) toast(`☁️ Профиль привязан к Google: <b>${esc(Cloud.email() || '')}</b>`);
+      return;
     }
-    if (u) { State.login(u.id); showApp(); return; }
+    if (!u && remote) {
+      // новое устройство — забираем прогресс из облака
+      remote.cloudId = uid; remote.id = 'c_' + uid.slice(0, 8); delete remote.email;
+      State.adopt(remote); State.login(remote.id); showApp();
+      return;
+    }
     const meta = (Cloud.user() && Cloud.user().user_metadata) || {};
     startOnboarding({ cloudId: uid, suggestedName: meta.given_name || meta.full_name || meta.name || '' });
+  }
+
+  // Подтянуть и слить облако в текущий профиль (при возврате в приложение).
+  async function syncFromCloud(){
+    if (!State.U || !window.Cloud || !Cloud.active() || !Cloud.user()) return;
+    if (State.U.cloudId !== Cloud.user().id) return;
+    if (document.body.classList.contains('lesson-open')) return; // не трогаем активный урок
+    let remote = null;
+    try { remote = await Cloud.pull(); } catch (e) { return; }
+    if (!remote) return;
+    const before = JSON.stringify(State.U);
+    const merged = State.mergeProgress(JSON.parse(JSON.stringify(State.U)), remote);
+    merged.id = State.U.id; merged.cloudId = State.U.cloudId; delete merged.email;
+    State.adopt(merged); State.login(merged.id);
+    if (JSON.stringify(State.U) !== before) { State.save(); if (!document.body.classList.contains('lesson-open')) selectTab(tab); }
   }
 
   async function googleSignIn(linkProfileId){
@@ -553,7 +583,7 @@ const App = (() => {
     };
     // облако: привязка текущего профиля через Google (вернёмся сюда после редиректа)
     if ($('#cl-google')) $('#cl-google').onclick = () => googleSignIn(State.U.id);
-    if ($('#cl-out')) $('#cl-out').onclick = async () => { await Cloud.signOut(); toast('Вышли из облака на этом устройстве. Профиль и прогресс остались.'); renderProfile(); };
+    if ($('#cl-out')) $('#cl-out').onclick = async () => { await Cloud.flush(); await Cloud.signOut(); toast('Вышли из облака на этом устройстве. Профиль и прогресс остались.'); renderProfile(); };
   }
 
   // ── проигрыватель урока ──

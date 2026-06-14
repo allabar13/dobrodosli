@@ -8,7 +8,7 @@
 const Cloud = (() => {
   const CFG_KEY = 'dobrodosli_cloud_cfg_v1';
   const LINK_KEY = 'dobrodosli_link_profile_v1'; // какой локальный профиль привязать после возврата от Google
-  let sb = null, authUser = null, pushTimer = null, lastErr = null;
+  let sb = null, authUser = null, pushTimer = null, pendingUser = null, lastErr = null;
 
   function cfg(){
     try {
@@ -91,13 +91,22 @@ const Cloud = (() => {
     // сохраняем с задержкой, чтобы не дёргать сеть на каждый клик
     push(user){
       if (!sb || !authUser || !user || user.cloudId !== authUser.id) return;
+      pendingUser = user; // ссылка на актуальный профиль — sanitize снимет копию при отправке
       clearTimeout(pushTimer);
-      pushTimer = setTimeout(async () => {
-        try {
-          await sb.from('progress').upsert({ user_id: authUser.id, data: sanitize(user), updated_at: new Date().toISOString() });
-        } catch (e) { /* не вышло — уедет при следующем сохранении */ }
-      }, 1500);
+      pushTimer = setTimeout(() => { pushTimer = null; doUpsert(); }, 1500);
+    },
+    // немедленно дослать накопившееся (при сворачивании/закрытии вкладки)
+    async flush(){
+      if (pushTimer) { clearTimeout(pushTimer); pushTimer = null; }
+      await doUpsert();
     },
   };
+
+  async function doUpsert(){
+    if (!sb || !authUser || !pendingUser || pendingUser.cloudId !== authUser.id) return;
+    try {
+      await sb.from('progress').upsert({ user_id: authUser.id, data: sanitize(pendingUser), updated_at: new Date().toISOString() });
+    } catch (e) { /* не вышло — уедет при следующем сохранении/flush */ }
+  }
   return api;
 })();

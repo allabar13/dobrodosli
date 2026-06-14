@@ -69,6 +69,56 @@ const State = (() => {
       if (window.Cloud) Cloud.push(api.U);
     },
 
+    // ── Слияние прогресса двух устройств без потерь ──────────────────────
+    // Прогресс монотонный (слова/уроки/XP только растут), поэтому берём
+    // «лучшее из каждого». Результат не зависит от порядка устройств —
+    // именно это лечит «как отдельные аккаунты».
+    mergeProgress(a, b){
+      if (!a) return b;
+      if (!b) return a;
+      const newer = (a.updatedAt || 0) >= (b.updatedAt || 0) ? a : b;
+      const older = newer === a ? b : a;
+      const out = JSON.parse(JSON.stringify(newer)); // база — свежее (имя, настройки)
+      const nz = (x, y) => Math.max(x || 0, y || 0);
+      out.xp = nz(a.xp, b.xp);
+      out.reviews = nz(a.reviews, b.reviews);
+      out.level = Math.max(a.level || 1, b.level || 1);
+      out.createdAt = Math.min(a.createdAt || Date.now(), b.createdAt || Date.now());
+      out.updatedAt = nz(a.updatedAt, b.updatedAt);
+      const as = a.streak || {}, bs = b.streak || {};
+      out.streak = {
+        count: nz(as.count, bs.count), best: nz(as.best, bs.best),
+        last: (as.last || '') >= (bs.last || '') ? (as.last || null) : (bs.last || null),
+        freezes: nz(as.freezes, bs.freezes),
+      };
+      out.words = {};
+      for (const src of [a.words || {}, b.words || {}]) for (const id in src) {
+        const c = out.words[id], w = src[id];
+        out.words[id] = c ? {
+          s: nz(c.s, w.s), seen: nz(c.seen, w.seen), ok: nz(c.ok, w.ok),
+          bad: nz(c.bad, w.bad), last: nz(c.last, w.last), due: nz(c.due, w.due),
+        } : Object.assign({}, w);
+      }
+      out.lessons = {};
+      for (const src of [a.lessons || {}, b.lessons || {}]) for (const id in src) {
+        const c = out.lessons[id], l = src[id];
+        out.lessons[id] = c ? { stars: nz(c.stars, l.stars), times: nz(c.times, l.times), ts: nz(c.ts, l.ts) } : Object.assign({}, l);
+      }
+      out.history = {};
+      for (const src of [a.history || {}, b.history || {}]) for (const d in src) out.history[d] = nz(out.history[d], src[d]);
+      out.badges = [...new Set([...(a.badges || []), ...(b.badges || [])])].sort();
+      out.unlockedExtra = Object.assign({}, a.unlockedExtra || {}, b.unlockedExtra || {});
+      out.mistakes = {};
+      for (const src of [a.mistakes || {}, b.mistakes || {}]) for (const id in src) {
+        const c = out.mistakes[id]; out.mistakes[id] = c ? { n: nz(c.n, src[id].n), ts: nz(c.ts, src[id].ts) } : Object.assign({}, src[id]);
+      }
+      out.flags = Object.assign({}, a.flags || {}, b.flags || {});
+      if ((a.flags && a.flags.perfect) || (b.flags && b.flags.perfect)) out.flags.perfect = true;
+      out.settings = Object.assign({}, older.settings || {}, newer.settings || {});
+      out.name = newer.name || older.name;
+      return out;
+    },
+
     xpToday(){ return (api.U && api.U.history[todayKey()]) || 0; },
     addXp(n){ const u = api.U; u.xp += n; u.history[todayKey()] = (u.history[todayKey()] || 0) + n; },
 
