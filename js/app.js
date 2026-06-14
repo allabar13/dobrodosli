@@ -63,6 +63,7 @@ const App = (() => {
 
   // ── старт ──
   async function boot(){
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     wireChrome();
     State.init();
     applySound();
@@ -182,8 +183,8 @@ const App = (() => {
           ])}`);
         wireCards(k => data.script = k);
       } else if (step === 2) {
-        shell(`<h2>Какой у тебя уровень?</h2><p class="muted">Полностью готов уровень 1, остальные — в производстве. Выберешь выше — всё предыдущее откроется автоматически.</p>
-          ${cards(LEVELS.map(l => ({ k: String(l.n), emoji: ['🐣','☕','🌊','🧺','🏔️'][l.n - 1], t: `${l.name} · ${l.code}`, d: l.desc + (l.ready ? '' : ' Скоро!') })))}`);
+        shell(`<h2>Какой у тебя уровень?</h2><p class="muted">Не уверен(а) — бери первый, всегда честно. Выберешь выше — всё предыдущее откроется автоматически, а начнёшь со своего уровня.</p>
+          ${cards(LEVELS.map(l => ({ k: String(l.n), emoji: ['🐣','☕','🌊','🧺','🏔️'][l.n - 1], t: `${l.name} · ${l.code}`, d: l.desc })))}`);
         wireCards(k => data.level = +k);
       } else if (step === 3) {
         shell(`<h2>Какой темп?</h2><p class="muted">Психологи за реалистичные цели: лучше маленькая, но каждый день.</p>
@@ -255,6 +256,17 @@ const App = (() => {
     ({ path: renderPath, review: renderReview, dict: renderDict, profile: renderProfile })[t]();
     updateTabbar();
     $('#screen').scrollTop = 0;
+    window.scrollTo(0, 0);
+    // путь длинный (5 уровней) — открываем сразу на «ты здесь»
+    if (t === 'path' && (State.U.level || 1) > 1) {
+      const go = () => {
+        if (tab !== 'path') return;
+        const cur = document.querySelector('.level-banner.cur');
+        if (cur) window.scrollTo(0, cur.getBoundingClientRect().top + window.scrollY - 56);
+      };
+      const ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      ready.then(() => { requestAnimationFrame(go); [120, 300, 600].forEach(ms => setTimeout(go, ms)); });
+    }
   }
 
   function renderTopbar(){
@@ -290,21 +302,31 @@ const App = (() => {
   }
   function renderPath(){
     const u = State.U;
+    const userLvl = u.level || 1;
+    const curLesson = (ALL_LESSONS.find(l => State.isUnlocked(l.id) && !u.lessons[l.id]) || {}).id;
     let html = '<div class="path">';
     let idx = 0;
-    const userLvl = LEVELS[(u.level || 1) - 1] || LEVELS[0];
-    html += `<div class="level-banner"><small>УРОВЕНЬ 1 · ${LEVELS[0].code}</small><h3>${esc(LEVELS[0].name)}</h3>
-      ${(u.level || 1) > 1
-        ? `<p>Твой уровень — «${esc(userLvl.name)}», поэтому здесь всё открыто сразу. Контент уровней 2–5 в производстве.</p>`
-        : `<p>${esc(LEVELS[0].desc)}</p>`}</div>`;
-    for (const unit of UNITS) {
+    for (const lvl of LEVELS) {
+      const units = UNITS.filter(un => (un.level || 1) === lvl.n);
+      if (!units.length) continue;
+      const lessonsInLvl = units.reduce((n, un) => n + un.lessons.length, 0);
+      const doneInLvl = units.reduce((n, un) => n + un.lessons.filter(l => u.lessons[l.id]).length, 0);
+      const isCur = lvl.n === userLvl;
+      html += `<div class="level-banner ${isCur ? 'cur' : ''}">
+        <div class="lb-row"><small>УРОВЕНЬ ${lvl.n} · ${lvl.code}</small>${isCur ? '<span class="lb-tag">ты здесь</span>' : lvl.n < userLvl ? '<span class="lb-tag open">открыт</span>' : ''}</div>
+        <h3>${lvl.n > userLvl ? '🔒 ' : ''}${esc(lvl.name)}</h3>
+        <p>${esc(lvl.desc)}</p>
+        <div class="lb-prog"><i style="width:${lessonsInLvl ? Math.round(doneInLvl / lessonsInLvl * 100) : 0}%"></i></div>
+        <small class="lb-count">${doneInLvl}/${lessonsInLvl} уроков пройдено</small>
+      </div>`;
+      for (const unit of units) {
       const doneCount = unit.lessons.filter(l => u.lessons[l.id]).length;
       const th = THEMES[unit.theme] || { emoji: '', name: '' };
       html += `<div class="unit-banner"><span class="unit-emoji">${unit.emoji}</span><div><span class="unit-theme">${th.emoji} ${esc(th.name)}</span><h3>${esc(unit.title)}</h3><p>${esc(unit.sub)}</p></div><span class="unit-progress">${doneCount}/${unit.lessons.length}</span></div>`;
       for (const l of unit.lessons) {
         const done = !!u.lessons[l.id];
         const unlocked = State.isUnlocked(l.id);
-        const current = unlocked && !done;
+        const current = l.id === curLesson;
         const stars = done ? u.lessons[l.id].stars : 0;
         html += `
           <div class="node-row ${idx % 2 ? 'right' : 'left'}">
@@ -319,10 +341,9 @@ const App = (() => {
           </div>`;
         idx++;
       }
+      }
     }
-    const next = LEVELS[1];
-    html += `<div class="level-next"><span class="ln-lock">🔒</span><div><b>Уровень 2 · ${esc(next.name)}</b><small>Те же темы — глубже: вкусы (кисло/сладко/солёно), покупки списком, первые мини-диалоги. Скоро!</small></div></div>`;
-    html += `<div class="path-end">${mascotSvg('wow', 64)}<p>Скажи, какой темы не хватает для жизни, — добавим. Полако!</p></div></div>`;
+    html += `<div class="path-end">${mascotSvg('wow', 64)}<p>Пять уровней, восемь тем, сотни слов для жизни. Скажи, чего ещё не хватает, — добавим. Полако!</p></div></div>`;
     $('#screen').innerHTML = html;
     $$('.node').forEach(b => b.onclick = () => {
       const l = lessonById(b.dataset.l);

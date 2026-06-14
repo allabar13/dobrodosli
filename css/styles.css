@@ -174,11 +174,20 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
 .path{ position:relative; padding-bottom:30px; }
 .level-banner{
   background:var(--card); border:1.5px solid var(--line); border-radius:var(--radius);
-  padding:14px 16px; margin:6px 0 4px; box-shadow:var(--shadow);
+  padding:14px 16px; margin:30px 0 4px; box-shadow:var(--shadow);
 }
+.level-banner:first-child{ margin-top:6px; }
+.level-banner{ scroll-margin-top:64px; }
+.level-banner.cur{ border-color:var(--primary); box-shadow:0 10px 26px var(--glow); }
 .level-banner small{ color:var(--muted); font-weight:800; letter-spacing:.06em; font-size:11px; }
 .level-banner h3{ margin:2px 0; font-size:20px; }
 .level-banner p{ margin:0; color:var(--muted); font-size:13.5px; }
+.lb-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.lb-tag{ font-size:10px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:#fff; background:var(--primary); border-radius:99px; padding:3px 9px; }
+.lb-tag.open{ background:var(--green); }
+.lb-prog{ height:7px; background:var(--line); border-radius:99px; overflow:hidden; margin:9px 0 5px; }
+.lb-prog i{ display:block; height:100%; background:var(--primary); border-radius:99px; transition:width .5s; }
+.lb-count{ font-size:11px !important; letter-spacing:0 !important; font-weight:700; }
 .unit-theme{
   display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.04em;
   background:rgba(255,255,255,.22); border-radius:99px; padding:2px 8px; margin-bottom:4px;

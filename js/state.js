@@ -140,11 +140,14 @@ const State = (() => {
       const idx = ALL_LESSONS.findIndex(l => l.id === lessonId);
       if (idx <= 0) return true;
       const lesson = ALL_LESSONS[idx];
-      const unit = unitById(lesson.unitId);
-      // выбран уровень выше — всё предыдущее открыто автоматически
-      if (unit && (unit.level || 1) < (api.U.level || 1)) return true;
+      const lvl = (unitById(lesson.unitId) || {}).level || 1;
+      const userLvl = api.U.level || 1;
+      if (lvl < userLvl) return true;                  // более ранние уровни открыты целиком
       if (api.U.unlockedExtra && api.U.unlockedExtra[lessonId]) return true;
-      return !!api.U.lessons[ALL_LESSONS[idx - 1].id];
+      const prev = ALL_LESSONS[idx - 1];
+      const prevLvl = (unitById(prev.unitId) || {}).level || 1;
+      if (prevLvl < lvl && lvl <= userLvl) return true; // первый урок «своего» уровня открыт
+      return !!api.U.lessons[prev.id];
     },
     forceUnlock(lessonId){
       api.U.unlockedExtra[lessonId] = true;
