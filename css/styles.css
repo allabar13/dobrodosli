@@ -286,6 +286,9 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
 .badge.off{ filter:grayscale(1); opacity:.4; }
 .settings{ display:flex; flex-direction:column; gap:12px; }
 .set-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:800; font-size:14.5px; flex-wrap:wrap; }
+.feedback-line{ color:var(--muted); font-size:13.5px; text-align:center; margin:18px 0 4px; line-height:1.5; }
+.feedback-line a{ color:var(--primary); font-weight:800; text-decoration:none; border-bottom:1.5px solid var(--primary-soft); }
+.feedback-line a:active{ opacity:.7; }
 .prof-actions{ display:flex; gap:10px; margin-top:18px; }
 .prof-actions .btn{ flex:1; font-size:14.5px; padding:11px 8px; }
 

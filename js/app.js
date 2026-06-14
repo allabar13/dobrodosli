@@ -518,6 +518,7 @@ const App = (() => {
         </div>
         <h4>Облако</h4>
         <div class="card settings" id="cloud-box">${cloudBoxHtml()}</div>
+        <p class="feedback-line">Есть идея или нашли ошибку? <a href="https://t.me/alla_barashchuk" target="_blank" rel="noopener">Поделиться обратной связью</a> ✈️ — Жарко и автор читают всё.</p>
         <div class="prof-actions">
           <button class="btn ghost" id="btn-switch">Сменить профиль</button>
           <button class="btn ghost danger" id="btn-reset">Сбросить прогресс</button>
