@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#EAF6FA">
+<title>Добродошли · Кабинет</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<style>
+  .admin{ max-width:760px; margin:0 auto; padding:18px 16px 60px; }
+  .admin-head{ display:flex; align-items:center; gap:12px; margin:10px 0 18px; }
+  .admin-head h1{ font-size:26px; margin:0; }
+  .admin-head .who{ margin-left:auto; font-size:12.5px; color:var(--muted); text-align:right; }
+  .kpi-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+  .kpi{ background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:16px; box-shadow:var(--shadow); }
+  .kpi b{ font-size:30px; display:block; color:var(--primary); line-height:1.1; }
+  .kpi small{ color:var(--muted); font-weight:700; font-size:12.5px; }
+  .panel{ background:var(--card); border:1.5px solid var(--line); border-radius:20px; padding:18px; box-shadow:var(--shadow); margin-top:16px; }
+  .panel h3{ margin:0 0 12px; font-size:16px; }
+  .bars{ display:flex; align-items:flex-end; gap:3px; height:120px; }
+  .bars .bar{ flex:1; background:var(--primary); border-radius:4px 4px 0 0; min-height:2px; position:relative; opacity:.85; }
+  .bars .bar:hover{ opacity:1; }
+  .bars .bar span{ position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:10px; font-weight:800; color:var(--ink); }
+  .bars-x{ display:flex; gap:3px; margin-top:4px; }
+  .bars-x small{ flex:1; text-align:center; font-size:9px; color:var(--muted); overflow:hidden; }
+  .lvlrow{ display:flex; align-items:center; gap:10px; margin:7px 0; font-size:14px; }
+  .lvlrow .ln{ width:150px; font-weight:700; }
+  .lvlrow .lt{ flex:1; height:14px; background:var(--line); border-radius:99px; overflow:hidden; }
+  .lvlrow .lt i{ display:block; height:100%; background:var(--primary); border-radius:99px; }
+  .lvlrow .lc{ width:36px; text-align:right; font-weight:800; color:var(--muted); }
+  .muted-note{ color:var(--muted); font-size:13px; line-height:1.5; }
+  .cf-btn{ display:inline-flex; align-items:center; gap:8px; }
+  .reload{ background:none; border:1.5px solid var(--line); border-radius:99px; padding:6px 12px; font-weight:700; font-size:12.5px; cursor:pointer; color:var(--muted); }
+  .err{ color:var(--red); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="admin" id="root">
+  <div class="gate" style="padding-top:14vh">
+    <div class="gate-hero">
+      <h1>Кабинет «Добродошли»</h1>
+      <p class="tagline">Статистика только для тебя. Вход через Google.</p>
+    </div>
+    <button class="btn primary big" id="login"><span class="g-mark">G</span> Войти через Google</button>
+    <p class="cloud-hint" id="hint"></p>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/vendor/supabase.min.js"></script>
+<script>
+"use strict";
+(async () => {
+  const $ = s => document.querySelector(s);
+  const cfg = window.DOBRODOSLI_SUPABASE;
+  if (!cfg || !cfg.url) { $('#hint').textContent = 'Облако не настроено (js/config.js).'; return; }
+  const sb = window.supabase.createClient(cfg.url, cfg.key);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+  const { data: sess } = await sb.auth.getSession();
+  if (sess && sess.session) return load();
+
+  $('#login').onclick = async () => {
+    const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
+    if (error) $('#hint').innerHTML = '<span class="err">' + esc(error.message) + '</span>';
+  };
+
+  async function load(){
+    const email = (sess && sess.session && sess.session.user && sess.session.user.email) || '';
+    $('#root').innerHTML = '<p class="muted-note">Загружаю статистику…</p>';
+    const { data, error } = await sb.rpc('admin_overview');
+    if (error) {
+      const denied = /not authoriz/i.test(error.message);
+      $('#root').innerHTML = `<div class="admin-head"><h1>Кабинет</h1></div>
+        <div class="panel"><p class="err">${denied ? 'Этот аккаунт (' + esc(email) + ') не в списке админов.' : esc(error.message)}</p>
+        <p class="muted-note">${denied ? 'Войди аккаунтом из списка ADMIN_EMAILS в admin-setup.sql, либо добавь туда эту почту и снова выполни SQL.' : 'Проверь, что функция admin_overview создана (admin-setup.sql выполнен в Supabase).'}</p>
+        <button class="btn ghost" id="out" style="margin-top:10px">Выйти</button></div>`;
+      $('#out').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+      return;
+    }
+    render(data, email);
+  }
+
+  function nf(n){ return (n ?? 0).toLocaleString('ru-RU'); }
+
+  function render(d, email){
+    const days = d.signups_by_day || [];
+    const maxN = Math.max(1, ...days.map(x => x.n));
+    const bars = days.map(x => `<div class="bar" style="height:${Math.round(x.n / maxN * 100)}%" title="${x.d}: ${x.n}">${x.n >= maxN && x.n > 0 ? `<span>${x.n}</span>` : ''}</div>`).join('');
+    const xlabels = days.map((x, i) => `<small>${(days.length <= 16 || i % 3 === 0) ? x.d.slice(5) : ''}</small>`).join('');
+
+    const LV = { '1':'1 · Впервые слышу', '2':'2 · Заказываю кофе', '3':'3 · Уже год', '4':'4 · Торгуюсь', '5':'5 · Локалац' };
+    const dist = d.level_dist || {};
+    const maxL = Math.max(1, ...Object.values(dist));
+    const lvls = ['1','2','3','4','5'].map(k => {
+      const n = dist[k] || 0;
+      return `<div class="lvlrow"><span class="ln">${LV[k]}</span><span class="lt"><i style="width:${Math.round(n / maxL * 100)}%"></i></span><span class="lc">${n}</span></div>`;
+    }).join('');
+
+    const gen = d.generated_at ? new Date(d.generated_at).toLocaleString('ru-RU') : '';
+
+    $('#root').innerHTML = `
+      <div class="admin-head">
+        <h1>🐦 Кабинет</h1>
+        <div class="who">${esc(email)}<br><button class="reload" id="reload">⟳ обновить</button> <button class="reload" id="out">выйти</button></div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><b>${nf(d.total_users)}</b><small>всего пользователей</small></div>
+        <div class="kpi"><b>${nf(d.users_7d)}</b><small>новых за 7 дней</small></div>
+        <div class="kpi"><b>${nf(d.users_30d)}</b><small>новых за 30 дней</small></div>
+        <div class="kpi"><b>${nf(d.active_7d)}</b><small>занимались за 7 дней</small></div>
+      </div>
+
+      <div class="panel">
+        <h3>📈 Регистрации по дням (30 дней)</h3>
+        ${days.length ? `<div class="bars">${bars}</div><div class="bars-x">${xlabels}</div>` : '<p class="muted-note">Пока нет регистраций за период.</p>'}
+      </div>
+
+      <div class="panel">
+        <h3>🪜 Пользователи по уровням</h3>
+        ${lvls}
+        <p class="muted-note" style="margin-top:10px">Профилей с прогрессом: <b>${nf(d.profiles)}</b></p>
+      </div>
+
+      <div class="panel">
+        <h3>📚 Учёба суммарно (из прогресса)</h3>
+        <div class="kpi-grid">
+          <div class="kpi"><b>${nf(d.total_words)}</b><small>слов выучено всеми</small></div>
+          <div class="kpi"><b>${nf(d.total_lessons)}</b><small>уроков пройдено</small></div>
+          <div class="kpi"><b>${nf(d.total_xp)}</b><small>XP суммарно</small></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>🌐 Трафик: заходы и источники</h3>
+        <p class="muted-note">Заходы на сайт, страны, устройства и откуда пришли люди — в Cloudflare Web Analytics (бесплатно, без cookies). Это отдельный дашборд Cloudflare, привязанный к твоему сайту.</p>
+        <p><a class="btn primary cf-btn" id="cf" href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" rel="noopener">Открыть трафик в Cloudflare ↗</a></p>
+        <p class="muted-note" id="cf-status">Статус подключения проверю и подскажу настройку.</p>
+      </div>
+
+      <p class="muted-note" style="text-align:center;margin-top:18px">Обновлено: ${esc(gen)} · данные зашифрованы в Supabase (ЕС), доступ только у тебя</p>
+    `;
+    $('#reload').onclick = () => location.reload();
+    $('#out').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+  }
+})();
+</script>
+</body>
+</html>
