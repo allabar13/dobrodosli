@@ -2,7 +2,7 @@
 // ── Сервис-воркер: офлайн-кэш ────────────────────────────────────────────
 // Стратегия network-first: всегда сначала сеть (правки доезжают сразу),
 // кэш — запасной вариант, чтобы приложение открывалось без интернета.
-const CACHE = 'dobrodosli-v1';
+const CACHE = 'dobrodosli-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 
@@ -20,7 +20,9 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if (url.origin !== location.origin) return; // облако и шрифты не кэшируем
   e.respondWith(
-    fetch(req).then(res => {
+    // cache:'no-cache' — мимо HTTP-кэша браузера с ревалидацией (ETag),
+    // иначе после деплоя старый JS может залипнуть надолго.
+    fetch(req, { cache: 'no-cache' }).then(res => {
       if (res.ok) {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(req, copy));

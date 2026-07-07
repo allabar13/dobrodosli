@@ -26,7 +26,7 @@ const Ex = (() => {
     const f = formOf(w, variant);
     return f.length <= 9 && !f.includes('?') && !f.includes('…');
   }
-  function speakBtn(text){ return `<button class="spk" data-say="${escAttr(text)}" title="Озвучить">🔊</button>`; }
+  function speakBtn(text){ return `<button class="spk" data-say="${escAttr(text)}" title="${t('Озвучить')}">🔊</button>`; }
   function wireSpeak(ctx){
     ctx.area.querySelectorAll('.spk').forEach(b => b.onclick = e => { e.stopPropagation(); ctx.speak(b.dataset.say); });
   }
@@ -104,7 +104,7 @@ const Ex = (() => {
     const w = item.w, form = formOf(w, ctx.variant);
     const other = ctx.script === 'cyr' ? form : TR.toCyr(form);
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Новое слово</p>
+      <p class="ex-kicker">${t('Новое слово')}</p>
       <div class="card word-card pop-in">
         <div class="word-main">${esc(disp(form, ctx.script))} ${speakBtn(form)}</div>
         <div class="word-alt">${esc(other)}</div>
@@ -119,7 +119,7 @@ const Ex = (() => {
 
   function rTip(item, ctx){
     ctx.area.innerHTML = `
-      <p class="ex-kicker">${esc(item.kicker || 'Жарко советует')}</p>
+      <p class="ex-kicker">${esc(item.kicker ? t(item.kicker) : t('Жарко советует'))}</p>
       <div class="card tip-card pop-in">
         <div class="tip-mascot">${mascotSvg('happy', 64)}</div>
         <h3>${esc(item.tip.title)}</h3>
@@ -134,7 +134,7 @@ const Ex = (() => {
     const opts = shuf([w.ru].concat(distractRu(w, 3)));
     item._correct = opts.indexOf(w.ru);
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Что значит это слово?</p>
+      <p class="ex-kicker">${t('Что значит это слово?')}</p>
       <div class="big-term">${esc(disp(form, ctx.script))} ${speakBtn(form)}</div>
       <div class="opts">${opts.map((o, i) => `<button class="opt" data-i="${i}"><span class="opt-key">${i + 1}</span>${esc(o)}</button>`).join('')}</div>`;
     wireSpeak(ctx); wireOpts(item, ctx);
@@ -153,9 +153,9 @@ const Ex = (() => {
     const w = item.w, form = formOf(w, ctx.variant);
     const opts = shuf([form].concat(distractSr(w, 3, ctx.variant)));
     item._correct = opts.indexOf(form);
-    const lang = ctx.variant === 'me' ? 'по-черногорски' : 'по-сербски';
+    const lang = ctx.variant === 'me' ? 'me' : 'sr';
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Как сказать ${lang}?</p>
+      <p class="ex-kicker">${t(lang === 'me' ? 'Как сказать по-черногорски?' : 'Как сказать по-сербски?')}</p>
       <div class="big-term">${esc(w.ru)}</div>
       <div class="opts">${opts.map((o, i) => `<button class="opt" data-i="${i}"><span class="opt-key">${i + 1}</span>${esc(disp(o, ctx.script))}</button>`).join('')}</div>`;
     wireOpts(item, ctx);
@@ -172,11 +172,11 @@ const Ex = (() => {
 
   function rType(item, ctx){
     const w = item.w, form = formOf(w, ctx.variant);
-    const lang = ctx.variant === 'me' ? 'по-черногорски' : 'по-сербски';
+    const lang = ctx.variant === 'me' ? 'me' : 'sr';
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Напиши ${lang}</p>
+      <p class="ex-kicker">${t(lang === 'me' ? 'Напиши по-черногорски' : 'Напиши по-сербски')}</p>
       <div class="big-term">${esc(w.ru)}</div>
-      <input id="type-in" class="type-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="латиницей или кириллицей">
+      <input id="type-in" class="type-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${t('латиницей или кириллицей')}">
       <div class="char-row">${['č','ć','š','ž','đ'].map(c => `<button class="chip char-chip" data-c="${c}">${c}</button>`).join('')}</div>`;
     const inp = ctx.area.querySelector('#type-in');
     inp.addEventListener('input', () => ctx.onReady(inp.value.trim().length > 0));
@@ -204,10 +204,10 @@ const Ex = (() => {
     const opts = shuf([form].concat(distractSr(w, 3, ctx.variant)));
     item._correct = opts.indexOf(form);
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Что ты слышишь?</p>
+      <p class="ex-kicker">${t('Что ты слышишь?')}</p>
       <div class="listen-wrap">
         <button class="listen-big" id="play-big" title="Послушать">🔊</button>
-        <button class="listen-slow" id="play-slow" title="Помедленнее">🐢</button>
+        <button class="listen-slow" id="play-slow" title="${t('Помедленнее')}">🐢</button>
       </div>
       <div class="opts">${opts.map((o, i) => `<button class="opt" data-i="${i}"><span class="opt-key">${i + 1}</span>${esc(disp(o, ctx.script))}</button>`).join('')}</div>`;
     ctx.area.querySelector('#play-big').onclick = () => ctx.speak(form);
@@ -229,7 +229,7 @@ const Ex = (() => {
     const opts = shuf(g.opts.slice());
     item._correct = opts.indexOf(g.a);
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Вставь нужную форму</p>
+      <p class="ex-kicker">${t('Вставь нужную форму')}</p>
       <div class="big-term fill-q">${esc(disp(g.q, ctx.script)).replace('___', '<span class="blank" id="blank">___</span>')}</div>
       <p class="fill-hint">${esc(g.hint)}</p>
       <div class="opts opts-row">${opts.map((o, i) => `<button class="opt opt-sm" data-i="${i}">${esc(disp(o, ctx.script))}</button>`).join('')}</div>`;
@@ -267,7 +267,7 @@ const Ex = (() => {
     const chips = shuf(chipsBase.concat(extras)).map((t, i) => ({ t, i }));
     item._answer = [];
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Собери перевод</p>
+      <p class="ex-kicker">${t('Собери перевод')}</p>
       <div class="big-term bank-ru">${esc(ru)} ${speakBtn(target)}</div>
       <div class="bank-answer" id="bank-answer"></div>
       <div class="bank-pool" id="bank-pool">${chips.map(c => `<button class="chip bank-chip" data-i="${c.i}">${esc(disp(c.t, ctx.script))}</button>`).join('')}</div>`;
@@ -277,7 +277,7 @@ const Ex = (() => {
     function sync(){
       ansEl.innerHTML = item._answer.length
         ? item._answer.map((ci, pos) => `<button class="chip bank-chip in-ans" data-pos="${pos}">${esc(disp(chips.find(c => c.i === ci).t, ctx.script))}</button>`).join('')
-        : '<span class="bank-placeholder">нажимай на слова ниже ↓</span>';
+        : `<span class="bank-placeholder">${t('нажимай на слова ниже ↓')}</span>`;
       ansEl.querySelectorAll('.in-ans').forEach(b => b.onclick = () => {
         const ci = item._answer.splice(+b.dataset.pos, 1)[0];
         poolEl.querySelector(`[data-i="${ci}"]`).classList.remove('used');
@@ -316,7 +316,7 @@ const Ex = (() => {
     item._miss = {};
     let selL = null, selR = null, done = 0;
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Соедини пары</p>
+      <p class="ex-kicker">${t('Соедини пары')}</p>
       <div class="pairs">
         <div class="pairs-col">${left.map(c => `<button class="opt pair" data-side="l" data-id="${escAttr(c.id)}">${esc(c.t)}</button>`).join('')}</div>
         <div class="pairs-col">${right.map(c => `<button class="opt pair" data-side="r" data-id="${escAttr(c.id)}">${esc(c.t)}</button>`).join('')}</div>
@@ -338,7 +338,7 @@ const Ex = (() => {
           done++; selL = selR = null;
           if (done === ws.length) {
             const ok = Object.keys(item._miss).length === 0;
-            setTimeout(() => ctx.onAutoDone({ ok, misses: item._miss, correct: 'Все пары собраны' }), 380);
+            setTimeout(() => ctx.onAutoDone({ ok, misses: item._miss, correct: t('Все пары собраны') }), 380);
           }
         } else {
           item._miss[selL.dataset.id] = true;
@@ -360,7 +360,7 @@ const Ex = (() => {
     const order = shuf(sit.opts.map((_, i) => i));
     item._order = order;
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Жизненная ситуация 🎬</p>
+      <p class="ex-kicker">${t('Жизненная ситуация 🎬')}</p>
       <div class="card sit-q">${esc(sit.q)}</div>
       <div class="opts">${order.map((oi, i) => `<button class="opt" data-i="${i}">${esc(sit.opts[oi].t)}</button>`).join('')}</div>`;
     wireOpts(item, ctx);
@@ -385,22 +385,22 @@ const Ex = (() => {
     const w = item.w, form = formOf(w, ctx.variant);
     const other = ctx.script === 'cyr' ? form : TR.toCyr(form);
     ctx.area.innerHTML = `
-      <p class="ex-kicker">Карточка · вспомни перевод, потом переверни</p>
+      <p class="ex-kicker">${t('Карточка · вспомни перевод, потом переверни')}</p>
       <div class="flash-wrap"><div class="flash" id="flash">
         <div class="flash-face front">
           <div class="word-main">${esc(disp(form, ctx.script))} ${TTS.has() ? speakBtn(form) : ''}</div>
           <div class="word-alt">${esc(other)}</div>
-          <span class="flash-hint">нажми, чтобы перевернуть</span>
+          <span class="flash-hint">${t('нажми, чтобы перевернуть')}</span>
         </div>
         <div class="flash-face back">
           <div class="word-ru">${esc(w.ru)}</div>
           ${w.note ? `<div class="word-note">💡 ${esc(w.note)}</div>` : ''}
-          <span class="flash-hint">ну что, знал(а)?</span>
+          <span class="flash-hint">${t('ну что, знал(а)?')}</span>
         </div>
       </div></div>
       <div class="flash-btns">
-        <button class="btn ghost" id="fl-no">🌀 Ещё учу</button>
-        <button class="btn primary" id="fl-yes">Знаю ✓</button>
+        <button class="btn ghost" id="fl-no">${t('🌀 Ещё учу')}</button>
+        <button class="btn primary" id="fl-yes">${t('Знаю ✓')}</button>
       </div>`;
     const card = ctx.area.querySelector('#flash');
     card.onclick = e => {
