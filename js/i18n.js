@@ -67,6 +67,8 @@ const I18N = (() => {
     'Создать профиль': 'Create profile',
     'Прогресс сохраняется в этом браузере автоматически. Вход через Google появится после настройки облака (README.md).': 'Progress is saved in this browser automatically.',
     'Совет: на стартовом экране есть «Продолжить с Google» — тогда прогресс сохранится в облаке и не потеряется. Привязать Google можно и позже, в профиле.': 'Tip: use “Continue with Google” on the start screen to keep progress in the cloud. You can also link it later in your profile.',
+    // iOS-подсказка (используется ios-auth.js)
+    'Совет: на стартовом экране есть «Войти через Apple» — тогда прогресс сохранится в облаке и не потеряется.': 'Tip: “Sign in with Apple” on the start screen keeps your progress in the cloud so it can’t get lost.',
     // табы и топбар
     'Путь': 'Path',
     'Тренировка': 'Practice',
