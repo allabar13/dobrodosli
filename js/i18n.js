@@ -69,6 +69,17 @@ const I18N = (() => {
     'Совет: на стартовом экране есть «Продолжить с Google» — тогда прогресс сохранится в облаке и не потеряется. Привязать Google можно и позже, в профиле.': 'Tip: use “Continue with Google” on the start screen to keep progress in the cloud. You can also link it later in your profile.',
     // iOS-подсказка (используется ios-auth.js)
     'Совет: на стартовом экране есть «Войти через Apple» — тогда прогресс сохранится в облаке и не потеряется.': 'Tip: “Sign in with Apple” on the start screen keeps your progress in the cloud so it can’t get lost.',
+    // промокоды (iOS, используется ios-premium.js)
+    'Промокод': 'Promo code',
+    'Есть промокод? Введи его — получишь безлимит на несколько дней.': 'Got a promo code? Enter it to unlock unlimited access for a few days.',
+    'Активировать': 'Activate',
+    'Код не найден или больше не действует.': 'Code not found or no longer active.',
+    'У этого кода закончились активации.': 'This code has run out of activations.',
+    'Этот код уже активирован на этом устройстве.': 'This code is already active on this device.',
+    'Не получилось проверить код. Проверь интернет и попробуй ещё раз.': 'Couldn’t check the code. Check your connection and try again.',
+    '🎟 Промокод принят! Безлимит до': '🎟 Promo code accepted! Unlimited until',
+    '🎁 Тебе начислили дни безлимита! Действует до': '🎁 You’ve been granted unlimited days! Active until',
+    '🎟 Безлимит по промокоду до': '🎟 Promo unlimited until',
     // табы и топбар
     'Путь': 'Path',
     'Тренировка': 'Practice',

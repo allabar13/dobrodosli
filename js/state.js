@@ -114,6 +114,7 @@ const State = (() => {
       }
       out.flags = Object.assign({}, a.flags || {}, b.flags || {});
       if ((a.flags && a.flags.perfect) || (b.flags && b.flags.perfect)) out.flags.perfect = true;
+      out.premiumUntil = nz(a.premiumUntil, b.premiumUntil); // промо-безлимит: берём дольший
       out.settings = Object.assign({}, older.settings || {}, newer.settings || {});
       out.name = newer.name || older.name;
       return out;

@@ -70,7 +70,17 @@ const App = (() => {
     applySound();
     applyVariant();
     applyTheme();
-    await Cloud.init();
+    if (window.Track) Track.sendDaily('app_open');
+    // облаку даём 2.5 секунды: без сети (или на медленной) стартуем локально,
+    // а когда облако очнётся — тихо доподключаемся фоном
+    const cloudReady = Cloud.init();
+    let cloudLate = true;
+    await Promise.race([cloudReady.then(() => { cloudLate = false; }), new Promise(r => setTimeout(r, 2500))]);
+    if (cloudLate) cloudReady.then(() => {
+      if (!Cloud.active() || !Cloud.user()) return;
+      if (!State.U) enterCloudUser();   // так и стоим на гейте — входим в облачный профиль
+      else syncFromCloud();             // локальный профиль уже открыт — просто подтянуть прогресс
+    });
     if (Cloud.active() && Cloud.user()) return enterCloudUser();
     // продолжение онбординга после смены языка (перезагрузка)
     if (localStorage.getItem('dobrodosli_resume_ob')) {
@@ -286,6 +296,7 @@ const App = (() => {
         settings: { variant: data.script === 'cyr' ? 'rs' : 'me', script: data.script, goal: data.goal, sound: true, motivation: data.motivation },
       });
       State.save();
+      if (window.Track) Track.send('onboarding_done', { level: data.level, motivation: data.motivation });
       applySound();
       showApp();
       setTimeout(() => toast(`${t('Добро дошли,')} <b>${esc(data.name)}</b>! ${t('Первый урок — три минуты. Полако')} 🪶`, 3800), 400);
@@ -621,6 +632,7 @@ const App = (() => {
       : kind === 'cards' ? Ex.buildCards(lesson.wordIds)
       : Ex.buildReview(lesson.wordIds, V());
     if (!queue.length) { toast(t('Пока пусто — сначала пройди урок. Полако!')); return; }
+    if (window.Track) Track.send('lesson_start', { kind, id: lesson.id || null });
     LS = { lesson, kind, replay, queue, total: queue.length, doneCount: 0, firstTry: {}, attempted: {},
            item: null, ctrl: null, awaitingNext: false, words0: State.knownWords().length, newMistakes: {} };
     $('#lesson-top').classList.remove('hidden');
@@ -724,6 +736,7 @@ const App = (() => {
     let xp, result;
     if (kind === 'lesson') { xp = (LS.replay ? 10 : 20) + (perfect ? 5 : 0); result = State.completeLesson(LS.lesson.id, stars, xp, perfect); }
     else { xp = kind === 'review' ? 15 : 10; result = State.completeSession(xp, kind); }
+    if (window.Track) Track.send('lesson_done', { kind, stars });
     AudioFX.win();
     confetti();
     const total = State.knownWords().length;

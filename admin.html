@@ -6,148 +6,254 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#EAF6FA">
 <title>Добродошли · Кабинет</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/styles.css?v=2">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <style>
-  .admin{ max-width:760px; margin:0 auto; padding:18px 16px 60px; }
+  .admin{ max-width:820px; margin:0 auto; padding:18px 16px 60px; }
   .admin-head{ display:flex; align-items:center; gap:12px; margin:10px 0 18px; }
   .admin-head h1{ font-size:26px; margin:0; }
   .admin-head .who{ margin-left:auto; font-size:12.5px; color:var(--muted); text-align:right; }
   .kpi-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
   .kpi{ background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:16px; box-shadow:var(--shadow); }
-  .kpi b{ font-size:30px; display:block; color:var(--primary); line-height:1.1; }
+  .kpi b{ font-size:28px; display:block; color:var(--primary); line-height:1.1; }
   .kpi small{ color:var(--muted); font-weight:700; font-size:12.5px; }
   .panel{ background:var(--card); border:1.5px solid var(--line); border-radius:20px; padding:18px; box-shadow:var(--shadow); margin-top:16px; }
   .panel h3{ margin:0 0 12px; font-size:16px; }
-  .bars{ display:flex; align-items:flex-end; gap:3px; height:120px; }
-  .bars .bar{ flex:1; background:var(--primary); border-radius:4px 4px 0 0; min-height:2px; position:relative; opacity:.85; }
-  .bars .bar:hover{ opacity:1; }
-  .bars .bar span{ position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:10px; font-weight:800; color:var(--ink); }
-  .bars-x{ display:flex; gap:3px; margin-top:4px; }
-  .bars-x small{ flex:1; text-align:center; font-size:9px; color:var(--muted); overflow:hidden; }
+  .muted-note{ color:var(--muted); font-size:13px; line-height:1.5; }
+  .reload{ background:none; border:1.5px solid var(--line); border-radius:99px; padding:6px 12px; font-weight:700; font-size:12.5px; cursor:pointer; color:var(--muted); }
+  .err{ color:var(--red, #c0392b); font-weight:700; }
+  .ok-msg{ color:#2e7d32; font-weight:700; }
+  .frow{ display:flex; align-items:center; gap:10px; margin:7px 0; font-size:14px; }
+  .frow .fn{ width:170px; font-weight:700; }
+  .frow .ft{ flex:1; height:14px; background:var(--line); border-radius:99px; overflow:hidden; }
+  .frow .ft i{ display:block; height:100%; background:var(--primary); border-radius:99px; }
+  .frow .fc{ width:86px; text-align:right; font-weight:800; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .inrow{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px; }
+  .inrow input, .inrow select{ font-family:inherit; font-size:14.5px; padding:9px 12px; border-radius:12px; border:2px solid var(--line); background:#fff; color:inherit; }
+  .inrow input:focus{ outline:none; border-color:var(--primary); }
+  .abtn{ font-family:inherit; font-size:14px; font-weight:800; padding:9px 16px; border-radius:12px; border:2px solid var(--primary); background:var(--primary); color:#fff; cursor:pointer; }
+  .abtn.ghost{ background:none; color:var(--primary); }
+  .abtn:disabled{ opacity:.5; cursor:default; }
+  table.adm{ width:100%; border-collapse:collapse; font-size:13px; }
+  .adm th, .adm td{ text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); }
+  .adm th{ color:var(--muted); font-weight:700; }
+  .pill{ font-size:11px; padding:2px 8px; border-radius:99px; background:var(--line); font-weight:700; }
+  .pill.on{ background:#d9efdb; color:#2e7d32; }
   .lvlrow{ display:flex; align-items:center; gap:10px; margin:7px 0; font-size:14px; }
   .lvlrow .ln{ width:150px; font-weight:700; }
   .lvlrow .lt{ flex:1; height:14px; background:var(--line); border-radius:99px; overflow:hidden; }
   .lvlrow .lt i{ display:block; height:100%; background:var(--primary); border-radius:99px; }
   .lvlrow .lc{ width:36px; text-align:right; font-weight:800; color:var(--muted); }
-  .muted-note{ color:var(--muted); font-size:13px; line-height:1.5; }
-  .cf-btn{ display:inline-flex; align-items:center; gap:8px; }
-  .reload{ background:none; border:1.5px solid var(--line); border-radius:99px; padding:6px 12px; font-weight:700; font-size:12.5px; cursor:pointer; color:var(--muted); }
-  .err{ color:var(--red); font-weight:700; }
 </style>
 </head>
 <body>
 <div class="admin" id="root">
-  <div class="gate" style="padding-top:14vh">
+  <div class="gate" style="padding-top:12vh">
     <div class="gate-hero">
       <h1>Кабинет «Добродошли»</h1>
-      <p class="tagline">Статистика только для тебя. Вход через Google.</p>
+      <p class="tagline">Только для администратора. Пришлю ссылку для входа на почту.</p>
     </div>
-    <button class="btn primary big" id="login"><span class="g-mark">G</span> Войти через Google</button>
+    <div class="inrow" style="justify-content:center;">
+      <input id="email" type="email" placeholder="почта администратора" style="min-width:250px;" autocomplete="email">
+      <button class="abtn" id="login">Прислать ссылку</button>
+    </div>
     <p class="cloud-hint" id="hint"></p>
   </div>
 </div>
 
-<script src="js/config.js"></script>
+<script src="js/config.js?v=2"></script>
 <script src="js/vendor/supabase.min.js"></script>
 <script>
 "use strict";
 (async () => {
   const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const nf = n => (n ?? 0).toLocaleString('ru-RU');
   const cfg = window.DOBRODOSLI_SUPABASE;
   if (!cfg || !cfg.url) { $('#hint').textContent = 'Облако не настроено (js/config.js).'; return; }
   const sb = window.supabase.createClient(cfg.url, cfg.key);
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+  const FUNNEL = [
+    ['app_open', 'Открыли приложение'],
+    ['onboarding_done', 'Прошли онбординг'],
+    ['lesson_start', 'Начали урок'],
+    ['lesson_done', 'Закончили урок'],
+    ['paywall_shown', 'Увидели пейволл'],
+    ['purchase_tap', 'Нажали «купить»'],
+    ['purchase_done', 'Купили'],
+  ];
 
   const { data: sess } = await sb.auth.getSession();
-  if (sess && sess.session) return load();
+  if (sess && sess.session) return load(sess.session);
+  sb.auth.onAuthStateChange((_e, session) => { if (session) load(session); });
 
   $('#login').onclick = async () => {
-    const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
-    if (error) $('#hint').innerHTML = '<span class="err">' + esc(error.message) + '</span>';
+    const email = $('#email').value.trim();
+    if (!email) { $('#email').focus(); return; }
+    $('#login').disabled = true;
+    const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
+    $('#hint').innerHTML = error ? '<span class="err">' + esc(error.message) + '</span>'
+      : '<span class="ok-msg">Ссылка ушла на почту. Открой письмо на этом устройстве и перейди по ней.</span>';
+    $('#login').disabled = false;
   };
 
-  async function load(){
-    const email = (sess && sess.session && sess.session.user && sess.session.user.email) || '';
-    $('#root').innerHTML = '<p class="muted-note">Загружаю статистику…</p>';
-    const { data, error } = await sb.rpc('admin_overview');
-    if (error) {
-      const denied = /not authoriz/i.test(error.message);
-      $('#root').innerHTML = `<div class="admin-head"><h1>Кабинет</h1></div>
-        <div class="panel"><p class="err">${denied ? 'Этот аккаунт (' + esc(email) + ') не в списке админов.' : esc(error.message)}</p>
-        <p class="muted-note">${denied ? 'Войди аккаунтом из списка ADMIN_EMAILS в admin-setup.sql, либо добавь туда эту почту и снова выполни SQL.' : 'Проверь, что функция admin_overview создана (admin-setup.sql выполнен в Supabase).'}</p>
-        <button class="btn ghost" id="out" style="margin-top:10px">Выйти</button></div>`;
+  async function load(session){
+    const email = (session.user && session.user.email) || '';
+    $('#root').innerHTML = '<p class="muted-note" style="text-align:center;padding-top:20vh;">Загружаю статистику…</p>';
+    const period = +(localStorage.getItem('adm_period') || 14);
+    const [ov, st] = await Promise.all([
+      sb.rpc('admin_overview'),
+      sb.rpc('admin_stats', { p_days: period }),
+    ]);
+    const err = ov.error || st.error;
+    if (err) {
+      const denied = /forbidden|not authoriz/i.test(err.message);
+      $('#root').innerHTML = `<div class="admin-head"><h1>🐦 Кабинет</h1></div>
+        <div class="panel"><p class="err">${denied ? 'Аккаунт ' + esc(email) + ' не в списке админов.' : esc(err.message)}</p>
+        <p class="muted-note">${denied ? 'Вход разрешён только почте из таблицы admins (supabase-admin.sql).' : 'Проверь, что supabase-admin.sql выполнен в Supabase → SQL Editor.'}</p>
+        <button class="abtn ghost" id="out" style="margin-top:10px">Выйти</button></div>`;
       $('#out').onclick = async () => { await sb.auth.signOut(); location.reload(); };
       return;
     }
-    render(data, email);
+    render(ov.data, st.data, email, period);
   }
 
-  function nf(n){ return (n ?? 0).toLocaleString('ru-RU'); }
-
-  function render(d, email){
-    const days = d.signups_by_day || [];
-    const maxN = Math.max(1, ...days.map(x => x.n));
-    const bars = days.map(x => `<div class="bar" style="height:${Math.round(x.n / maxN * 100)}%" title="${x.d}: ${x.n}">${x.n >= maxN && x.n > 0 ? `<span>${x.n}</span>` : ''}</div>`).join('');
-    const xlabels = days.map((x, i) => `<small>${(days.length <= 16 || i % 3 === 0) ? x.d.slice(5) : ''}</small>`).join('');
+  function render(d, s, email, period){
+    const f = s.funnel || {};
+    const base = f.app_open || 0;
+    const funnelRows = FUNNEL.map(([ev, label]) => {
+      const n = f[ev] || 0;
+      const pct = base ? Math.round(n / base * 100) : 0;
+      return `<div class="frow"><span class="fn">${label}</span>
+        <span class="ft"><i style="width:${pct}%"></i></span>
+        <span class="fc">${nf(n)} · ${pct}%</span></div>`;
+    }).join('');
 
     const LV = { '1':'1 · Впервые слышу', '2':'2 · Заказываю кофе', '3':'3 · Уже год', '4':'4 · Торгуюсь', '5':'5 · Локалац' };
     const dist = d.level_dist || {};
-    const maxL = Math.max(1, ...Object.values(dist));
+    const maxL = Math.max(1, ...Object.values(dist).map(Number));
     const lvls = ['1','2','3','4','5'].map(k => {
-      const n = dist[k] || 0;
-      return `<div class="lvlrow"><span class="ln">${LV[k]}</span><span class="lt"><i style="width:${Math.round(n / maxL * 100)}%"></i></span><span class="lc">${n}</span></div>`;
+      const n = +(dist[k] || 0);
+      return `<div class="lvlrow"><span class="ln">${LV[k]}</span><span class="lt"><i style="width:${Math.round(n / maxL * 100)}%"></i></span><span class="lc">${nf(n)}</span></div>`;
     }).join('');
-
-    const gen = d.generated_at ? new Date(d.generated_at).toLocaleString('ru-RU') : '';
 
     $('#root').innerHTML = `
       <div class="admin-head">
         <h1>🐦 Кабинет</h1>
-        <div class="who">${esc(email)}<br><button class="reload" id="reload">⟳ обновить</button> <button class="reload" id="out">выйти</button></div>
+        <div class="who">${esc(email)}<br>
+          <select id="period" class="reload">
+            ${[7,14,30,90].map(p => `<option value="${p}" ${p === period ? 'selected' : ''}>период: ${p} дн.</option>`).join('')}
+          </select>
+          <button class="reload" id="reload">⟳ обновить</button>
+          <button class="reload" id="out">выйти</button></div>
       </div>
 
       <div class="kpi-grid">
-        <div class="kpi"><b>${nf(d.total_users)}</b><small>всего пользователей</small></div>
-        <div class="kpi"><b>${nf(d.users_7d)}</b><small>новых за 7 дней</small></div>
-        <div class="kpi"><b>${nf(d.users_30d)}</b><small>новых за 30 дней</small></div>
+        <div class="kpi"><b>${nf(s.devices_total)}</b><small>устройств всего</small></div>
+        <div class="kpi"><b>${nf(s.devices_active)}</b><small>активных за период</small></div>
+        <div class="kpi"><b>${nf(d.total_users)}</b><small>облачных аккаунтов</small></div>
+        <div class="kpi"><b>${nf(s.purchases_total)}</b><small>покупок</small></div>
+        <div class="kpi"><b>${nf(s.promo_redeemed_total)}</b><small>промо погашено</small></div>
         <div class="kpi"><b>${nf(d.active_7d)}</b><small>занимались за 7 дней</small></div>
       </div>
 
       <div class="panel">
-        <h3>📈 Регистрации по дням (30 дней)</h3>
-        ${days.length ? `<div class="bars">${bars}</div><div class="bars-x">${xlabels}</div>` : '<p class="muted-note">Пока нет регистраций за период.</p>'}
+        <h3>🔻 Воронка за ${period} дн. <span class="muted-note">(уникальные устройства)</span></h3>
+        ${funnelRows}
+        <p class="muted-note" style="margin-top:10px;">Просмотры страницы в App Store и деньги Apple наружу не отдаёт —
+        это в App Store Connect → App Analytics и Payments.</p>
       </div>
 
       <div class="panel">
-        <h3>🪜 Пользователи по уровням</h3>
+        <h3>🎟 Промокоды</h3>
+        <div class="inrow">
+          <input id="pc-code" placeholder="код (пусто — сгенерирую)" style="width:200px;" maxlength="24">
+          <input id="pc-days" type="number" value="3" min="1" max="365" style="width:76px;" title="дней безлимита">
+          <input id="pc-uses" type="number" value="100" min="1" max="100000" style="width:96px;" title="максимум активаций">
+          <input id="pc-note" placeholder="заметка (кому/зачем)" style="flex:1;min-width:150px;">
+          <button class="abtn" id="pc-create">Создать</button>
+        </div>
+        <p class="muted-note" id="pc-msg"></p>
+        <table class="adm" id="pc-table"></table>
+      </div>
+
+      <div class="panel">
+        <h3>🎁 Начислить дни юзеру <span class="muted-note">(вошедшим — по почте их входа)</span></h3>
+        <div class="inrow">
+          <input id="gr-email" type="email" placeholder="почта юзера" style="flex:1;min-width:200px;">
+          <input id="gr-days" type="number" value="3" min="1" max="365" style="width:76px;">
+          <input id="gr-note" placeholder="заметка" style="flex:1;min-width:130px;">
+          <button class="abtn" id="gr-create">Начислить</button>
+        </div>
+        <p class="muted-note" id="gr-msg"></p>
+        <table class="adm" id="gr-table"></table>
+      </div>
+
+      <div class="panel">
+        <h3>🪜 Облачные юзеры по уровням</h3>
         ${lvls}
-        <p class="muted-note" style="margin-top:10px">Профилей с прогрессом: <b>${nf(d.profiles)}</b></p>
-      </div>
-
-      <div class="panel">
-        <h3>📚 Учёба суммарно (из прогресса)</h3>
-        <div class="kpi-grid">
+        <div class="kpi-grid" style="margin-top:12px;">
           <div class="kpi"><b>${nf(d.total_words)}</b><small>слов выучено всеми</small></div>
           <div class="kpi"><b>${nf(d.total_lessons)}</b><small>уроков пройдено</small></div>
           <div class="kpi"><b>${nf(d.total_xp)}</b><small>XP суммарно</small></div>
         </div>
       </div>
 
-      <div class="panel">
-        <h3>🌐 Трафик: заходы и источники</h3>
-        <p class="muted-note">Заходы на сайт, страны, устройства и откуда пришли люди — в Cloudflare Web Analytics (бесплатно, без cookies). Это отдельный дашборд Cloudflare, привязанный к твоему сайту.</p>
-        <p><a class="btn primary cf-btn" id="cf" href="https://dash.cloudflare.com/?to=/:account/web-analytics" target="_blank" rel="noopener">Открыть трафик в Cloudflare ↗</a></p>
-        <p class="muted-note" id="cf-status">Статус подключения проверю и подскажу настройку.</p>
-      </div>
-
-      <p class="muted-note" style="text-align:center;margin-top:18px">Обновлено: ${esc(gen)} · данные зашифрованы в Supabase (ЕС), доступ только у тебя</p>
+      <p class="muted-note" style="text-align:center;margin-top:18px">
+        Обновлено: ${esc(new Date().toLocaleString('ru-RU'))} · данные в Supabase (ЕС), доступ только по таблице admins</p>
     `;
     $('#reload').onclick = () => location.reload();
+    $('#period').onchange = e => { localStorage.setItem('adm_period', e.target.value); location.reload(); };
     $('#out').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+    $('#pc-create').onclick = createPromo;
+    $('#gr-create').onclick = createGrant;
+    loadPromos(); loadGrants();
+  }
+
+  async function loadPromos(){
+    const { data, error } = await sb.from('promo_codes').select('*').order('created_at', { ascending: false }).limit(50);
+    if (error || !data) return;
+    $('#pc-table').innerHTML = '<tr><th>Код</th><th>Дней</th><th>Активаций</th><th>Заметка</th><th></th></tr>' +
+      data.map(r => `<tr>
+        <td><b>${esc(r.code)}</b></td><td>${r.days}</td><td>${r.used_count}/${r.max_uses}</td>
+        <td class="muted-note">${esc(r.note)}</td>
+        <td>${r.active
+          ? `<button class="reload" data-off="${esc(r.code)}">выключить</button>`
+          : '<span class="pill">выключен</span>'}</td></tr>`).join('');
+    document.querySelectorAll('[data-off]').forEach(b => b.onclick = async () => {
+      await sb.from('promo_codes').update({ active: false }).eq('code', b.dataset.off);
+      loadPromos();
+    });
+  }
+
+  async function createPromo(){
+    let code = $('#pc-code').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (!code) code = 'DOBRO' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    const row = { code, days: +$('#pc-days').value || 3, max_uses: +$('#pc-uses').value || 100, note: $('#pc-note').value.trim() };
+    const { error } = await sb.from('promo_codes').insert(row);
+    $('#pc-msg').innerHTML = error
+      ? `<span class="err">${error.code === '23505' ? 'Такой код уже есть.' : esc(error.message)}</span>`
+      : `<span class="ok-msg">Код <b>${esc(row.code)}</b> создан: ${row.days} дн. безлимита, ${row.max_uses} активаций.</span>`;
+    if (!error) { $('#pc-code').value = ''; $('#pc-note').value = ''; loadPromos(); }
+  }
+
+  async function loadGrants(){
+    const { data, error } = await sb.from('premium_grants').select('*').order('created_at', { ascending: false }).limit(30);
+    if (error || !data) return;
+    $('#gr-table').innerHTML = '<tr><th>Почта</th><th>Дней</th><th>Статус</th><th>Заметка</th></tr>' +
+      data.map(r => `<tr>
+        <td>${esc(r.email)}</td><td>${r.days}</td>
+        <td>${r.claimed_at ? '<span class="pill on">получено</span>' : '<span class="pill">ждёт входа</span>'}</td>
+        <td class="muted-note">${esc(r.note)}</td></tr>`).join('');
+  }
+
+  async function createGrant(){
+    const email = $('#gr-email').value.trim();
+    if (!email) { $('#gr-email').focus(); return; }
+    const { error } = await sb.from('premium_grants').insert({ email, days: +$('#gr-days').value || 3, note: $('#gr-note').value.trim() });
+    $('#gr-msg').innerHTML = error ? `<span class="err">${esc(error.message)}</span>`
+      : '<span class="ok-msg">Начислено. Дни приедут юзеру при следующем открытии приложения (вход по этой почте).</span>';
+    if (!error) { $('#gr-email').value = ''; loadGrants(); }
   }
 })();
 </script>
