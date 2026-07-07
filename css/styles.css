@@ -161,14 +161,15 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
 .ob-list{ list-style:none; padding:0; margin:4px 0 10px; display:flex; flex-direction:column; gap:10px; font-size:16px; }
 .ob-cards{ display:flex; flex-direction:column; gap:10px; }
 .ob-card{
-  display:flex; align-items:center; gap:14px; text-align:left;
+  display:flex; align-items:center; gap:16px; text-align:left;
   background:var(--card); border:2px solid var(--line); border-radius:var(--radius);
-  padding:15px; cursor:pointer; box-shadow:var(--shadow); transition:border-color .15s, transform .08s;
+  padding:18px 16px; cursor:pointer; box-shadow:var(--shadow); transition:border-color .15s, transform .08s;
 }
 .ob-card:active{ transform:scale(.98); }
 .ob-card.sel{ border-color:var(--select); background:var(--select-soft); }
-.ob-emoji{ font-size:30px; flex:none; }
-.ob-card small{ color:var(--muted); display:block; margin-top:2px; }
+.ob-card b{ font-size:20px; line-height:1.25; }
+.ob-emoji{ font-size:40px; flex:none; }
+.ob-card small{ color:var(--muted); display:block; margin-top:4px; font-size:15px; line-height:1.35; }
 
 /* ── путь ── */
 .path{ position:relative; padding-bottom:30px; }
