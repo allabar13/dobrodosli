@@ -202,7 +202,7 @@ const App = (() => {
         shell(`<h2>Language / Язык</h2>
           <p class="muted">Язык интерфейса · interface language</p>
           ${cards([
-            { k:'ru', emoji:'🪆', t:'Русский', d:'Интерфейс и переводы слов на русском.' },
+            { k:'ru', emoji:'💬', t:'Русский', d:'Интерфейс и переводы слов на русском.' },
             { k:'en', emoji:'🌍', t:'English', d:'Interface and word translations in English.' },
           ])}`);
         $$('.ob-card').forEach(b => b.onclick = () => {
