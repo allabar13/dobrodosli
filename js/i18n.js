@@ -80,6 +80,10 @@ const I18N = (() => {
     '🎟 Промокод принят! Безлимит до': '🎟 Promo code accepted! Unlimited until',
     '🎁 Тебе начислили дни безлимита! Действует до': '🎁 You’ve been granted unlimited days! Active until',
     '🎟 Безлимит по промокоду до': '🎟 Promo unlimited until',
+    // приветственный пейволл после онбординга (iOS)
+    'Делу время — потехе час!': 'Business before pleasure!',
+    '«Добродошли» — бесплатное приложение: 10 минут занятий в день не стоят ни динара, и для прогресса этого правда хватает. Но разработчики тоже хотят кушать 🙂 Хочешь заниматься без ограничений — безлимит навсегда одной покупкой. Никаких подписок и скрытых платежей.': 'Dobrodošli is a free app: 10 minutes of practice a day costs nothing, and it’s genuinely enough to make progress. But the developers need to eat too 🙂 Want no limits — unlimited forever with a single purchase. No subscriptions, no hidden fees.',
+    'Учиться 10 минут в день бесплатно': 'Learn free, 10 minutes a day',
     // табы и топбар
     'Путь': 'Path',
     'Тренировка': 'Practice',

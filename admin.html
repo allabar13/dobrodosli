@@ -51,11 +51,10 @@
   <div class="gate" style="padding-top:12vh">
     <div class="gate-hero">
       <h1>Кабинет «Добродошли»</h1>
-      <p class="tagline">Только для администратора. Пришлю ссылку для входа на почту.</p>
+      <p class="tagline">Только для администратора.</p>
     </div>
     <div class="inrow" style="justify-content:center;">
-      <input id="email" type="email" placeholder="почта администратора" style="min-width:250px;" autocomplete="email">
-      <button class="abtn" id="login">Прислать ссылку</button>
+      <button class="abtn" id="login">Войти через Google</button>
     </div>
     <p class="cloud-hint" id="hint"></p>
   </div>
@@ -88,13 +87,14 @@
   sb.auth.onAuthStateChange((_e, session) => { if (session) load(session); });
 
   $('#login').onclick = async () => {
-    const email = $('#email').value.trim();
-    if (!email) { $('#email').focus(); return; }
     $('#login').disabled = true;
-    const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
-    $('#hint').innerHTML = error ? '<span class="err">' + esc(error.message) + '</span>'
-      : '<span class="ok-msg">Ссылка ушла на почту. Открой письмо на этом устройстве и перейди по ней.</span>';
-    $('#login').disabled = false;
+    // тот же Google-провайдер, что и вход в приложении; доступ к данным
+    // всё равно решает таблица admins в базе (a.barashchuk@gmail.com)
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: location.origin + location.pathname },
+    });
+    if (error) { $('#hint').innerHTML = '<span class="err">' + esc(error.message) + '</span>'; $('#login').disabled = false; }
   };
 
   async function load(session){

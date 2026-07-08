@@ -223,3 +223,6 @@ const State = (() => {
   };
   return api;
 })();
+
+// верхнеуровневый const не виден как window.State — а iOS-слой и хуки смотрят туда
+window.State = State;

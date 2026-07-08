@@ -62,3 +62,5 @@ const TTS = (() => {
     },
   };
 })();
+
+window.AudioFX = AudioFX; // для хаптики iOS-моста

@@ -110,3 +110,5 @@ const Cloud = (() => {
   }
   return api;
 })();
+
+window.Cloud = Cloud; // для iOS-слоя и страховочного flush при сворачивании
