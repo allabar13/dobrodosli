@@ -169,6 +169,76 @@ end $$;
 revoke all on function admin_stats(int) from public;
 grant execute on function admin_stats(int) to authenticated;
 
+-- ── Тексты пушей (редактируются в админке, приложение подтягивает) ────
+create table if not exists push_texts (
+  id text primary key,
+  slot text not null check (slot in ('morning','evening','evening_done')),
+  lang text not null check (lang in ('ru','en')),
+  title text not null check (char_length(title) <= 80),
+  body text not null default '' check (char_length(body) <= 140),
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+alter table push_texts enable row level security;
+drop policy if exists push_texts_read_all on push_texts;
+create policy push_texts_read_all on push_texts
+  for select to anon, authenticated using (active);
+drop policy if exists push_texts_admin_all on push_texts;
+create policy push_texts_admin_all on push_texts
+  for all to authenticated using (is_admin()) with check (is_admin());
+
+-- стартовый набор: {goal}=цель XP, {left}=осталось, {name}=имя, {tail}=хвост мотивации
+insert into push_texts (id, slot, lang, title, body) values
+  ('ru-m1','morning','ru','☀️ Доброе јутро! {goal} XP на сегодня','Начни с трёх минут за кофе — полако'),
+  ('ru-m2','morning','ru','🐦 Жарко напоминает: {goal} XP','Сделай сейчас — и совесть чиста до вечера'),
+  ('ru-m3','morning','ru','☕ Кафа + сербский = идеальное утро','{goal} XP ждут. Три минуты, не больше'),
+  ('ru-m4','morning','ru','Сербский сам себя не выучит 🙂','{goal} XP на сегодня — {tail}'),
+  ('ru-m5','morning','ru','Новый день — новые слова','{goal} XP, {name}. Полако, но каждый день'),
+  ('ru-e1','evening','ru','🌙 Осталось {left} XP до цели','Одна короткая тренировка — и день закрыт'),
+  ('ru-e2','evening','ru','Жарко волнуется: {left} XP до цели','Заходи — {tail}'),
+  ('ru-e3','evening','ru','Вечер — лучшее время для слов','{left} XP до цели. Мозг запомнит во сне 🧠'),
+  ('ru-e4','evening','ru','Ещё {left} XP — и день прожит не зря','Пять минут, {name}. Ты успеешь'),
+  ('ru-e5','evening','ru','{left} XP до цели дня','Коротко позанимайся — {tail}'),
+  ('ru-d1','evening_done','ru','⭐ Цель дня закрыта!','А может, ещё немного сербского, дружок?'),
+  ('ru-d2','evening_done','ru','Ты сегодня молодец 💪','Хочешь — добей пару слов сверх плана'),
+  ('ru-d3','evening_done','ru','План выполнен! Бонус-раунд?','Пять слов сверху — и ты машина 🙂'),
+  ('en-m1','morning','en','☀️ Dobro jutro! {goal} XP today','Start with three minutes over coffee — polako'),
+  ('en-m2','morning','en','🐦 Žarko reminds you: {goal} XP','Do it now and relax till the evening'),
+  ('en-m3','morning','en','☕ Kafa + Serbian = perfect morning','{goal} XP waiting. Three minutes, tops'),
+  ('en-m4','morning','en','Serbian won''t learn itself 🙂','{goal} XP today — {tail}'),
+  ('en-m5','morning','en','New day — new words','{goal} XP, {name}. Polako, but daily'),
+  ('en-e1','evening','en','🌙 {left} XP left today','One short session and the day is done'),
+  ('en-e2','evening','en','Žarko is worried: {left} XP to go','Come on in — {tail}'),
+  ('en-e3','evening','en','Evening is word time','{left} XP to goal. Your brain learns in sleep 🧠'),
+  ('en-e4','evening','en','{left} XP and the day counts','Five minutes, {name}. You''ve got this'),
+  ('en-e5','evening','en','{left} XP to today''s goal','A quick session — {tail}'),
+  ('en-d1','evening_done','en','⭐ Daily goal done!','Fancy a little more Serbian, friend?'),
+  ('en-d2','evening_done','en','You did great today 💪','Want to grab a few bonus words?'),
+  ('en-d3','evening_done','en','Goal complete! Bonus round?','Five extra words and you''re a machine 🙂')
+on conflict (id) do nothing;
+
+-- ── Обратная связь из приложения (тема, почта, текст → админка) ───────
+create table if not exists feedback (
+  id bigint generated always as identity primary key,
+  topic text not null check (char_length(topic) between 1 and 120),
+  email text not null check (char_length(email) between 3 and 200),
+  message text not null check (char_length(message) between 1 and 4000),
+  device_id uuid,
+  platform text check (platform in ('web','ios')),
+  is_read boolean not null default false,
+  created_at timestamptz not null default now()
+);
+alter table feedback enable row level security;
+drop policy if exists feedback_insert_all on feedback;
+create policy feedback_insert_all on feedback
+  for insert to anon, authenticated with check (true);
+drop policy if exists feedback_admin_all on feedback;
+create policy feedback_admin_all on feedback
+  for select to authenticated using (is_admin());
+drop policy if exists feedback_admin_upd on feedback;
+create policy feedback_admin_upd on feedback
+  for update to authenticated using (is_admin()) with check (is_admin());
+
 -- ── Сводка по учебному прогрессу (облачные аккаунты) ──────────────────
 create or replace function admin_overview()
 returns jsonb language plpgsql stable security definer set search_path = public as $$

@@ -84,6 +84,25 @@ const I18N = (() => {
     'Делу время — потехе час!': 'Business before pleasure!',
     '«Добродошли» — бесплатное приложение: 10 минут занятий в день не стоят ни динара, и для прогресса этого правда хватает. Но разработчики тоже хотят кушать 🙂 Хочешь заниматься без ограничений — безлимит навсегда одной покупкой. Никаких подписок и скрытых платежей.': 'Dobrodošli is a free app: 10 minutes of practice a day costs nothing, and it’s genuinely enough to make progress. But the developers need to eat too 🙂 Want no limits — unlimited forever with a single purchase. No subscriptions, no hidden fees.',
     'Учиться 10 минут в день бесплатно': 'Learn free, 10 minutes a day',
+    // пре-пермишен пушей (iOS)
+    '🔔 Жарко будет напоминать?': '🔔 Want Žarko to remind you?',
+    'Два коротких напоминания в день под твою цель — с ними до результата доходят в разы чаще. Настроить?': 'Two short daily reminders tuned to your goal — people who enable them get results several times more often. Set them up?',
+    'Давай!': 'Let’s do it!',
+    'Позже': 'Later',
+    // шаринг-бонус (+5, только соцсети/мессенджеры)
+    '🎁 +5 минут за пост в соцсети или мессенджер': '🎁 +5 min for sharing to socials or a chat',
+    '🎁 +5 минут на сегодня. Уживању!': '🎁 +5 minutes for today. Uživanju!',
+    'Бонус — за шаринг в соцсети или мессенджер. «Скопировать» не считается 🙂': 'The bonus is for sharing to socials or a chat. “Copy” doesn’t count 🙂',
+    // обратная связь (iOS-форма)
+    '✍️ Написать разработчикам': '✍️ Write to the developers',
+    'Читаем всё и отвечаем на почту.': 'We read everything and reply by email.',
+    'Тема': 'Topic',
+    'Твоя почта (для ответа)': 'Your email (for the reply)',
+    'Сообщение': 'Message',
+    'Отправить': 'Send',
+    'Заполни все три поля, пожалуйста.': 'Please fill in all three fields.',
+    'Хвала! Сообщение улетело — ответим на почту.': 'Hvala! Your message is on its way — we’ll reply by email.',
+    'Не отправилось. Проверь интернет и попробуй ещё раз.': 'Couldn’t send. Check your connection and try again.',
     // табы и топбар
     'Путь': 'Path',
     'Тренировка': 'Practice',

@@ -190,6 +190,28 @@
       </div>
 
       <div class="panel">
+        <h3>💌 Обратная связь <span class="muted-note">(из формы в приложении)</span></h3>
+        <table class="adm" id="fb-table"></table>
+      </div>
+
+      <div class="panel">
+        <h3>🔔 Тексты пушей <span class="muted-note">({goal} {left} {name} {tail} — подставятся сами)</span></h3>
+        <div class="inrow">
+          <select id="pt-slot">
+            <option value="morning">утро 9:00</option>
+            <option value="evening">вечер 19:30</option>
+            <option value="evening_done">вечер · цель закрыта</option>
+          </select>
+          <select id="pt-lang"><option value="ru">RU</option><option value="en">EN</option></select>
+          <input id="pt-title" placeholder="заголовок (до 80)" maxlength="80" style="flex:2;min-width:180px;">
+          <input id="pt-body" placeholder="текст (до 140)" maxlength="140" style="flex:3;min-width:200px;">
+          <button class="abtn" id="pt-create">Добавить</button>
+        </div>
+        <p class="muted-note" id="pt-msg"></p>
+        <table class="adm" id="pt-table"></table>
+      </div>
+
+      <div class="panel">
         <h3>🪜 Облачные юзеры по уровням</h3>
         ${lvls}
         <div class="kpi-grid" style="margin-top:12px;">
@@ -207,7 +229,58 @@
     $('#out').onclick = async () => { await sb.auth.signOut(); location.reload(); };
     $('#pc-create').onclick = createPromo;
     $('#gr-create').onclick = createGrant;
-    loadPromos(); loadGrants();
+    $('#pt-create').onclick = createPushText;
+    loadPromos(); loadGrants(); loadFeedback(); loadPushTexts();
+  }
+
+  async function loadFeedback(){
+    const { data, error } = await sb.from('feedback').select('*').order('created_at', { ascending: false }).limit(50);
+    if (error || !data) return;
+    $('#fb-table').innerHTML = data.length
+      ? '<tr><th>Когда</th><th>Тема</th><th>Почта</th><th>Сообщение</th><th></th></tr>' +
+        data.map(r => `<tr style="${r.is_read ? 'opacity:.55;' : ''}">
+          <td class="muted-note" style="white-space:nowrap;">${new Date(r.created_at).toLocaleDateString('ru-RU')}</td>
+          <td><b>${esc(r.topic)}</b></td>
+          <td><a href="mailto:${esc(r.email)}?subject=${encodeURIComponent('Re: ' + r.topic + ' — Добродошли')}">${esc(r.email)}</a></td>
+          <td style="max-width:340px;">${esc(r.message)}</td>
+          <td>${r.is_read ? '' : `<button class="reload" data-read="${r.id}">прочитано</button>`}</td></tr>`).join('')
+      : '<tr><td class="muted-note">Пока пусто — сообщения из формы «Написать разработчикам» появятся здесь.</td></tr>';
+    document.querySelectorAll('[data-read]').forEach(b => b.onclick = async () => {
+      await sb.from('feedback').update({ is_read: true }).eq('id', b.dataset.read);
+      loadFeedback();
+    });
+  }
+
+  async function loadPushTexts(){
+    const { data, error } = await sb.from('push_texts').select('*').order('slot').order('id');
+    if (error || !data) return;
+    const SLOT = { morning: '☀️ утро', evening: '🌙 вечер', evening_done: '⭐ цель закрыта' };
+    $('#pt-table').innerHTML = '<tr><th>Слот</th><th>Язык</th><th>Заголовок</th><th>Текст</th><th></th></tr>' +
+      data.map(r => `<tr style="${r.active ? '' : 'opacity:.5;'}">
+        <td style="white-space:nowrap;">${SLOT[r.slot] || r.slot}</td><td>${r.lang.toUpperCase()}</td>
+        <td>${esc(r.title)}</td><td class="muted-note">${esc(r.body)}</td>
+        <td>${r.active
+          ? `<button class="reload" data-ptoff="${esc(r.id)}">выключить</button>`
+          : `<button class="reload" data-pton="${esc(r.id)}">включить</button>`}</td></tr>`).join('');
+    document.querySelectorAll('[data-ptoff]').forEach(b => b.onclick = async () => {
+      await sb.from('push_texts').update({ active: false }).eq('id', b.dataset.ptoff); loadPushTexts();
+    });
+    document.querySelectorAll('[data-pton]').forEach(b => b.onclick = async () => {
+      await sb.from('push_texts').update({ active: true }).eq('id', b.dataset.pton); loadPushTexts();
+    });
+  }
+
+  async function createPushText(){
+    const row = {
+      id: 'x-' + Date.now().toString(36),
+      slot: $('#pt-slot').value, lang: $('#pt-lang').value,
+      title: $('#pt-title').value.trim(), body: $('#pt-body').value.trim(),
+    };
+    if (!row.title) { $('#pt-title').focus(); return; }
+    const { error } = await sb.from('push_texts').insert(row);
+    $('#pt-msg').innerHTML = error ? `<span class="err">${esc(error.message)}</span>`
+      : '<span class="ok-msg">Добавлено. Приложения подтянут тексты в течение ~6 часов.</span>';
+    if (!error) { $('#pt-title').value = ''; $('#pt-body').value = ''; loadPushTexts(); }
   }
 
   async function loadPromos(){
