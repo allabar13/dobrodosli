@@ -162,7 +162,7 @@ const App = (() => {
     $('#screen').innerHTML = `
       <div class="gate">
         <div class="gate-hero">${mascotSvg('happy', 116)}
-          <h1>Добродошли!</h1>
+          <h1>${I18N.lang === 'en' ? 'Dobrodošli!' : 'Добродошли!'}</h1>
           <p class="tagline">${t('Сербский для жизни на Балканах.<br>Без паники. Полако.')}</p>
         </div>
         ${profiles.length ? `<div class="gate-list">${profiles.map(p => `
@@ -193,8 +193,9 @@ const App = (() => {
 
     function dots(){ return `<div class="ob-dots">${Array.from({ length: TOTAL }, (_, i) => `<i class="${i <= step ? 'on' : ''}"></i>`).join('')}</div>`; }
     function shell(inner){
-      $('#screen').innerHTML = `<div class="ob">${step > 0 ? `<button class="link-back" id="ob-back">${t('← Назад')}</button>` : ''}${dots()}${inner}</div>`;
-      if ($('#ob-back')) $('#ob-back').onclick = () => { step--; render(); };
+      $('#screen').innerHTML = `<div class="ob"><button class="link-back" id="ob-back">${t('← Назад')}</button>${dots()}${inner}</div>`;
+      // с первого шага «назад» возвращает на стартовый экран — вдруг передумал(а) и хочет войти в существующий профиль
+      $('#ob-back').onclick = () => { AudioFX.tap(); if (step === 0) return showGate(); step--; render(); };
     }
     function cards(list){
       return `<div class="ob-cards">${list.map(o => `<button class="ob-card" data-k="${o.k}"><span class="ob-emoji">${o.emoji}</span><div><b>${o.t}</b><small>${o.d}</small></div></button>`).join('')}</div>`;
@@ -225,7 +226,7 @@ const App = (() => {
         });
       } else if (step === 1) {
         shell(`
-          <div class="gate-hero">${mascotSvg('happy', 120)}<h1>Добродо́шли!</h1>
+          <div class="gate-hero">${mascotSvg('happy', 120)}<h1>${I18N.lang === 'en' ? 'Dobrodošli!' : 'Добродо́шли!'}</h1>
             <p class="tagline">${t('Это Жа́рко, адриатический галеб. Научит тебя сербскому — и, так и быть, не унесёт твой бурек.')}</p></div>
           <ul class="ob-list">
             <li>${t('🎯 Короткие уроки из реальной балканской жизни')}</li>
@@ -236,11 +237,14 @@ const App = (() => {
           <button class="btn primary big" id="ob-go">${t('Идемо! (поехали)')}</button>`);
         $('#ob-go').onclick = () => { step++; render(); };
       } else if (step === 2) {
+        // русскоязычным ближе кириллица — она первой; англоязычным — латиница
+        const alphCards = [
+          { k:'cyr', emoji:'Ж', t: I18N.lang === 'en' ? 'Ćirilica' : 'Кириллица', d:t('Сербский вариант: лепо, млеко, динары. Так — в документах и на табличках Белграда.') },
+          { k:'lat', emoji:'🌊', t: I18N.lang === 'en' ? 'Latinica' : 'Латиница', d:t('Черногорский вариант: lijepo, mlijeko, евро. Так пишут на побережье и в интернете.') },
+        ];
+        if (I18N.lang === 'en') alphCards.reverse();
         shell(`<h2>${t('Какой алфавит?')}</h2><p class="muted">${t('Язык один — сербский. Алфавит задаёт «акцент», различия покажем по ходу. Ответы принимаются любым, переключить можно в любой момент.')}</p>
-          ${cards([
-            { k:'lat', emoji:'🌊', t:'Latinica', d:t('Черногорский вариант: lijepo, mlijeko, евро. Так пишут на побережье и в интернете.') },
-            { k:'cyr', emoji:'Ж', t:'Ћирилица', d:t('Сербский вариант: лепо, млеко, динары. Так — в документах и на табличках Белграда.') },
-          ])}`);
+          ${cards(alphCards)}`);
         wireCards(k => data.script = k);
       } else if (step === 3) {
         shell(`<h2>${t('Какой у тебя уровень?')}</h2><p class="muted">${t('Не уверен(а) — бери первый, всегда честно. Выберешь выше — всё предыдущее откроется автоматически, а начнёшь со своего уровня.')}</p>
@@ -253,10 +257,10 @@ const App = (() => {
       } else if (step === 5) {
         shell(`<h2>${t('Зачем тебе сербский?')}</h2><p class="muted">${t('Подстроим акценты в лексике под твою цель. А когда мотивация просядет — Жарко напомнит, ради чего всё это.')}</p>
           ${cards([
-            { k:'docs',   emoji:'📋', t:t('Документы и быт'), d:t('Лексика выживания: МУП, аренда, банк, справки.') },
+            { k:'travel', emoji:'✈️', t:t('Путешествия по Балканам'), d:t('Дорога, жильё, заказ еды и «как пройти».') },
             { k:'live',   emoji:'🗣️', t:t('Общение и друзья'), d:t('Смолток, кафана, комшии — живая разговорная база.') },
             { k:'work',   emoji:'💼', t:t('Работа и клиенты'), d:t('Деловые слова, переписка, созвоны.') },
-            { k:'travel', emoji:'✈️', t:t('Путешествия по Балканам'), d:t('Дорога, жильё, заказ еды и «как пройти».') },
+            { k:'docs',   emoji:'📋', t:t('Документы и быт'), d:t('Лексика выживания: МУП, аренда, банк, справки.') },
             { k:'love',   emoji:'❤️', t:t('Любовь'), d:t('Самая быстрая методика из существующих.') },
           ])}`);
         wireCards(k => data.motivation = k);
@@ -274,11 +278,11 @@ const App = (() => {
         $('#ob-pwa').onclick = () => { step++; render(); };
       } else {
         shell(`<h2>${t('Как тебя зовут?')}</h2>
-          <label>${t('Имя — для приветствий и профиля')}<input id="ob-name" maxlength="30" placeholder="${t('Ана')}" value="${escAttr(data.name || '')}" autocomplete="off"></label>
+          <label>${t('Имя — для приветствий и профиля')}<input id="ob-name" maxlength="30" placeholder="${t('Ана')}" value="${escAttr(data.name || '')}" autocomplete="off" autocorrect="off" spellcheck="false"></label>
           ${data.cloudId
             ? `<p class="muted small">${t('☁️ Вход через Google:')} <b>${esc(Cloud.email() || '')}</b></p>`
             : Cloud.active() && Cloud.canOAuth()
-              ? `<p class="muted small">${t('Совет: на стартовом экране есть «Продолжить с Google» — тогда прогресс сохранится в облаке и не потеряется. Привязать Google можно и позже, в профиле.')}</p>`
+              ? `<p class="muted small">${t('Совет: во вкладке «Профиль» можно привязать прогресс к Google — тогда он сохранится в облаке и не потеряется.')}</p>`
               : `<p class="muted small">${t('Прогресс сохраняется в этом браузере автоматически. Вход через Google появится после настройки облака (README.md).')}</p>`}
           <button class="btn primary big" id="ob-done">${t('Создать профиль')}</button>`);
         $('#ob-name').focus();
@@ -300,8 +304,54 @@ const App = (() => {
       applySound();
       showApp();
       setTimeout(() => toast(`${t('Добро дошли,')} <b>${esc(data.name)}</b>! ${t('Первый урок — три минуты. Полако')} 🪶`, 3800), 400);
+      maybeStartTour();
     }
     render();
+  }
+
+  // ── экскурсия по разделам после онбординга (пропускаемая) ──
+  // Ждём, пока закроются другие модалки (в iOS сразу после онбординга
+  // показывается приветственный пейволл) — и только потом начинаем.
+  function maybeStartTour(){
+    if (!State.U || (State.U.flags && State.U.flags.tour)) return;
+    let tries = 0;
+    function wait(){
+      if (!State.U) return;
+      if (document.querySelector('.modal-back') || document.body.classList.contains('lesson-open')) {
+        if (++tries < 240) setTimeout(wait, 500);
+        return;
+      }
+      startTour();
+    }
+    setTimeout(wait, 600); // даём intro-пейволлу (iOS) смонтироваться первым
+  }
+  function startTour(){
+    const steps = [
+      { tab:'path',    emoji:'🗺️', title:t('Путь'),       text:t('Уроки по уровням и темам — иди по порядку, Жарко подскажет, где ты. Каждый урок — три-пять минут.') },
+      { tab:'review',  emoji:'🧠', title:t('Тренировка'), text:t('Сердце метода: повторения по кривой памяти, разбор ошибок и карточки по темам. Заглядывай сюда каждый день хотя бы на минутку.') },
+      { tab:'dict',    emoji:'📖', title:t('Словарь'),    text:t('Все выученные слова с озвучкой и «силой» запоминания. Что начнёт забываться — само попросится в повторение.') },
+      { tab:'profile', emoji:'🐦', title:t('Профиль'),    text:t('Статистика, ачивки, настройки и облако, чтобы прогресс не потерялся.') },
+    ];
+    let i = 0;
+    const done = () => { State.U.flags.tour = 1; State.save(); selectTab('path'); };
+    (function show(){
+      const s = steps[i];
+      selectTab(s.tab); // показываем сам раздел за подложкой
+      const m = document.createElement('div');
+      m.className = 'modal-back';
+      m.innerHTML = `<div class="modal tour-modal">
+        <p class="ex-kicker" style="margin:0 0 8px;">${t('Экскурсия')} · ${i + 1}/${steps.length}</p>
+        <div class="tour-emoji">${s.emoji}</div>
+        <h3>${s.title}</h3>
+        <p class="muted" style="margin:6px 0 14px;">${s.text}</p>
+        <button class="btn primary big" id="tour-next">${i === steps.length - 1 ? t('Идемо! (поехали)') : t('Дальше')}</button>
+        ${i < steps.length - 1 ? `<button class="link-back" id="tour-skip" style="width:100%;margin-top:6px;">${t('Пропустить экскурсию')}</button>` : ''}
+      </div>`;
+      document.body.appendChild(m);
+      m.querySelector('#tour-next').onclick = () => { AudioFX.tap(); m.remove(); if (++i < steps.length) show(); else done(); };
+      const sk = m.querySelector('#tour-skip');
+      if (sk) sk.onclick = () => { m.remove(); done(); };
+    })();
   }
 
   // ── основное приложение ──
@@ -477,7 +527,7 @@ const App = (() => {
     if (!ids.length) {
       html += `<div class="card empty">${mascotSvg('happy', 80)}<p>${t('Здесь появятся выученные слова — с озвучкой и «силой» запоминания.')}</p></div>`;
     } else {
-      html += `<input id="dict-q" class="type-in dict-q" placeholder="${escAttr(t('Поиск: kafa, кафа или кофе…'))}">`;
+      html += `<input id="dict-q" class="type-in dict-q" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${escAttr(t('Поиск: kafa, кафа или кофе…'))}">`;
       for (const tid of Object.keys(THEMES)) {
         const us = ids.filter(id => (unitById(WORDS[id].unit) || {}).theme === tid);
         if (!us.length) continue;
@@ -560,17 +610,18 @@ const App = (() => {
         <p class="muted small">${t('Здесь нет стриков и сердечек: пропустить день — нормально, ничего не сгорает. Слова дождутся, повторения перестроятся. «Полако» — это тоже методика.')}</p>
         <h4>${t('Календарь занятий · 4 недели')}</h4>
         <div class="cal">${calendarHtml(u)}</div>
-        <h4>${t('Ачивки')}</h4>
+        <h4>${t('Ачивки')} · ${u.badges.length}/${BADGES.length}</h4>
+        <p class="muted small" style="margin:2px 0 8px;">${t('Нажми на ачивку — расскажем, за что она даётся.')}</p>
         <div class="badges">${BADGES.map(b => {
           const got = u.badges.includes(b.id);
-          return `<div class="badge ${got ? '' : 'off'}" title="${escAttr(b.desc)}"><span>${b.emoji}</span><small>${esc(b.name)}</small></div>`;
+          return `<button class="badge ${got ? '' : 'off'}" data-b="${b.id}"><span>${b.emoji}</span><small>${esc(b.name)}</small></button>`;
         }).join('')}</div>
         <h4>${t('Настройки')}</h4>
         <div class="card settings">
           <div class="set-row"><span>${t('Язык интерфейса')}</span>
             <span class="seg sm"><button class="${I18N.lang === 'ru' ? 'on' : ''}" data-lang="ru">Русский</button><button class="${I18N.lang === 'en' ? 'on' : ''}" data-lang="en">English</button></span></div>
           <div class="set-row"><span>${t('Алфавит')}</span>
-            <span class="seg sm"><button class="${SC() === 'lat' ? 'on' : ''}" data-s="lat">Latinica</button><button class="${SC() === 'cyr' ? 'on' : ''}" data-s="cyr">Ћирилица</button></span></div>
+            <span class="seg sm"><button class="${SC() === 'lat' ? 'on' : ''}" data-s="lat">${I18N.lang === 'en' ? 'Latinica' : 'Латиница'}</button><button class="${SC() === 'cyr' ? 'on' : ''}" data-s="cyr">${I18N.lang === 'en' ? 'Ćirilica' : 'Кириллица'}</button></span></div>
           <p class="muted small">${t('Latinica — черногорский вариант (lijepo, евро, Подгорица), Ћирилица — сербский (лепо, динары, Белград). Язык и логика одни, ответы принимаются любым алфавитом. Это практически один язык — но не говори это вслух ни там, ни там 😉')}</p>
           <div class="set-row"><span>${t('Тема')}</span>
             <span class="seg sm"><button class="${u.settings.theme === 'auto' ? 'on' : ''}" data-th="auto">${t('Авто')}</button><button class="${u.settings.theme === 'light' ? 'on' : ''}" data-th="light">${t('☀️ День')}</button><button class="${u.settings.theme === 'dark' ? 'on' : ''}" data-th="dark">${t('🌙 Ночь')}</button></span></div>
@@ -588,6 +639,20 @@ const App = (() => {
         </div>
         <p class="muted small center">Добродошли! v1 · ${t('сделано с ♥ и буреком')}</p>
       </div>`;
+
+    // ачивки: тап — карточка с условием получения
+    $$('.badge').forEach(el => el.onclick = () => {
+      const b = BADGES.find(x => x.id === el.dataset.b);
+      if (!b) return;
+      AudioFX.tap();
+      const got = u.badges.includes(b.id);
+      modal(`<div class="center">
+        <div style="font-size:52px;${got ? '' : 'filter:grayscale(1);opacity:.5;'}">${b.emoji}</div>
+        <h3 style="margin:6px 0 4px;">${esc(b.name)}</h3>
+        <p class="muted" style="margin:0 0 10px;">${esc(b.desc)}</p>
+        <p class="small" style="font-weight:800;margin:0;color:${got ? 'var(--green-deep)' : 'var(--muted)'};">${got ? t('✅ Уже твоя') : t('🔒 Ещё впереди')}</p>
+      </div>`);
+    });
 
     const reSet = () => { State.save(); renderTopbar(); renderProfile(); };
     $$('[data-lang]').forEach(b => b.onclick = () => {
@@ -716,6 +781,7 @@ const App = (() => {
         <p>${OOPS[Math.floor(Math.random() * OOPS.length)]}</p>
         <p class="fb-again">${t('→ Промахнувшиеся слова упали в блок «Ошибки»')}</p>`
         : `<b>${t('Правильный ответ:')}</b><p class="fb-ans">${esc(res.correct)}</p>
+        ${res.gloss ? `<p class="fb-gloss">💡 ${esc(res.gloss)}</p>` : ''}
         ${res.fb ? `<p>${esc(res.fb)}</p>` : `<p>${OOPS[Math.floor(Math.random() * OOPS.length)]}</p>`}
         ${hasWords && LS.kind !== 'mistakes' ? `<p class="fb-again">${t('→ Слово упало в блок «Ошибки» — добьёшь, когда удобно')}</p>` : ''}`;
       $('#ex-area').classList.add('shake');

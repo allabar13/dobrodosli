@@ -27,6 +27,11 @@ const Ex = (() => {
     return f.length <= 9 && !f.includes('?') && !f.includes('…');
   }
   function speakBtn(text){ return `<button class="spk" data-say="${escAttr(text)}" title="${t('Озвучить')}">🔊</button>`; }
+  // «слово — перевод» для сербской формы (глоссы в разборе ответа)
+  function glossSr(text, ctx){
+    const w = Object.values(WORDS).find(x => TR.norm(x.sr) === TR.norm(text) || (x.me && TR.norm(x.me) === TR.norm(text)));
+    return w ? `${disp(text, ctx.script)} — ${w.ru}` : disp(text, ctx.script);
+  }
   function wireSpeak(ctx){
     ctx.area.querySelectorAll('.spk').forEach(b => b.onclick = e => { e.stopPropagation(); ctx.speak(b.dataset.say); });
   }
@@ -49,21 +54,30 @@ const Ex = (() => {
   }
 
   // ── Сборка очереди урока ──
+  // Урок держим коротким (~на треть короче первой версии): мгновенная
+  // проверка — для 60% слов, остальные добирают пары и две выборочные
+  // проверки сейчас, а SRS-повторения — завтра. Предложений — максимум три,
+  // лишние форматы не дублируем: длинные уроки роняют дочитываемость.
   function buildLesson(lesson, variant){
     const items = [];
     const words = lesson.words.map(W);
-    // знакомство + мгновенная проверка (testing effect)
+    const checked = new Set(pickN(words, Math.ceil(words.length * 0.6)).map(w => w.id));
     for (const w of words) {
       items.push({ type: 'new', w });
-      items.push({ type: 'mcq', w });
+      if (checked.has(w.id)) items.push({ type: 'mcq', w });
     }
     const extras = [];
     if (words.length >= 4) extras.push({ type: 'pairs', words: pickN(words, 5) });
-    for (const w of pickN(words, Math.min(3, words.length))) extras.push({ type: 'rmcq', w });
-    for (const w of pickN(words.filter(x => typeable(x, variant)), 2)) extras.push({ type: 'type', w });
-    if (TTS.has()) for (const w of pickN(words, 2)) extras.push({ type: 'listen', w });
+    // две активные проверки в случайном формате — в приоритете слова без мгновенной
+    const unchecked = words.filter(w => !checked.has(w.id));
+    for (const w of pickN(unchecked.length >= 2 ? unchecked : words, 2)) {
+      const kinds = ['rmcq'];
+      if (typeable(w, variant)) kinds.push('type');
+      if (TTS.has()) kinds.push('listen');
+      extras.push({ type: kinds[Math.floor(Math.random() * kinds.length)], w });
+    }
     for (const g of (lesson.grammar || [])) extras.push({ type: 'fill', g });
-    for (const s of (lesson.sentences || [])) extras.push({ type: 'bank', s });
+    for (const s of pickN(lesson.sentences || [], 3)) extras.push({ type: 'bank', s });
 
     const queue = items.concat(shuf(extras));
     if (lesson.situation) queue.push({ type: 'sit', sit: lesson.situation });
@@ -144,7 +158,16 @@ const Ex = (() => {
       check(){
         const ok = item._sel === item._correct;
         markOpts(ctx, item._correct, item._sel);
-        return { ok, correct: `${disp(form, ctx.script)} — ${w.ru}` };
+        // при ошибке поясняем и выбранный вариант: «а „маленькое“ — это maleno»
+        let gloss = '';
+        if (!ok) {
+          const chosen = opts[item._sel];
+          const src = Object.values(WORDS).find(x => x.ru === chosen);
+          if (src) gloss = I18N.lang === 'en'
+            ? `and “${chosen}” is ${disp(formOf(src, ctx.variant), ctx.script)}`
+            : `а «${chosen}» — это ${disp(formOf(src, ctx.variant), ctx.script)}`;
+        }
+        return { ok, correct: `${disp(form, ctx.script)} — ${w.ru}`, gloss };
       },
     };
   }
@@ -165,7 +188,8 @@ const Ex = (() => {
         const ok = item._sel === item._correct;
         markOpts(ctx, item._correct, item._sel);
         if (ok) ctx.speak(form);
-        return { ok, correct: disp(form, ctx.script) };
+        return { ok, correct: `${disp(form, ctx.script)} — ${w.ru}`,
+                 gloss: ok ? '' : glossSr(opts[item._sel], ctx) };
       },
     };
   }
@@ -176,7 +200,7 @@ const Ex = (() => {
     ctx.area.innerHTML = `
       <p class="ex-kicker">${t(lang === 'me' ? 'Напиши по-черногорски' : 'Напиши по-сербски')}</p>
       <div class="big-term">${esc(w.ru)}</div>
-      <input id="type-in" class="type-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${t('латиницей или кириллицей')}">
+      <input id="type-in" class="type-in" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${t('латиницей или кириллицей')}">
       <div class="char-row">${['č','ć','š','ž','đ'].map(c => `<button class="chip char-chip" data-c="${c}">${c}</button>`).join('')}</div>`;
     const inp = ctx.area.querySelector('#type-in');
     inp.addEventListener('input', () => ctx.onReady(inp.value.trim().length > 0));
@@ -219,7 +243,10 @@ const Ex = (() => {
       check(){
         const ok = item._sel === item._correct;
         markOpts(ctx, item._correct, item._sel);
-        return { ok, correct: `${disp(form, ctx.script)} — ${w.ru}` };
+        // перевод показываем всегда: и в «Тако је!», и в разборе ошибки
+        return { ok, correct: `${disp(form, ctx.script)} — ${w.ru}`,
+                 fb: ok ? `${disp(form, ctx.script)} — ${w.ru}` : '',
+                 gloss: ok ? '' : glossSr(opts[item._sel], ctx) };
       },
     };
   }
@@ -301,10 +328,26 @@ const Ex = (() => {
     return {
       scored: true, wordIds: uniq(ids),
       check(){
-        const got = item._answer.map(ci => TR.norm(chips.find(c => c.i === ci).t)).join(' ');
+        const gotWords = item._answer.map(ci => chips.find(c => c.i === ci).t);
+        const got = gotWords.map(w => TR.norm(w)).join(' ');
         const ok = got === TR.norm(target);
         if (ok) ctx.speak(target);
-        return { ok, correct: disp(target, ctx.script), fb: s.fb };
+        // при ошибке — глоссы пропущенных и лишних слов: «pumpa — заправка»
+        let gloss = '';
+        if (!ok) {
+          const missing = chipsBase.filter(w => !gotWords.some(g => TR.norm(g) === TR.norm(w)));
+          const extraW = gotWords.filter(g => !chipsBase.some(w => TR.norm(w) === TR.norm(g)));
+          const seen = new Set();
+          const parts = [];
+          for (const token of extraW.concat(missing)) {
+            const k = TR.norm(token);
+            if (seen.has(k) || parts.length >= 4) continue;
+            seen.add(k);
+            parts.push(glossSr(token, ctx));
+          }
+          gloss = parts.join(' · ');
+        }
+        return { ok, correct: disp(target, ctx.script), fb: s.fb, gloss };
       },
     };
   }
@@ -315,11 +358,13 @@ const Ex = (() => {
     const right = shuf(ws.map(w => ({ id: w.id, t: w.ru })));
     item._miss = {};
     let selL = null, selR = null, done = 0;
+    // одна grid-сетка с явными рядами: карточки пары всегда строго напротив
+    // и одинаковой высоты, даже если текст в одной из них длиннее
     ctx.area.innerHTML = `
       <p class="ex-kicker">${t('Соедини пары')}</p>
       <div class="pairs">
-        <div class="pairs-col">${left.map(c => `<button class="opt pair" data-side="l" data-id="${escAttr(c.id)}">${esc(c.t)}</button>`).join('')}</div>
-        <div class="pairs-col">${right.map(c => `<button class="opt pair" data-side="r" data-id="${escAttr(c.id)}">${esc(c.t)}</button>`).join('')}</div>
+        ${left.map((c, i) => `<button class="opt pair" data-side="l" data-id="${escAttr(c.id)}" style="grid-row:${i + 1};grid-column:1;">${esc(c.t)}</button>`).join('')}
+        ${right.map((c, i) => `<button class="opt pair" data-side="r" data-id="${escAttr(c.id)}" style="grid-row:${i + 1};grid-column:2;">${esc(c.t)}</button>`).join('')}
       </div>`;
     function pickBtn(btn){
       if (btn.classList.contains('done')) return;

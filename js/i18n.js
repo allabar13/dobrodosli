@@ -66,9 +66,20 @@ const I18N = (() => {
     'Ана': 'Ana',
     'Создать профиль': 'Create profile',
     'Прогресс сохраняется в этом браузере автоматически. Вход через Google появится после настройки облака (README.md).': 'Progress is saved in this browser automatically.',
-    'Совет: на стартовом экране есть «Продолжить с Google» — тогда прогресс сохранится в облаке и не потеряется. Привязать Google можно и позже, в профиле.': 'Tip: use “Continue with Google” on the start screen to keep progress in the cloud. You can also link it later in your profile.',
+    'Совет: во вкладке «Профиль» можно привязать прогресс к Google — тогда он сохранится в облаке и не потеряется.': 'Tip: in the Profile tab you can link your progress to Google — it’ll live in the cloud and can’t get lost.',
     // iOS-подсказка (используется ios-auth.js)
-    'Совет: на стартовом экране есть «Войти через Apple» — тогда прогресс сохранится в облаке и не потеряется.': 'Tip: “Sign in with Apple” on the start screen keeps your progress in the cloud so it can’t get lost.',
+    'Совет: привязать прогресс к Apple-аккаунту можно в любой момент во вкладке «Профиль» — тогда он сохранится в облаке и не потеряется.': 'Tip: you can link your progress to your Apple account anytime in the Profile tab — it’ll live in the cloud and can’t get lost.',
+    // экскурсия по разделам после онбординга
+    'Экскурсия': 'Quick tour',
+    'Пропустить экскурсию': 'Skip the tour',
+    'Уроки по уровням и темам — иди по порядку, Жарко подскажет, где ты. Каждый урок — три-пять минут.': 'Lessons by level and theme — go in order, Žarko will show you where you are. Each lesson takes three to five minutes.',
+    'Сердце метода: повторения по кривой памяти, разбор ошибок и карточки по темам. Заглядывай сюда каждый день хотя бы на минутку.': 'The heart of the method: memory-curve reviews, mistake clearing and themed flashcards. Drop by every day, even for a minute.',
+    'Все выученные слова с озвучкой и «силой» запоминания. Что начнёт забываться — само попросится в повторение.': 'All your learned words with audio and memory strength. Whatever starts to fade will ask for a review on its own.',
+    'Статистика, ачивки, настройки и облако, чтобы прогресс не потерялся.': 'Stats, achievements, settings and the cloud so your progress can’t get lost.',
+    // ачивки
+    'Нажми на ачивку — расскажем, за что она даётся.': 'Tap an achievement to see how to earn it.',
+    '✅ Уже твоя': '✅ Already yours',
+    '🔒 Ещё впереди': '🔒 Still ahead',
     // промокоды (iOS, используется ios-premium.js)
     'Промокод': 'Promo code',
     'Есть промокод? Введи его — получишь безлимит на несколько дней.': 'Got a promo code? Enter it to unlock unlimited access for a few days.',

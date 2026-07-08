@@ -419,9 +419,9 @@
     u37l1:'The long paper trail', u38l1:'Life in the yard', u39l1:'What I think', u40l1:'Complex sentences',
   };
   UNITS.forEach(u => u.lessons.forEach(l => { if (LESSON_T[l.id]) l.title = LESSON_T[l.id]; }));
-  const GO = [['Polako','One session a day. Honestly — enough.'],
-    ['Steady','A lesson a day keeps the conscience clean.'],
-    ['Vuk Karadžić','Linguist-reformer mode. Respect.']];
+  const GO = [['Polako','One short practice a day: a review or clearing mistakes.'],
+    ['Steady','One new lesson a day keeps the conscience clean.'],
+    ['Vuk Karadžić','A lesson and a practice every day. Linguist-reformer mode.']];
   GOALS.forEach((g, i) => { g.name = GO[i][0]; g.desc = GO[i][1]; });
 
   // ── советы (tips) по заголовку ──
@@ -606,9 +606,11 @@
     birokrata:['Bureaucrat, 1st class','The Papiri unit is done. Mentally ready for the immigration office.'],
     streak3:['Three days','Three days of practice — not necessarily in a row, we don’t push.'],
     streak7:['Stubborn one','Seven days of practice. “Stubborn” is a compliment here.'],
+    streak30:['A month of days','30 days of practice. Not a feat anymore — a lifestyle.'],
     words25:['25 words','25 words in the bank.'],
     words50:['Half a hundred','50 words. The market grandmas almost understand you.'],
     words100:['Living legend','100 words. The neighbour is proud.'],
+    words200:['Two hundred words','200 words. The kafana goes quiet when you speak.'],
     review10:['Review master','10 review sessions. Spaced repetition works.'],
     perfect:['Flawless','A lesson without a single mistake.'],
   };

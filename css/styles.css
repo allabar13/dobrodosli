@@ -280,8 +280,10 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
 .cal-cell{ aspect-ratio:1; border-radius:6px; background:var(--line); }
 .cal-cell.l1{ background:color-mix(in srgb, var(--primary) 40%, var(--card)); }
 .cal-cell.l2{ background:var(--primary); }
-.badges{ display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr)); gap:10px; }
-.badge{ background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:10px 6px; text-align:center; }
+/* ровно 3 в ряд → 12 ачивок = аккуратные 4 ряда; тап открывает описание */
+.badges{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+.badge{ background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:10px 6px; text-align:center; cursor:pointer; transition:transform .08s; }
+.badge:active{ transform:scale(.96); }
 .badge span{ font-size:26px; display:block; }
 .badge small{ font-size:11.5px; font-weight:800; }
 .badge.off{ filter:grayscale(1); opacity:.4; }
@@ -311,6 +313,7 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
 .lesson-fb.bad{ background:var(--red-soft); color:var(--red-deep); }
 .lesson-fb p{ margin:5px 0 0; }
 .fb-ans{ font-size:17px; font-weight:800; }
+.fb-gloss{ font-size:13.5px; font-weight:700; opacity:.92; }
 .fb-again{ font-size:13px; opacity:.85; }
 @keyframes slide-up{ from{ transform:translateY(12px); opacity:0; } to{ transform:none; opacity:1; } }
 
@@ -366,9 +369,9 @@ html.no-tts .spk{ display:none; }
 .bank-chip:active{ transform:scale(.96); }
 .bank-chip.used{ opacity:.22; pointer-events:none; }
 .bank-chip.in-ans{ border-color:var(--select); background:var(--select-soft); }
+/* пары: одна сетка с явными рядами — карточки строго напротив, высоты в ряду равные */
 .pairs{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.pairs-col{ display:flex; flex-direction:column; gap:10px; }
-.pair{ text-align:center; font-size:15.5px; padding:13px 8px; }
+.pair{ text-align:center; font-size:15.5px; padding:13px 8px; display:flex; align-items:center; justify-content:center; }
 .pair.done{ border-color:var(--green); background:var(--green-soft); opacity:.5; pointer-events:none; }
 .pair.bad{ border-color:var(--red); background:var(--red-soft); animation:shake .4s; }
 .sit-q{ font-size:17px; font-weight:700; margin-bottom:14px; }
@@ -428,6 +431,11 @@ html.no-tts .spk{ display:none; }
 .modal-back{ position:fixed; inset:0; background:rgba(8,28,40,.5); z-index:80; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(3px); }
 .modal{ background:var(--card); border-radius:24px; padding:20px; max-width:340px; width:100%; box-shadow:0 16px 48px rgba(0,0,0,.35); animation:pop-in .22s cubic-bezier(.22,1,.36,1); }
 .modal h3{ margin-top:0; }
+
+/* экскурсия по разделам после онбординга */
+.tour-modal{ text-align:center; }
+.tour-modal h3{ margin:0; font-size:20px; }
+.tour-emoji{ font-size:44px; line-height:1; margin:2px 0 8px; }
 
 @media (max-width:420px){
   .node-row.right{ padding-left:30%; }
