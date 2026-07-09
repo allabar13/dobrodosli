@@ -327,31 +327,66 @@ const App = (() => {
   }
   function startTour(){
     const steps = [
-      { tab:'path',    emoji:'🗺️', title:t('Путь'),       text:t('Уроки по уровням и темам — иди по порядку, Жарко подскажет, где ты. Каждый урок — три-пять минут.') },
-      { tab:'review',  emoji:'🧠', title:t('Тренировка'), text:t('Сердце метода: повторения по кривой памяти, разбор ошибок и карточки по темам. Заглядывай сюда каждый день хотя бы на минутку.') },
-      { tab:'dict',    emoji:'📖', title:t('Словарь'),    text:t('Все выученные слова с озвучкой и «силой» запоминания. Что начнёт забываться — само попросится в повторение.') },
-      { tab:'profile', emoji:'🐦', title:t('Профиль'),    text:t('Статистика, ачивки, настройки и облако, чтобы прогресс не потерялся.') },
+      { tab:'path', emoji:'🗺️', title:t('Путь'),
+        text:t('Уроки по уровням и темам — иди по порядку, Жарко подскажет, где ты. Каждый урок — три-пять минут.') },
+      { tab:'review', emoji:'🧠', title:t('Тренировка'),
+        text:t('Сердце метода. Заглядывай сюда каждый день хотя бы на минутку — тут три режима:'),
+        modes:[
+          ['🧠', t('Повторение'), t('слова возвращаются точно тогда, когда мозг готов их забыть')],
+          ['🎯', t('Ошибки'),     t('добиваешь то, где ошибся, — без спешки')],
+          ['🃏', t('Карточки'),   t('спокойная зубрёжка колодами по темам')],
+        ] },
+      { tab:'dict', emoji:'📖', title:t('Словарь'),
+        text:t('Все выученные слова в одном месте:'),
+        modes:[
+          ['🔊', t('Озвучка'),      t('нажми на слово — послушай, как оно звучит')],
+          ['💪', t('Сила памяти'),  t('точками видно, что уже крепко, а что пора повторить')],
+          ['🔎', t('Поиск'),        t('найди слово хоть по-русски, хоть латиницей')],
+        ] },
+      { tab:'profile', emoji:'🐦', title:t('Профиль'),
+        text:t('Статистика, ачивки, настройки и облако, чтобы прогресс не потерялся.') },
     ];
     let i = 0;
-    const done = () => { State.U.flags.tour = 1; State.save(); selectTab('path'); };
-    (function show(){
+    const done = () => { document.querySelector('#tour')?.remove(); State.U.flags.tour = 1; State.save(); selectTab('path'); };
+    function show(){
+      document.querySelector('#tour')?.remove();
       const s = steps[i];
       selectTab(s.tab); // показываем сам раздел за подложкой
-      const m = document.createElement('div');
-      m.className = 'modal-back';
-      m.innerHTML = `<div class="modal tour-modal">
-        <p class="ex-kicker" style="margin:0 0 8px;">${t('Экскурсия')} · ${i + 1}/${steps.length}</p>
-        <div class="tour-emoji">${s.emoji}</div>
-        <h3>${s.title}</h3>
-        <p class="muted" style="margin:6px 0 14px;">${s.text}</p>
-        <button class="btn primary big" id="tour-next">${i === steps.length - 1 ? t('Идемо! (поехали)') : t('Дальше')}</button>
-        ${i < steps.length - 1 ? `<button class="link-back" id="tour-skip" style="width:100%;margin-top:6px;">${t('Пропустить экскурсию')}</button>` : ''}
-      </div>`;
-      document.body.appendChild(m);
-      m.querySelector('#tour-next').onclick = () => { AudioFX.tap(); m.remove(); if (++i < steps.length) show(); else done(); };
-      const sk = m.querySelector('#tour-skip');
-      if (sk) sk.onclick = () => { m.remove(); done(); };
-    })();
+      // ждём отрисовки таббара, чтобы измерить реальное положение вкладки
+      requestAnimationFrame(() => {
+        const btn = document.querySelector(`#tabbar .tab[data-t="${s.tab}"]`);
+        const r = btn ? btn.getBoundingClientRect() : null;
+        const modesHtml = s.modes ? `<div class="tour-modes">${s.modes.map(m =>
+          `<div class="tour-mode"><span class="tour-mi">${m[0]}</span><div><b>${esc(m[1])}</b><small>${esc(m[2])}</small></div></div>`).join('')}</div>` : '';
+        const el = document.createElement('div');
+        el.id = 'tour';
+        el.innerHTML = `
+          <div class="tour-back"></div>
+          <div class="tour-spot"${r ? ` style="left:${r.left - 7}px;top:${r.top - 7}px;width:${r.width + 14}px;height:${r.height + 14}px;"` : ' style="display:none"'}></div>
+          <div class="tour-card">
+            <button class="tour-x" id="tour-x" aria-label="${escAttr(t('Закрыть'))}">×</button>
+            <p class="ex-kicker" style="margin:0 0 6px;">${t('Экскурсия')} · ${i + 1}/${steps.length}</p>
+            <div class="tour-emoji">${s.emoji}</div>
+            <h3>${s.title}</h3>
+            <p class="muted" style="margin:6px 0 ${s.modes ? '2' : '14'}px;">${s.text}</p>
+            ${modesHtml}
+            <button class="btn primary big" id="tour-next" style="margin-top:14px;">${i === steps.length - 1 ? t('Идемо! (поехали)') : t('Дальше')}</button>
+          </div>`;
+        document.body.appendChild(el);
+        // карточку — над этим же разделом, стрелкой к подсвеченной вкладке
+        const card = el.querySelector('.tour-card');
+        if (r) {
+          const cw = card.offsetWidth;
+          const left = Math.min(Math.max(12, r.left + r.width / 2 - cw / 2), window.innerWidth - cw - 12);
+          card.style.left = left + 'px';
+          card.style.bottom = (window.innerHeight - r.top + 16) + 'px';
+          card.style.setProperty('--arrow', (r.left + r.width / 2 - left) + 'px');
+        }
+        el.querySelector('#tour-next').onclick = () => { AudioFX.tap(); if (++i < steps.length) show(); else done(); };
+        el.querySelector('#tour-x').onclick = () => { AudioFX.tap(); done(); };
+      });
+    }
+    show();
   }
 
   // ── основное приложение ──
@@ -718,7 +753,7 @@ const App = (() => {
     fb.className = 'lesson-fb';
     fb.innerHTML = '';
     const btn = $('#btn-check');
-    const scored = !(item.type === 'new' || item.type === 'tip');
+    const scored = !(item.type === 'new' || item.type === 'tip' || item.type === 'welcome');
     btn.textContent = t(scored ? 'Проверить' : 'Дальше');
     btn.disabled = scored;
     btn.style.display = item.type === 'flash' ? 'none' : '';

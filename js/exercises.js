@@ -85,6 +85,9 @@ const Ex = (() => {
     // добрый факт о Балканах — передышка ближе к концу урока
     const f = FACTS[Math.floor(Math.random() * FACTS.length)];
     queue.splice(Math.max(5, Math.floor(queue.length * 0.7)), 0, { type: 'tip', kicker: 'Балканский факт 🪶', tip: { title: f.t, text: f.x } });
+    // самый первый урок (любого стартового уровня) открываем словом «dobrodošli» —
+    // тёплый старт. Новичкам оно учится дальше по ходу, профи просто здороваемся.
+    if (window.State && State.U && Object.keys(State.U.lessons).length === 0) queue.unshift({ type: 'welcome' });
     queue.forEach((it, i) => { it.uid = i; it.retries = 0; });
     return queue;
   }
@@ -460,7 +463,24 @@ const Ex = (() => {
     return { scored: true, auto: true, instant: true, wordIds: [w.id] };
   }
 
-  const R = { new: rNew, tip: rTip, mcq: rMcq, rmcq: rRmcq, type: rType, listen: rListen, fill: rFill, bank: rBank, pairs: rPairs, sit: rSit, flash: rFlash };
+  // тёплое приветствие: первое слово курса «dobrodošli», не в зачёт
+  function rWelcome(item, ctx){
+    const w = W('dobrodosli'), form = formOf(w, ctx.variant);
+    ctx.area.innerHTML = `
+      <p class="ex-kicker">${t('Первое слово')}</p>
+      <div class="card word-card pop-in">
+        <div class="tip-mascot">${typeof mascotSvg === 'function' ? mascotSvg('happy', 88) : ''}</div>
+        <div class="word-main">${esc(disp(form, ctx.script))} ${speakBtn(form)}</div>
+        <div class="word-ru">${esc(w.ru)}</div>
+        <div class="word-note">💡 ${t('С этого слова всё и начинается. Ты уже знаешь одно сербское слово 🐦')}</div>
+      </div>`;
+    wireSpeak(ctx);
+    setTimeout(() => ctx.speak(form), 350);
+    ctx.onReady(true);
+    return { scored: false };
+  }
+
+  const R = { new: rNew, tip: rTip, mcq: rMcq, rmcq: rRmcq, type: rType, listen: rListen, fill: rFill, bank: rBank, pairs: rPairs, sit: rSit, flash: rFlash, welcome: rWelcome };
   function render(item, ctx){ return R[item.type](item, ctx); }
 
   return { buildLesson, buildReview, buildCards, render };
