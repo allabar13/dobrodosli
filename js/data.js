@@ -197,7 +197,7 @@ defW('u9', [
   { id:'ime',         sr:'ime',         ru:'имя' },
   { id:'prezime',     sr:'prezime',     ru:'фамилия' },
   { id:'odakle_si',   sr:'odakle si?',  ru:'откуда ты?' },
-  { id:'iz_inostranstva',   sr:'iz inostranstva',   ru:'из-за границы', note:'Из Украины — iz Ukrajine, из Беларуси — iz Belorusije.' },
+  { id:'iz_inostranstva',   sr:'iz inostranstva',   ru:'из-за границы', note:'Ответ на «odakle si?» — назови свою страну: «iz» + её название.' },
   { id:'drago_mi_je', sr:'drago mi je', ru:'приятно познакомиться', note:'Дословно — «мне мило».' },
   { id:'godine',      sr:'godine',      ru:'годы (возраст)', note:'«Imam 30 godina» — мне 30 лет.' },
   { id:'ovde',        sr:'ovde', me:'ovdje', ru:'здесь' },

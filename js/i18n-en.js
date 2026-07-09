@@ -179,7 +179,7 @@
     raditi:'radim. “Ne radi” — “it doesn’t work” (about everything).',
     ziveti:'živim u… + city. Locative case! But polako.',
     zovem_se:'“Zovem se Ana” — literally “I call myself Ana”.',
-    iz_inostranstva:'From Ukraine — iz Ukrajine, from Belarus — iz Belorusije.',
+    iz_inostranstva:'Answer to “odakle si?” — name your country: “iz” + its name.',
     drago_mi_je:'Literally “it is dear to me”.',
     godine:'“Imam 30 godina” — I’m 30 years old.',
     ukusno:'The highest praise for any cook. And any grandma.',
