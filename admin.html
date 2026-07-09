@@ -89,7 +89,7 @@
   $('#login').onclick = async () => {
     $('#login').disabled = true;
     // тот же Google-провайдер, что и вход в приложении; доступ к данным
-    // всё равно решает таблица admins в базе (a.barashchuk@gmail.com)
+    // всё равно проверяется на сервере (RLS) — фронтенд ничего не решает
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: location.origin + location.pathname },
@@ -109,8 +109,8 @@
     if (err) {
       const denied = /forbidden|not authoriz/i.test(err.message);
       $('#root').innerHTML = `<div class="admin-head"><h1>🐦 Кабинет</h1></div>
-        <div class="panel"><p class="err">${denied ? 'Аккаунт ' + esc(email) + ' не в списке админов.' : esc(err.message)}</p>
-        <p class="muted-note">${denied ? 'Вход разрешён только почте из таблицы admins (supabase-admin.sql).' : 'Проверь, что supabase-admin.sql выполнен в Supabase → SQL Editor.'}</p>
+        <div class="panel"><p class="err">${denied ? 'Доступ только для администратора.' : 'Не удалось загрузить данные.'}</p>
+        <p class="muted-note">${denied ? 'Вы вошли как ' + esc(email) + '. Войдите почтой администратора.' : 'Попробуйте обновить страницу чуть позже.'}</p>
         <button class="abtn ghost" id="out" style="margin-top:10px">Выйти</button></div>`;
       $('#out').onclick = async () => { await sb.auth.signOut(); location.reload(); };
       return;
@@ -222,7 +222,7 @@
       </div>
 
       <p class="muted-note" style="text-align:center;margin-top:18px">
-        Обновлено: ${esc(new Date().toLocaleString('ru-RU'))} · данные в Supabase (ЕС), доступ только по таблице admins</p>
+        Обновлено: ${esc(new Date().toLocaleString('ru-RU'))} · данные в Supabase (ЕС)</p>
     `;
     $('#reload').onclick = () => location.reload();
     $('#period').onchange = e => { localStorage.setItem('adm_period', e.target.value); location.reload(); };
