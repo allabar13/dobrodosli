@@ -804,7 +804,9 @@ const App = (() => {
     if (res.ok) {
       AudioFX.correct();
       fb.className = 'lesson-fb show ok';
-      fb.innerHTML = `<b>${['Тако је!', 'Браво!', 'Свака част!', 'Одлично!'][Math.floor(Math.random() * 4)]}</b>
+      // похвала — по-сербски, но в алфавите юзера: латиница не должна видеть кириллицу
+      const bravo = ['Tako je!', 'Bravo!', 'Svaka čast!', 'Odlično!'][Math.floor(Math.random() * 4)];
+      fb.innerHTML = `<b>${SC() === 'cyr' ? TR.toCyr(bravo) : bravo}</b>
         ${res.soft ? `<p>${t('Почти идеально — следи за «галочками»:')} <b>${esc(res.correct)}</b></p>` : ''}
         ${res.fb ? `<p>${esc(res.fb)}</p>` : ''}
         ${LS.kind === 'mistakes' && hasWords ? `<p class="fb-again">${t('✓ Вычеркнуто из «Ошибок»')}</p>` : ''}`;
