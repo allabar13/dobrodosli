@@ -38,7 +38,7 @@
     biti:'to be', imati:'to have', znati:'to know', razumeti:'to understand', hteti:'to want', moci:'can, to be able',
     govoriti:'to speak', uciti:'to learn', raditi:'to work, to do', ziveti:'to live',
     // u9
-    zovem_se:'my name is', ime:'first name', prezime:'surname', odakle_si:'where are you from?', iz_rusije:'from Russia',
+    zovem_se:'my name is', ime:'first name', prezime:'surname', odakle_si:'where are you from?', iz_inostranstva:'from abroad',
     drago_mi_je:'nice to meet you', godine:'years (age)', ovde:'here', tamo:'there', sada:'now',
     // u10
     ukus:'taste', ukusno:'tasty', slatko:'sweet', slano:'salty', kiselo:'sour', ljuto:'spicy', gorko:'bitter',
@@ -179,7 +179,7 @@
     raditi:'radim. “Ne radi” — “it doesn’t work” (about everything).',
     ziveti:'živim u… + city. Locative case! But polako.',
     zovem_se:'“Zovem se Ana” — literally “I call myself Ana”.',
-    iz_rusije:'From Ukraine — iz Ukrajine, from Belarus — iz Belorusije.',
+    iz_inostranstva:'From Ukraine — iz Ukrajine, from Belarus — iz Belorusije.',
     drago_mi_je:'Literally “it is dear to me”.',
     godine:'“Imam 30 godina” — I’m 30 years old.',
     ukusno:'The highest praise for any cook. And any grandma.',
@@ -278,7 +278,7 @@
     'Radim onlajn.': ['I work online.', 'Yes, “onlajn” is spelled like that. Serbian writes as it hears. Vuk Karadžić approves.'],
     'Mogu li da platim karticom?': ['Can I pay by card?', 'Sometimes the answer is “samo keš” — cash only. Especially where the burek is best.'],
     'Zovem se Ana, drago mi je.': ['My name is Ana, nice to meet you.'],
-    'Ja sam iz Rusije.': ['I’m from Russia.'],
+    'Ja sam iz inostranstva.': ['I’m from abroad.'],
     'Odakle si ti?': ['And where are you from?'],
     'Živim ovde već godinu dana.': ['I’ve been living here for a year.'],
     'Tražim crvenu majicu.': ['I’m looking for a red T-shirt.'],
@@ -294,7 +294,7 @@
     'Prozor je prljav.': ['The window is dirty.'],
     'Želim da naučim srpski.': ['I want to learn Serbian.'],
     'Idem na posao.': ['I’m off to work.'],
-    'Rođena sam u Moskvi.': ['I was born in Moscow.'],
+    'Rođena sam u inostranstvu.': ['I was born abroad.'],
     'Imam dvoje dece.': ['I have two kids.'],
     'Govorim ruski i učim srpski.': ['I speak Russian and I’m learning Serbian.'],
     'Tek sam stigla, učim jezik.': ['I’ve only just arrived, I’m learning the language.'],
@@ -359,7 +359,7 @@
 
   // ── грамматика: подсказки ──
   const G = {
-    'Я из России.':'I’m from Russia.', 'Мы в кафане.':'We’re at the kafana.', 'Он официант.':'He’s a waiter.',
+    'Я из-за границы.':'I’m from abroad.', 'Мы в кафане.':'We’re at the kafana.', 'Он официант.':'He’s a waiter.',
     'Я хочу один кофе.':'I want one coffee.', 'Вы говорите по-английски?':'Do you speak English?',
     'Я иду в город.':'I’m going to town.', 'Мне нужна помощь.':'I need help.', 'Мы любим кофе.':'We love coffee.',
     'Вчера я был(а) на рынке.':'Yesterday I was at the market.', 'Завтра я приду (букв. буду прийти).':'Tomorrow I will come.',
@@ -476,7 +476,7 @@
     'Сосед в лифте кивает: «Ćao!» Твой ход:': ['A neighbour in the lift nods: “Ćao!” Your move:',
       [['“Ćao!”','Yes! “Ćao” is both hello and bye. One sound — double value.'],
        ['“Doviđenja!”','That’s “goodbye” — you’ve left before saying hello. Bold, but odd.'],
-       ['Stare silently at the floor','That worked in a Moscow lift. Here you’ll have to talk — such is the way.']]],
+       ['Stare silently at the floor','That worked in a lift back home. Here you’ll have to talk — such is the way.']]],
     'Ты допил кофе час назад, а счёт никто не несёт. Почему?': ['You finished your coffee an hour ago and no bill in sight. Why?',
       [['No one rushes you here: the table is yours all day','Exactly. A kafana isn’t catering, it’s a way of life. Want the bill? Say “Račun, molim”.'],
        ['The waiter forgot you','A konobar forgets nothing. He simply respects your right to sit forever.'],
@@ -506,7 +506,7 @@
        ['They politely switch to English','That’s Berlin. Here they continue in Serbian — louder, with gestures.'],
        ['Nothing changes','It changes. People here truly love it when you learn the language.']]],
     'Новый знакомый спрашивает «Odakle si?». Лучший ответ:': ['A new acquaintance asks “Odakle si?”. Best reply:',
-      [['“Ja sam iz Rusije, a živim ovde.”','Perfect: short, clear — and it hands them a conversation hook.'],
+      [['“Ja sam iz inostranstva, a živim ovde.”','Perfect: short, clear — and it hands them a conversation hook.'],
        ['Pretend you didn’t hear','“Odakle si” is the most common question for newcomers. You can’t hide forever — learn the answer.'],
        ['“Doviđenja!”','Saying goodbye to “where are you from” is bold, but the chat is over before it began.']]],
     'Бабушка на пияце протягивает попробовать и говорит «Probaj, domaće!». Ты:': ['A grandma at the market offers a taste: “Probaj, domaće!”. You:',

@@ -197,7 +197,7 @@ defW('u9', [
   { id:'ime',         sr:'ime',         ru:'имя' },
   { id:'prezime',     sr:'prezime',     ru:'фамилия' },
   { id:'odakle_si',   sr:'odakle si?',  ru:'откуда ты?' },
-  { id:'iz_rusije',   sr:'iz Rusije',   ru:'из России', note:'Из Украины — iz Ukrajine, из Беларуси — iz Belorusije.' },
+  { id:'iz_inostranstva',   sr:'iz inostranstva',   ru:'из-за границы', note:'Из Украины — iz Ukrajine, из Беларуси — iz Belorusije.' },
   { id:'drago_mi_je', sr:'drago mi je', ru:'приятно познакомиться', note:'Дословно — «мне мило».' },
   { id:'godine',      sr:'godine',      ru:'годы (возраст)', note:'«Imam 30 godina» — мне 30 лет.' },
   { id:'ovde',        sr:'ovde', me:'ovdje', ru:'здесь' },
@@ -637,7 +637,7 @@ const UNITS = [
         situation: { q:'Сосед в лифте кивает: «Ćao!» Твой ход:', ai:0, opts:[
           { t:'«Ćao!»', why:'Да! «Ćao» — и привет, и пока. Один звук — двойная польза.' },
           { t:'«Doviđenja!»', why:'Это «до свидания» — ты попрощался(ась), не успев поздороваться. Смело, но странно.' },
-          { t:'Молча смотреть в пол', why:'Так работало в московском лифте. Здесь придётся разговаривать — таков путь.' },
+          { t:'Молча смотреть в пол', why:'Так работало в лифте дома. Здесь придётся разговаривать — таков путь.' },
         ] } },
     ],
   },
@@ -768,7 +768,7 @@ const UNITS = [
       { id:'u8l1', title:'Быть и понимать', words:['biti','imati','znati','razumeti'],
         tip:{ title:'Глагол biti (быть)', text:'ja sam · ti si · on/ona je · mi smo · vi ste · oni su. В отличие от русского, «есть» не выпадает: «Ja sam Ana» = «Я — Ана». Семь падежей подождут, biti — сейчас.' },
         grammar: [
-          { q:'Ja ___ iz Rusije.', hint:'Я из России.', opts:['sam','si','je','smo'], a:'sam' },
+          { q:'Ja ___ iz inostranstva.', hint:'Я из-за границы.', opts:['sam','si','je','smo'], a:'sam' },
           { q:'Mi ___ u kafani.', hint:'Мы в кафане.', opts:['smo','sam','su','ste'], a:'smo' },
           { q:'On ___ konobar.', hint:'Он официант.', opts:['je','sam','si','smo'], a:'je' },
         ] },
@@ -796,16 +796,16 @@ const UNITS = [
   {
     id:'u9', emoji:'🙋', title:'Ко сам ја?', sub:'Представиться и расспросить', level:2, theme:'intro',
     lessons: [
-      { id:'u9l1', title:'Знакомство', words:['zovem_se','ime','prezime','odakle_si','iz_rusije','drago_mi_je','godine','ovde','tamo','sada'],
+      { id:'u9l1', title:'Знакомство', words:['zovem_se','ime','prezime','odakle_si','iz_inostranstva','drago_mi_je','godine','ovde','tamo','sada'],
         tip:{ title:'«Drago mi je» работает всегда', text:'Знакомишься — «Drago mi je» («очень приятно»). Безотказно, как «hvala». Дальше — «Odakle si?», и разговор покатился.' },
         sentences: [
           { sr:'Zovem se Ana, drago mi je.', ru:'Меня зовут Ана, приятно познакомиться.' },
-          { sr:'Ja sam iz Rusije.', ru:'Я из России.' },
+          { sr:'Ja sam iz inostranstva.', ru:'Я из-за границы.' },
           { sr:'Odakle si ti?', ru:'А ты откуда?' },
           { sr:'Živim ovde već godinu dana.', me:'Živim ovdje već godinu dana.', ru:'Я живу здесь уже год.' },
         ],
         situation: { q:'Новый знакомый спрашивает «Odakle si?». Лучший ответ:', ai:0, opts:[
-          { t:'«Ja sam iz Rusije, a živim ovde.»', why:'Идеально: коротко, по делу — и сразу даёшь зацепку для разговора.' },
+          { t:'«Ja sam iz inostranstva, a živim ovde.»', why:'Идеально: коротко, по делу — и сразу даёшь зацепку для разговора.' },
           { t:'Сделать вид, что не услышал', why:'«Odakle si» — самый частый вопрос к новенькому. Прятаться придётся часто. Лучше выучить ответ.' },
           { t:'«Doviđenja!»', why:'Попрощаться в ответ на «откуда ты» — смело, но разговор окончен не начавшись.' },
         ] } },
@@ -909,7 +909,7 @@ const UNITS = [
       { id:'u17l1', title:'Рассказ о себе', words:['roden','porodica','posao','studiram','ozenjen','udata','dete','jezik','vec','tek'],
         tip:{ title:'«Oženjen» или «udata»?', text:'Тонкость: мужчина «oženjen» (женат), женщина «udata» (замужем). Один корень про мужчин, другой про женщин — перепутаешь, поправят с улыбкой.' },
         sentences: [
-          { sr:'Rođena sam u Moskvi.', ru:'Я родилась в Москве.' },
+          { sr:'Rođena sam u inostranstvu.', ru:'Я родилась за границей.' },
           { sr:'Imam dvoje dece.', me:'Imam dvoje djece.', ru:'У меня двое детей.' },
           { sr:'Govorim ruski i učim srpski.', me:'Govorim ruski i učim crnogorski.', ru:'Я говорю по-русски и учу сербский.' },
           { sr:'Tek sam stigla, učim jezik.', ru:'Я только приехала, учу язык.' },
