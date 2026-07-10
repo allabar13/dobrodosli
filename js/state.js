@@ -17,7 +17,7 @@ const State = (() => {
   function blank(profile){
     return Object.assign({
       id: 'u_' + Math.random().toString(36).slice(2, 10),
-      name: 'Ученик', cloudId: null,
+      name: (window.I18N && I18N.lang === 'en') ? 'Learner' : 'Ученик', cloudId: null,
       createdAt: Date.now(), updatedAt: Date.now(),
       settings: { variant: 'rs', script: 'lat', goal: 20, sound: true, motivation: null, theme: 'auto' },
       level: 1,           // выбранный уровень курса (1–5)
