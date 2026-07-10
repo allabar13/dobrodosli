@@ -82,9 +82,12 @@ const App = (() => {
       else syncFromCloud();             // локальный профиль уже открыт — просто подтянуть прогресс
     });
     if (Cloud.active() && Cloud.user()) return enterCloudUser();
-    // продолжение онбординга после смены языка (перезагрузка)
-    if (localStorage.getItem('dobrodosli_resume_ob')) {
+    // продолжение онбординга после смены языка: флаг несём в URL — localStorage
+    // в WKWebView может не пережить мгновенную перезагрузку (терялся выбор языка)
+    const resumeOb = /[?&]resume_ob=1/.test(location.search) || localStorage.getItem('dobrodosli_resume_ob');
+    if (resumeOb) {
       localStorage.removeItem('dobrodosli_resume_ob');
+      if (location.search) { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
       if (!State.U) return startOnboarding({}, 1); // язык уже выбран — сразу к знакомству
     }
     if (State.U) return showApp();
@@ -221,8 +224,10 @@ const App = (() => {
           b.classList.add('sel');
           if (k === I18N.lang) { setTimeout(() => { step++; render(); }, 180); return; }
           I18N.set(k);
-          localStorage.setItem('dobrodosli_resume_ob', '1');
-          setTimeout(() => location.reload(), 180);
+          localStorage.setItem('dobrodosli_resume_ob', '1'); // страховка
+          // язык и флаг продолжения — в URL: переживает перезагрузку даже там,
+          // где localStorage не успевает записаться (WKWebView)
+          setTimeout(() => location.replace(location.pathname + '?lang=' + k + '&resume_ob=1'), 180);
         });
       } else if (step === 1) {
         shell(`
@@ -283,7 +288,7 @@ const App = (() => {
             ? `<p class="muted small">${t('☁️ Вход через Google:')} <b>${esc(Cloud.email() || '')}</b></p>`
             : Cloud.active() && Cloud.canOAuth()
               ? `<p class="muted small">${t('Совет: во вкладке «Профиль» можно привязать прогресс к Google — тогда он сохранится в облаке и не потеряется.')}</p>`
-              : `<p class="muted small">${t('Прогресс сохраняется в этом браузере автоматически. Вход через Google появится после настройки облака (README.md).')}</p>`}
+              : `<p class="muted small">${t('Прогресс сохраняется на этом устройстве автоматически. Привязать аккаунт можно позже во вкладке «Профиль».')}</p>`}
           <button class="btn primary big" id="ob-done">${t('Создать профиль')}</button>`);
         $('#ob-name').focus();
         $('#ob-done').onclick = () => {
@@ -667,7 +672,6 @@ const App = (() => {
         </div>
         <h4>${t('Облако')}</h4>
         <div class="card settings" id="cloud-box">${cloudBoxHtml()}</div>
-        <p class="feedback-line">${t('Есть идея или нашли ошибку?')} <a href="https://t.me/alla_barashchuk" target="_blank" rel="noopener">${t('Поделиться обратной связью')}</a> ✈️ ${t('— Жарко и автор читают всё.')}</p>
         <div class="prof-actions">
           <button class="btn ghost" id="btn-switch">${t('Сменить профиль')}</button>
           <button class="btn ghost danger" id="btn-reset">${t('Сбросить прогресс')}</button>

@@ -59,6 +59,7 @@ const Ex = (() => {
   // проверки сейчас, а SRS-повторения — завтра. Предложений — максимум три,
   // лишние форматы не дублируем: длинные уроки роняют дочитываемость.
   function buildLesson(lesson, variant){
+    if (lesson.practice) return buildPractice(lesson, variant);
     const items = [];
     const words = lesson.words.map(W);
     const checked = new Set(pickN(words, Math.ceil(words.length * 0.6)).map(w => w.id));
@@ -88,6 +89,28 @@ const Ex = (() => {
     // самый первый урок (любого стартового уровня) открываем словом «dobrodošli» —
     // тёплый старт. Новичкам оно учится дальше по ходу, профи просто здороваемся.
     if (window.State && State.U && Object.keys(State.U.lessons).length === 0) queue.unshift({ type: 'welcome' });
+    queue.forEach((it, i) => { it.uid = i; it.retries = 0; });
+    return queue;
+  }
+
+  // ── Урок-закрепление: те же слова, но сложнее и без знакомств ──
+  // Обратный перевод, набор руками, аудио, пары и предложения — активное
+  // припоминание вместо показа. Каждое слово проверяется ровно один раз.
+  function buildPractice(lesson, variant){
+    const words = shuf(lesson.words.map(W).filter(Boolean));
+    let typeLeft = 3, listenLeft = 3;
+    const checks = words.map(w => {
+      if (typeLeft > 0 && typeable(w, variant)) { typeLeft--; return { type: 'type', w }; }
+      if (listenLeft > 0 && TTS.has()) { listenLeft--; return { type: 'listen', w }; }
+      return { type: 'rmcq', w };
+    });
+    const queue = [];
+    if (words.length >= 4) queue.push({ type: 'pairs', words: pickN(words, 5) });
+    queue.push(...shuf(checks));
+    for (const g of (lesson.grammar || [])) queue.push({ type: 'fill', g });
+    for (const s of pickN(lesson.sentences || [], 3)) queue.push({ type: 'bank', s });
+    const f = FACTS[Math.floor(Math.random() * FACTS.length)];
+    queue.splice(Math.max(3, Math.floor(queue.length * 0.6)), 0, { type: 'tip', kicker: 'Балканский факт 🪶', tip: { title: f.t, text: f.x } });
     queue.forEach((it, i) => { it.uid = i; it.retries = 0; });
     return queue;
   }
@@ -324,33 +347,59 @@ const Ex = (() => {
       sync();
     });
     sync();
-    // слова курса, встречающиеся в предложении, получают зачёт в SRS
-    const ids = chipsBase
-      .map(c => Object.values(WORDS).find(w => TR.norm(w.sr) === TR.norm(c) || (w.me && TR.norm(w.me) === TR.norm(c))))
-      .filter(Boolean).map(w => w.id);
+    // слова курса в предложении часто стоят в склонённой форме («tražim» от
+    // «tražiti») — привязываем токены к словарю по основе, а не только точно
+    function stemEq(a, b){
+      if (a === b) return true;
+      if (a.length < 4 || b.length < 4) return false;
+      const sa = a.slice(0, Math.max(3, a.length - 2));
+      const sb = b.slice(0, Math.max(3, b.length - 2));
+      return a.startsWith(sb) || b.startsWith(sa);
+    }
+    function tokenWord(tok){
+      const n = TR.norm(tok);
+      return Object.values(WORDS).find(w => TR.norm(w.sr) === n || (w.me && TR.norm(w.me) === n))
+        || Object.values(WORDS).find(w => stemEq(n, TR.norm(w.sr)) || (w.me && stemEq(n, TR.norm(w.me))))
+        || null;
+    }
+    const tokenMap = {};   // норм-токен → id слова курса
+    for (const c of chipsBase) {
+      const w = tokenWord(c);
+      if (w) tokenMap[TR.norm(c)] = w.id;
+    }
+    const ids = uniq(Object.values(tokenMap));
     return {
-      scored: true, wordIds: uniq(ids),
+      scored: true, wordIds: ids,
       check(){
         const gotWords = item._answer.map(ci => chips.find(c => c.i === ci).t);
         const got = gotWords.map(w => TR.norm(w)).join(' ');
         const ok = got === TR.norm(target);
         if (ok) ctx.speak(target);
-        // при ошибке — глоссы пропущенных и лишних слов: «pumpa — заправка»
-        let gloss = '';
+        // при ошибке виноваты только промахнувшиеся слова, а не всё предложение:
+        // пропущенные и лишние — в «Ошибки», правильно поставленные — в зачёт
+        let gloss = '', misses;
         if (!ok) {
           const missing = chipsBase.filter(w => !gotWords.some(g => TR.norm(g) === TR.norm(w)));
           const extraW = gotWords.filter(g => !chipsBase.some(w => TR.norm(w) === TR.norm(g)));
+          misses = {};
+          for (const tok of missing.concat(extraW)) {
+            const id = tokenMap[TR.norm(tok)] || (tokenWord(tok) || {}).id;
+            if (id) misses[id] = true;
+          }
+          // ошибка только в порядке слов (все токены те же) — спорные все
+          if (!Object.keys(misses).length) for (const id of ids) misses[id] = true;
           const seen = new Set();
           const parts = [];
           for (const token of extraW.concat(missing)) {
             const k = TR.norm(token);
             if (seen.has(k) || parts.length >= 4) continue;
             seen.add(k);
-            parts.push(glossSr(token, ctx));
+            const ww = tokenWord(token);
+            parts.push(ww ? `${disp(token, ctx.script)} — ${ww.ru}` : glossSr(token, ctx));
           }
           gloss = parts.join(' · ');
         }
-        return { ok, correct: disp(target, ctx.script), fb: s.fb, gloss };
+        return { ok, misses, correct: disp(target, ctx.script), fb: s.fb, gloss };
       },
     };
   }

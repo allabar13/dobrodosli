@@ -8,6 +8,10 @@ const I18N = (() => {
   const KEY = 'dobrodosli_lang';
 
   function detect(){
+    // язык из URL главнее: так смена языка в онбординге переживает перезагрузку
+    // даже если localStorage не успел записаться (WKWebView)
+    const fromUrl = (location.search.match(/[?&]lang=(ru|en)\b/) || [])[1];
+    if (fromUrl) { try { localStorage.setItem(KEY, fromUrl); } catch (e) {} return fromUrl; }
     const saved = localStorage.getItem(KEY);
     if (saved === 'ru' || saved === 'en') return saved;
     const nav = (navigator.language || 'ru').toLowerCase();
@@ -65,7 +69,7 @@ const I18N = (() => {
     'Имя — для приветствий и профиля': 'Name — for greetings and your profile',
     'Ана': 'Ana',
     'Создать профиль': 'Create profile',
-    'Прогресс сохраняется в этом браузере автоматически. Вход через Google появится после настройки облака (README.md).': 'Progress is saved in this browser automatically.',
+    'Прогресс сохраняется на этом устройстве автоматически. Привязать аккаунт можно позже во вкладке «Профиль».': 'Progress is saved on this device automatically. You can link an account later in the Profile tab.',
     'Совет: во вкладке «Профиль» можно привязать прогресс к Google — тогда он сохранится в облаке и не потеряется.': 'Tip: in the Profile tab you can link your progress to Google — it’ll live in the cloud and can’t get lost.',
     // iOS-подсказка (используется ios-auth.js)
     'Совет: привязать прогресс к Apple-аккаунту можно в любой момент во вкладке «Профиль» — тогда он сохранится в облаке и не потеряется.': 'Tip: you can link your progress to your Apple account anytime in the Profile tab — it’ll live in the cloud and can’t get lost.',
@@ -214,7 +218,7 @@ const I18N = (() => {
     'Ачивки': 'Achievements',
     'Настройки': 'Settings',
     'Алфавит': 'Alphabet',
-    'Язык интерфейса': 'Interface language',
+    'Язык интерфейса': 'App language',
     'Latinica — черногорский вариант (lijepo, евро, Подгорица), Ћирилица — сербский (лепо, динары, Белград). Язык и логика одни, ответы принимаются любым алфавитом. Это практически один язык — но не говори это вслух ни там, ни там 😉': 'Latinica is the Montenegrin flavour (lijepo, euros, Podgorica); Ћирилица is the Serbian one (лепо, dinars, Belgrade). Same language, same logic, answers accepted in either script. It’s practically one language — just don’t say that out loud in either country 😉',
     'Тема': 'Theme',
     'Авто': 'Auto',

@@ -1213,6 +1213,19 @@ const UNITS = [
   },
 ];
 
+// ── Уроки-закрепления ────────────────────────────────────────────────────
+// Каждому юниту с одним уроком добавляем второй — «Закрепление»: те же слова,
+// но сложнее (обратный перевод, набор, аудио, сборка предложений) и без
+// подсказок-знакомств. Первый урок знакомит, второй — заставляет вспоминать.
+UNITS.forEach(u => {
+  if (u.lessons.length !== 1) return;
+  const base = u.lessons[0];
+  u.lessons.push({
+    id: base.id + 'p', title: 'Закрепление', practice: true,
+    words: base.words.slice(), sentences: base.sentences, grammar: base.grammar,
+  });
+});
+
 const ALL_LESSONS = [];
 UNITS.forEach(u => u.lessons.forEach(l => { l.unitId = u.id; ALL_LESSONS.push(l); }));
 

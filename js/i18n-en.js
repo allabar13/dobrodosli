@@ -419,6 +419,7 @@
     u37l1:'The long paper trail', u38l1:'Life in the yard', u39l1:'What I think', u40l1:'Complex sentences',
   };
   UNITS.forEach(u => u.lessons.forEach(l => { if (LESSON_T[l.id]) l.title = LESSON_T[l.id]; }));
+  UNITS.forEach(u => u.lessons.forEach(l => { if (l.practice) l.title = 'Practice'; }));
   const GO = [['Polako','One short practice a day: a review or clearing mistakes.'],
     ['Steady','One new lesson a day keeps the conscience clean.'],
     ['Vuk Karadžić','A lesson and a practice every day. Linguist-reformer mode.']];
