@@ -29,17 +29,30 @@ const AudioFX = (() => {
   return api;
 })();
 
-// Озвучка: ищем сербский голос, затем хорватский/боснийский (произношение
-// почти идентично). Если голосов нет — аудио-задания просто не показываются.
+// Озвучка: системный синтез речи. Сербского голоса у Apple нет, поэтому
+// кандидаты — сербский → хорватский → боснийский (произношение почти
+// идентично). Из кандидатов берём ЛУЧШИЙ по качеству: премиум/enhanced-
+// версии голосов звучат по-человечески, compact — роботом (на это и
+// жаловались тестеры). Если голосов нет — аудио-задания не показываются.
 const TTS = (() => {
   let voice = null;
+  function score(v){
+    const lang = (v.lang || '').toLowerCase();
+    const name = (v.name || '').toLowerCase() + ' ' + (v.voiceURI || '').toLowerCase();
+    let s = 0;
+    if (lang.startsWith('sr')) s += 300;
+    else if (lang.startsWith('hr')) s += 200;
+    else if (lang.startsWith('bs')) s += 100;
+    else return -1;                                   // чужие языки не берём
+    if (/premium/.test(name)) s += 30;                // лучшие нейроголоса iOS
+    if (/enhanced|improved/.test(name)) s += 20;      // улучшенные
+    if (/eloquence|compact/.test(name)) s -= 15;      // роботизированные
+    if (!v.localService) s += 5;                      // сетевые (Chrome) обычно чище
+    return s;
+  }
   function pickVoice(){
     const vs = speechSynthesis.getVoices();
-    voice = null;
-    for (const pref of ['sr', 'hr', 'bs']) {
-      const v = vs.find(x => x.lang && x.lang.toLowerCase().startsWith(pref));
-      if (v) { voice = v; break; }
-    }
+    voice = vs.filter(v => score(v) > 0).sort((a, b) => score(b) - score(a))[0] || null;
     document.documentElement.classList.toggle('no-tts', !voice);
   }
   if ('speechSynthesis' in window) {
@@ -51,6 +64,14 @@ const TTS = (() => {
   return {
     enabled: true,
     has(){ return !!voice; },
+    // диагностика: какой голос реально выбран (и из чего выбирали)
+    voiceInfo(){
+      const vs = ('speechSynthesis' in window) ? speechSynthesis.getVoices() : [];
+      return {
+        picked: voice ? `${voice.name} (${voice.lang})${voice.localService ? '' : ' · сетевой'}` : null,
+        candidates: vs.filter(v => score(v) > 0).map(v => `${v.name} (${v.lang})`),
+      };
+    },
     speak(text, rate = 0.88){
       if (!voice || !this.enabled || !text) return;
       try {
