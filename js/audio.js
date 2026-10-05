@@ -29,13 +29,19 @@ const AudioFX = (() => {
   return api;
 })();
 
-// Озвучка: системный синтез речи. Сербского голоса у Apple нет, поэтому
-// кандидаты — сербский → хорватский → боснийский (произношение почти
-// идентично). Из кандидатов берём ЛУЧШИЙ по качеству: премиум/enhanced-
-// версии голосов звучат по-человечески, compact — роботом (на это и
-// жаловались тестеры). Если голосов нет — аудио-задания не показываются.
+// Озвучка. Основной путь — записанные mp3 (настоящий сербский голос,
+// см. js/audio-map.js: текст → файл в audio/sr/). Запасной — системный
+// синтез речи: сербского голоса у Apple нет, кандидаты sr → hr → bs
+// (произношение почти идентично), из них берём лучший по качеству.
+// Если нет ни файлов, ни голоса — аудио-задания не показываются.
 const TTS = (() => {
   let voice = null;
+  const MAP = window.AUDIO_MAP || {};
+  const player = new Audio();
+  function fileFor(text){
+    const f = MAP[String(text).trim()];
+    return f ? 'audio/sr/' + f : null;
+  }
   function score(v){
     const lang = (v.lang || '').toLowerCase();
     const name = (v.name || '').toLowerCase() + ' ' + (v.voiceURI || '').toLowerCase();
@@ -50,20 +56,21 @@ const TTS = (() => {
     if (!v.localService) s += 5;                      // сетевые (Chrome) обычно чище
     return s;
   }
+  const hasFiles = Object.keys(MAP).length > 0;
   function pickVoice(){
     const vs = speechSynthesis.getVoices();
     voice = vs.filter(v => score(v) > 0).sort((a, b) => score(b) - score(a))[0] || null;
-    document.documentElement.classList.toggle('no-tts', !voice);
+    document.documentElement.classList.toggle('no-tts', !hasFiles && !voice);
   }
   if ('speechSynthesis' in window) {
     pickVoice();
     speechSynthesis.onvoiceschanged = pickVoice;
   } else {
-    document.documentElement.classList.add('no-tts');
+    document.documentElement.classList.toggle('no-tts', !hasFiles);
   }
   return {
     enabled: true,
-    has(){ return !!voice; },
+    has(){ return hasFiles || !!voice; },
     // диагностика: какой голос реально выбран (и из чего выбирали)
     voiceInfo(){
       const vs = ('speechSynthesis' in window) ? speechSynthesis.getVoices() : [];
@@ -73,6 +80,25 @@ const TTS = (() => {
       };
     },
     speak(text, rate = 0.88){
+      if (!this.enabled || !text) return;
+      const file = fileFor(text);
+      if (file) {
+        try {
+          try { speechSynthesis.cancel(); } catch (e2) {}
+          player.pause();
+          player.src = file;
+          // rate < 0.88 — просьба «помедленнее» (кнопка-черепаха)
+          player.playbackRate = rate < 0.88 ? 0.72 : 1;
+          if ('preservesPitch' in player) player.preservesPitch = true;
+          player.currentTime = 0;
+          player.play().catch(() => { if (voice) this.synth(text, rate); });
+          return;
+        } catch (e) { /* падаем в синтез ниже */ }
+      }
+      this.synth(text, rate);
+    },
+    // запасной путь: системный синтезатор (для текстов без записи)
+    synth(text, rate = 0.88){
       if (!voice || !this.enabled || !text) return;
       try {
         speechSynthesis.cancel();

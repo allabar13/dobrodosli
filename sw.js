@@ -19,6 +19,17 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== location.origin) return; // облако и шрифты не кэшируем
+  // Озвучка: имена файлов — хэши содержимого, файл не меняется никогда →
+  // cache-first, без повторных походов в сеть при каждом прослушивании.
+  if (url.pathname.includes('/audio/')) {
+    e.respondWith(
+      caches.match(req).then(hit => hit || fetch(req).then(res => {
+        if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+        return res;
+      }))
+    );
+    return;
+  }
   e.respondWith(
     // cache:'no-cache' — мимо HTTP-кэша браузера с ревалидацией (ETag),
     // иначе после деплоя старый JS может залипнуть надолго.
