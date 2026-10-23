@@ -140,6 +140,15 @@
     // u40
     jer:'because', zato_sto:'because (clause start)', iako:'although', ako:'if', kad:'when', dok:'while',
     umesto:'instead of', osim:'except', zato:'that’s why', mada:'although (= iako)',
+    // services, kids & school, health (2026-10)
+    zakazati:'to book / to schedule', frizer:'hairdresser', sisanje:'haircut', manikir:'manicure',
+    veterinar:'vet', ljubimac:'pet', popravka:'repair', hemijsko:'dry cleaning',
+    vrtic:'kindergarten', skola:'school', uciteljica:'teacher (f.)', cas:'lesson / class',
+    domaci_zadatak:'homework', igraliste:'playground', sin:'son', cerka:'daughter',
+    pedijatar:'pediatrician', raspust:'school holidays',
+    zubar:'dentist', zub:'tooth', boli:'it hurts', temperatura:'fever / temperature',
+    pregled:'check-up', recept_med:'prescription', plomba:'filling (tooth)', bolnica:'hospital',
+    hitna_pomoc:'ambulance',
   };
   for (const id in W) if (WORDS[id]) WORDS[id].ru = W[id];
   // подсказки-заметки к словам оставляем только там, где перевели, иначе скрываем
@@ -348,6 +357,19 @@
     'Zapravo, mentalitet ovde je topao.': ['Actually, the mentality here is warm.'],
     'Ostajem ovde jer volim ljude.': ['I’m staying here because I love the people.'],
     'Iako je teško, vredi.': ['Although it’s hard, it’s worth it.'],
+    'Mogu li da zakažem šišanje za petak?': ['Can I book a haircut for Friday?'],
+    'Koliko košta manikir?': ['How much is a manicure?'],
+    'Moj pas mora kod veterinara.': ['My dog needs to see the vet.'],
+    'Da li popravljate telefone?': ['Do you repair phones?'],
+    'Moj sin ide u vrtić.': ['My son goes to kindergarten.'],
+    'Ćerka ide u školu.': ['My daughter goes to school.'],
+    'Kad počinje čas?': ['When does the class start?'],
+    'Deca su na igralištu.': ['The kids are at the playground.'],
+    'Tražimo pedijatra koji govori engleski.': ['We’re looking for a pediatrician who speaks English.'],
+    'Boli me zub već dva dana.': ['My tooth has been hurting for two days.'],
+    'Imam temperaturu.': ['I have a fever.'],
+    'Mogu li da zakažem pregled kod zubara?': ['Can I book a dental check-up?'],
+    'Da li mi treba recept za ovo?': ['Do I need a prescription for this?'],
   };
   function walkSentences(cb){
     UNITS.forEach(u => u.lessons.forEach(l => (l.sentences || []).forEach(cb)));
@@ -410,9 +432,9 @@
     u5l1:'The starter pack', u5l2:'In the queue', u6l1:'The apartment', u6l2:'Landlord & neighbours',
     u7l1:'Password-words', u7l2:'Weather and vibes', u8l1:'To be and to understand', u8l2:'To want and to be able',
     u9l1:'Introductions', u10l1:'Tastes and hunger', u11l1:'At the shop', u12l1:'Getting there',
-    u13l1:'Booking things', u14l1:'Rooms and furniture', u15l1:'How’s the mood', u16l1:'Key verbs',
-    u17l1:'About yourself', u18l1:'Products and actions', u19l1:'Cheaper or dearer', u20l1:'On the road',
-    u21l1:'Bank and health', u22l1:'Breakdowns', u23l1:'Let’s go out', u24l1:'Was and will be',
+    u13l1:'Booking things', u13l2:'Hairdresser & services', u14l1:'Rooms and furniture', u15l1:'How’s the mood', u16l1:'Key verbs',
+    u17l1:'About yourself', u17l2:'Kids and school', u18l1:'Products and actions', u19l1:'Cheaper or dearer', u20l1:'On the road',
+    u21l1:'Bank and health', u21l2:'At the dentist', u22l1:'Breakdowns', u23l1:'Let’s go out', u24l1:'Was and will be',
     u25l1:'What people are like', u26l1:'At the restaurant', u27l1:'Haggling', u28l1:'Trouble en route',
     u29l1:'Deeper bureaucracy', u30l1:'Renting a place', u31l1:'Polite arguing', u32l1:'Trickier verbs',
     u33l1:'Experience and dreams', u34l1:'The festive table', u35l1:'Worth buying?', u36l1:'Road tales',
@@ -427,6 +449,9 @@
 
   // ── советы (tips) по заголовку ──
   const TIPS = {
+    '«Zakazati» открывает все двери': ['“Zakazati” opens every door', 'Hairdresser, dentist, vet — everything starts with “mogu li da zakažem?” (can I book?). Learn this frame and half of your everyday phone calls stop being scary.'],
+    'Дети тут — святое': ['Kids are sacred here', 'Kindergarten enrolment starts with the word “upis”. Ask “kada je upis u vrtić?” and you’ll get the full story, in detail and with pleasure: on the Balkans, children are everyone’s treasure.'],
+    'Боли? Скажи «boli me»': ['Hurts? Say “boli me”', 'The frame “boli me…” (… hurts) + a body part covers the whole doctor visit: “boli me zub”, “boli me glava”. And dentists in Serbia are so good that people travel here just for them.'],
     'Molim — слово-мультитул': ['“Molim” — the multi-tool', '“Molim” means “please”, answers the phone, and works as a polite “come again?”. Didn’t catch something? Say “Molim?” and put on Žarko’s innocent face.'],
     'Кофе — это формат времени': ['Coffee is a unit of time', 'Coffee at a kafana isn’t a drink, it’s a unit of life. A coffee meeting shorter than two hours counts as suspicious haste.'],
     'Числа закрывают 90% жизни': ['Numbers cover 90% of life', 'Prices, buses, “dva piva, molim” — numbers one to ten cover almost everything. The rest is combinatorics.'],

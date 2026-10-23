@@ -620,6 +620,41 @@ defW('u40', [
   { id:'mada',     sr:'mada',     ru:'хотя (= iako)' },
 ]);
 
+// Дополнение по UX-аудиту 2026-10: быт эмигранта — услуги, дети, здоровье
+defW('u13', [
+  { id:'zakazati',   sr:'zakazati',          ru:'записаться / назначить', note:'Рамка «mogu li da zakažem…?» открывает фризера, зубного и ветеринара разом.' },
+  { id:'frizer',     sr:'frizer',            ru:'парикмахер' },
+  { id:'sisanje',    sr:'šišanje',           ru:'стрижка' },
+  { id:'manikir',    sr:'manikir',           ru:'маникюр' },
+  { id:'veterinar',  sr:'veterinar',         ru:'ветеринар' },
+  { id:'ljubimac',   sr:'ljubimac',          ru:'питомец', note:'Полностью — «kućni ljubimac», домашний любимец. Звучит честно.' },
+  { id:'popravka',   sr:'popravka',          ru:'ремонт / починка' },
+  { id:'hemijsko',   sr:'hemijsko čišćenje', ru:'химчистка' },
+]);
+defW('u17', [
+  { id:'vrtic',          sr:'vrtić',          ru:'детский сад' },
+  { id:'skola',          sr:'škola',          ru:'школа' },
+  { id:'uciteljica',     sr:'učiteljica',     ru:'учительница' },
+  { id:'cas',            sr:'čas',            ru:'урок / занятие', note:'То же слово — «час». Контекст решает: «čas srpskog» — урок сербского.' },
+  { id:'domaci_zadatak', sr:'domaći zadatak', ru:'домашнее задание' },
+  { id:'igraliste',      sr:'igralište',      ru:'детская площадка' },
+  { id:'sin',            sr:'sin',            ru:'сын' },
+  { id:'cerka',          sr:'ćerka',          ru:'дочь' },
+  { id:'pedijatar',      sr:'pedijatar',      ru:'педиатр' },
+  { id:'raspust',        sr:'raspust',        ru:'школьные каникулы' },
+]);
+defW('u21', [
+  { id:'zubar',       sr:'zubar',       ru:'зубной врач' },
+  { id:'zub',         sr:'zub',         ru:'зуб' },
+  { id:'boli',        sr:'boli',        ru:'болит', note:'Рамка «boli me…» + что болит: «boli me zub», «boli me glava». Весь визит к врачу одной конструкцией.' },
+  { id:'temperatura', sr:'temperatura', ru:'температура' },
+  { id:'pregled',     sr:'pregled',     ru:'осмотр / приём' },
+  { id:'recept_med',  sr:'recept',      ru:'рецепт (от врача)' },
+  { id:'plomba',      sr:'plomba',      ru:'пломба' },
+  { id:'bolnica',     sr:'bolnica',     ru:'больница' },
+  { id:'hitna_pomoc', sr:'hitna pomoć', ru:'скорая помощь' },
+]);
+
 // ── Юниты и уроки ────────────────────────────────────────────────────────
 const UNITS = [
   {
@@ -859,6 +894,14 @@ const UNITS = [
           { sr:'Ovde vaš potpis, molim.', me:'Ovdje vaš potpis, molim.', ru:'Здесь ваша подпись, пожалуйста.' },
           { sr:'Treba mi kopija i pečat.', ru:'Мне нужна копия и печать.' },
         ] },
+      { id:'u13l2', title:'Фризер и услуги', words:['zakazati','frizer','sisanje','manikir','veterinar','ljubimac','popravka','hemijsko'],
+        tip:{ title:'«Zakazati» открывает все двери', text:'Фризер, зубной, ветеринар — всё начинается с «mogu li da zakažem?» (могу ли записаться). Выучи эту рамку — и половина бытовых звонков больше не страшна.' },
+        sentences: [
+          { sr:'Mogu li da zakažem šišanje za petak?', ru:'Могу записаться на стрижку на пятницу?' },
+          { sr:'Koliko košta manikir?', ru:'Сколько стоит маникюр?' },
+          { sr:'Moj pas mora kod veterinara.', ru:'Моей собаке нужно к ветеринару.' },
+          { sr:'Da li popravljate telefone?', ru:'Вы чините телефоны?' },
+        ] },
     ],
   },
   {
@@ -914,6 +957,15 @@ const UNITS = [
           { sr:'Govorim ruski i učim srpski.', me:'Govorim ruski i učim crnogorski.', ru:'Я говорю по-русски и учу сербский.' },
           { sr:'Tek sam stigla, učim jezik.', ru:'Я только приехала, учу язык.' },
         ] },
+      { id:'u17l2', title:'Деца и школа', words:['vrtic','skola','uciteljica','cas','domaci_zadatak','igraliste','sin','cerka','pedijatar','raspust'],
+        tip:{ title:'Дети тут — святое', text:'Запись в садик начинается со слова «upis». Спроси «kada je upis u vrtić?» — и тебе расскажут всё, подробно и с удовольствием: к детям на Балканах относятся как к общему достоянию.' },
+        sentences: [
+          { sr:'Moj sin ide u vrtić.', ru:'Мой сын ходит в садик.' },
+          { sr:'Ćerka ide u školu.', ru:'Дочь ходит в школу.' },
+          { sr:'Kad počinje čas?', ru:'Когда начинается занятие?' },
+          { sr:'Deca su na igralištu.', me:'Djeca su na igralištu.', ru:'Дети на площадке.' },
+          { sr:'Tražimo pedijatra koji govori engleski.', ru:'Ищем педиатра, который говорит по-английски.' },
+        ] },
     ],
   },
   {
@@ -962,6 +1014,14 @@ const UNITS = [
           { sr:'Želim da otvorim račun u banci.', ru:'Хочу открыть счёт в банке.' },
           { sr:'Treba mi lekar.', me:'Treba mi ljekar.', ru:'Мне нужен врач.' },
           { sr:'Mogu li da produžim osiguranje?', ru:'Могу ли я продлить страховку?' },
+        ] },
+      { id:'u21l2', title:'Код зубара', words:['zubar','zub','boli','temperatura','pregled','recept_med','plomba','bolnica','hitna_pomoc'],
+        tip:{ title:'Боли? Скажи «boli me»', text:'Рамка «boli me…» (у меня болит…) + часть тела — и весь визит к врачу уже не страшен: «boli me zub», «boli me glava». А зубы в Сербии лечат так хорошо, что сюда специально приезжают.' },
+        sentences: [
+          { sr:'Boli me zub već dva dana.', ru:'У меня уже два дня болит зуб.' },
+          { sr:'Imam temperaturu.', ru:'У меня температура.' },
+          { sr:'Mogu li da zakažem pregled kod zubara?', ru:'Можно записаться на осмотр к зубному?' },
+          { sr:'Da li mi treba recept za ovo?', ru:'Для этого мне нужен рецепт?' },
         ] },
     ],
   },
@@ -1214,15 +1274,22 @@ const UNITS = [
 ];
 
 // ── Уроки-закрепления ────────────────────────────────────────────────────
-// Каждому юниту с одним уроком добавляем второй — «Закрепление»: те же слова,
-// но сложнее (обратный перевод, набор, аудио, сборка предложений) и без
-// подсказок-знакомств. Первый урок знакомит, второй — заставляет вспоминать.
+// Каждый юнит завершается «Закреплением» по всем его словам: обратный
+// перевод, набор, аудио, сборка предложений — без подсказок-знакомств.
+// Первые уроки знакомят, последний — заставляет вспоминать.
+// id: у одноурочных юнитов исторический (<урок>p — прогресс тестеров жив),
+// у многоурочных — <юнит>p.
 UNITS.forEach(u => {
-  if (u.lessons.length !== 1) return;
-  const base = u.lessons[0];
+  const words = [];
+  u.lessons.forEach(l => (l.words || []).forEach(w => { if (!words.includes(w)) words.push(w); }));
+  const sentences = [];
+  u.lessons.forEach(l => (l.sentences || []).forEach(s => sentences.push(s)));
+  let grammar = null;
+  u.lessons.forEach(l => { if (l.grammar) grammar = (grammar || []).concat(l.grammar); });
   u.lessons.push({
-    id: base.id + 'p', title: 'Закрепление', practice: true,
-    words: base.words.slice(), sentences: base.sentences, grammar: base.grammar,
+    id: u.lessons.length === 1 ? u.lessons[0].id + 'p' : u.id + 'p',
+    title: 'Закрепление', practice: true,
+    words, sentences, grammar: grammar || undefined,
   });
 });
 

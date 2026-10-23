@@ -563,11 +563,33 @@ const App = (() => {
   function renderDict(){
     const u = State.U;
     const ids = Object.keys(u.words).filter(id => WORDS[id] && u.words[id].seen > 0);
+    const my = u.myWords || [];
     let html = `<div class="page"><h2>${t('Словарь')}</h2>`;
+    if (ids.length || my.length) {
+      html += `<input id="dict-q" class="type-in dict-q" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${escAttr(t('Поиск: kafa, кафа или кофе…'))}">`;
+    }
+    // «Мои слова»: услышал на улице — записал; озвучка синтезом, живут в профиле
+    html += `<h4 class="dict-unit">📝 ${t('Мои слова')}</h4>
+      <div class="card" id="my-add" style="display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;">
+        <input id="my-sr" class="type-in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${escAttr(t('Слово по-сербски'))}" style="flex:1 1 120px;min-width:0;">
+        <input id="my-ru" class="type-in" autocomplete="off" placeholder="${escAttr(t('Перевод'))}" style="flex:1 1 120px;min-width:0;">
+        <button class="btn ghost" id="my-save">${t('Добавить')}</button>
+      </div>`;
+    if (!my.length) {
+      html += `<p class="muted small" style="margin:6px 2px 14px;">${t('Услышала слово на улице или в кафане? Запиши — оно останется здесь, с озвучкой и поиском.')}</p>`;
+    } else {
+      html += my.map(w => {
+        const search = (w.sr + ' ' + TR.toCyr(w.sr) + ' ' + w.ru).toLowerCase();
+        const shown = SC() === 'cyr' ? TR.toCyr(w.sr) : w.sr;
+        return `<div class="dict-row my-row" data-my="${escAttr(w.id)}" data-say="${escAttr(w.sr)}" data-text="${escAttr(search)}">
+          <div class="dict-word"><b>${esc(shown)}</b><small>${esc(w.ru)}</small></div>
+          <div class="dict-right"><button class="my-del" title="${escAttr(t('Удалить'))}" style="background:none;border:none;color:var(--muted);font-size:16px;padding:4px 6px;cursor:pointer;">✕</button></div>
+        </div>`;
+      }).join('');
+    }
     if (!ids.length) {
       html += `<div class="card empty">${mascotSvg('happy', 80)}<p>${t('Здесь появятся выученные слова — с озвучкой и «силой» запоминания.')}</p></div>`;
     } else {
-      html += `<input id="dict-q" class="type-in dict-q" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${escAttr(t('Поиск: kafa, кафа или кофе…'))}">`;
       for (const tid of Object.keys(THEMES)) {
         const us = ids.filter(id => (unitById(WORDS[id].unit) || {}).theme === tid);
         if (!us.length) continue;
@@ -585,11 +607,29 @@ const App = (() => {
     }
     html += '</div>';
     $('#screen').innerHTML = html;
-    $$('.dict-row').forEach(row => row.onclick = () => {
+    $$('.dict-row').forEach(row => row.onclick = (e) => {
+      if (e.target.closest('.my-del')) {
+        State.U.myWords = (State.U.myWords || []).filter(x => x.id !== row.dataset.my);
+        State.save();
+        renderDict();
+        return;
+      }
+      if (row.dataset.say) { TTS.speak(row.dataset.say); return; }
       const w = WORDS[row.dataset.id];
       TTS.speak(formOf(w, V()));
       row.classList.toggle('open');
     });
+    const mySave = $('#my-save');
+    if (mySave) mySave.onclick = () => {
+      const sr = ($('#my-sr').value || '').trim();
+      const ru = ($('#my-ru').value || '').trim();
+      if (!sr) { $('#my-sr').focus(); return; }
+      State.U.myWords = State.U.myWords || [];
+      State.U.myWords.unshift({ id: 'm_' + Date.now().toString(36), sr: TR.toLat(sr), ru, ts: Date.now() });
+      State.save();
+      if (window.Track) Track.send('my_word_added');
+      renderDict();
+    };
     if ($('#dict-q')) $('#dict-q').addEventListener('input', e => {
       const q = e.target.value.trim().toLowerCase();
       $$('.dict-row').forEach(r => r.style.display = !q || r.dataset.text.includes(q) ? '' : 'none');

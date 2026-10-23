@@ -97,7 +97,9 @@ const Ex = (() => {
   // Обратный перевод, набор руками, аудио, пары и предложения — активное
   // припоминание вместо показа. Каждое слово проверяется ровно один раз.
   function buildPractice(lesson, variant){
-    const words = shuf(lesson.words.map(W).filter(Boolean));
+    // не больше 12 слов за сессию: закрепление юнита с двумя уроками
+    // иначе растягивается на 20+ заданий и утомляет
+    const words = shuf(lesson.words.map(W).filter(Boolean)).slice(0, 12);
     let typeLeft = 3, listenLeft = 3;
     const checks = words.map(w => {
       if (typeLeft > 0 && typeable(w, variant)) { typeLeft--; return { type: 'type', w }; }

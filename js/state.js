@@ -28,6 +28,7 @@ const State = (() => {
       words: {},     // wordId  → { s, seen, ok, bad, last, due }
       mistakes: {},  // wordId  → { n, ts } — блок «Ошибки»
       badges: [],
+      myWords: [],   // свои слова юзера: { id, sr, ru, ts }
       history: {},   // 'YYYY-MM-DD' → XP за день
       reviews: 0,
       flags: {},
@@ -38,6 +39,7 @@ const State = (() => {
   function migrate(u){
     if (!u) return u;
     if (!u.mistakes) u.mistakes = {};
+    if (!u.myWords) u.myWords = [];
     if (!u.flags) u.flags = {};
     if (!u.settings.theme) u.settings.theme = 'auto';
     if (!u.level) u.level = 1;
@@ -91,6 +93,10 @@ const State = (() => {
         last: (as.last || '') >= (bs.last || '') ? (as.last || null) : (bs.last || null),
         freezes: nz(as.freezes, bs.freezes),
       };
+      out.myWords = [];
+      for (const src of [a.myWords || [], b.myWords || []]) for (const w of src) {
+        if (w && w.id && !out.myWords.some(x => x.id === w.id)) out.myWords.push(w);
+      }
       out.words = {};
       for (const src of [a.words || {}, b.words || {}]) for (const id in src) {
         const c = out.words[id], w = src[id];
