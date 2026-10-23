@@ -1376,7 +1376,7 @@ const BADGES = [
   { id:'prvi',      emoji:'🐾', name:'Први корак',          desc:'Первый урок пройден. Дальше — полако.', test:u => Object.keys(u.lessons).length >= 1 },
   { id:'kafana',    emoji:'☕', name:'Кафана-сертификат',    desc:'Юнит «Кафана» пройден: кофе, ракия и счёт — база собрана.', test:u => unitDone(u, 'u2') },
   { id:'birokrata', emoji:'📋', name:'Бирократа I степени', desc:'Юнит «Папири» пройден. Морально готов(а) к МУПу.', test:u => unitDone(u, 'u5') },
-  { id:'streak3',   emoji:'🌱', name:'Три дана',            desc:'Три дня занятий — подряд не обязательно, мы не давим.', test:u => Object.keys(u.history).length >= 3 },
+  { id:'streak3',   emoji:'🌱', name:'Три дана',            desc:'Три дня занятий. Процесс пошёл.', test:u => Object.keys(u.history).length >= 3 },
   { id:'streak7',   emoji:'🐏', name:'Тврдоглав',           desc:'Семь дней занятий. «Упрямый» — тут это комплимент.', test:u => Object.keys(u.history).length >= 7 },
   { id:'streak30',  emoji:'🏛️', name:'Месец дана',          desc:'30 дней занятий. Уже не подвиг, а образ жизни.', test:u => Object.keys(u.history).length >= 30 },
   { id:'words25',   emoji:'📚', name:'25 речи',             desc:'25 слов в копилке.', test:u => knownCount(u) >= 25 },

@@ -630,7 +630,7 @@
     prvi:['First step','First lesson done. Onwards — polako.'],
     kafana:['Kafana certificate','The Kafana unit is done: coffee, rakija and the bill — survival kit assembled.'],
     birokrata:['Bureaucrat, 1st class','The Papiri unit is done. Mentally ready for the immigration office.'],
-    streak3:['Three days','Three days of practice — not necessarily in a row, we don’t push.'],
+    streak3:['Three days','Three days of practice. It’s happening.'],
     streak7:['Stubborn one','Seven days of practice. “Stubborn” is a compliment here.'],
     streak30:['A month of days','30 days of practice. Not a feat anymore — a lifestyle.'],
     words25:['25 words','25 words in the bank.'],

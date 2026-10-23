@@ -517,7 +517,7 @@ const App = (() => {
     $('#screen').innerHTML = `
       <div class="page">
         <h2>${t('Тренировка')}</h2>
-        <p class="muted">${t('Повторения подстраиваются под память, ошибки ждут разбора, карточки — для спокойной зубрёжки. Стриков нет: пропустить день — нормально, слова дождутся.')}</p>
+        <p class="muted">${t('Повторения подстраиваются под память, ошибки ждут разбора, карточки — для спокойной зубрёжки. Стриков нет: интервальная память работает без шантажа.')}</p>
 
         <div class="card review-card">
           <h3>${t('🧠 Повторение')}</h3>
@@ -576,7 +576,7 @@ const App = (() => {
         <button class="btn ghost" id="my-save">${t('Добавить')}</button>
       </div>`;
     if (!my.length) {
-      html += `<p class="muted small" style="margin:6px 2px 14px;">${t('Услышала слово на улице или в кафане? Запиши — оно останется здесь, с озвучкой и поиском.')}</p>`;
+      html += `<p class="muted small" style="margin:6px 2px 14px;">${t('Услышал(а) слово на улице или в кафане? Запиши — останется здесь, с озвучкой и поиском.')}</p>`;
     } else {
       html += my.map(w => {
         const search = (w.sr + ' ' + TR.toCyr(w.sr) + ' ' + w.ru).toLowerCase();
@@ -684,10 +684,10 @@ const App = (() => {
           <div class="stat-cell"><b>⚡ ${u.xp}</b><small>${t('всего XP')}</small></div>
           <div class="stat-cell"><b>✅ ${Object.keys(u.lessons).length}</b><small>${t('уроков пройдено')}</small></div>
           <div class="stat-cell"><b>🧠 ${u.reviews || 0}</b><small>${t('сессий повторения')}</small></div>
-          <div class="stat-cell"><b>📅 ${State.daysStudied()}</b><small>${dayWord(State.daysStudied()) + (I18N.lang === 'en' ? ' of practice — not in a row, and that’s fine' : ' занятий — не подряд, и это ок')}</small></div>
+          <div class="stat-cell"><b>📅 ${State.daysStudied()}</b><small>${dayWord(State.daysStudied()) + (I18N.lang === 'en' ? ' with Serbian' : ' с сербским')}</small></div>
           <div class="stat-cell"><b>🪜 ${u.level || 1}/5</b><small>${t('уровень')} «${esc((LEVELS[(u.level || 1) - 1] || LEVELS[0]).name)}»</small></div>
         </div>
-        <p class="muted small">${t('Здесь нет стриков и сердечек: пропустить день — нормально, ничего не сгорает. Слова дождутся, повторения перестроятся. «Полако» — это тоже методика.')}</p>
+        <p class="muted small">${t('Стриков и сердечек нет: ничего не сгорает и никто не ноет. «Полако» — это тоже методика.')}</p>
         <h4>${t('Календарь занятий · 4 недели')}</h4>
         <div class="cal">${calendarHtml(u)}</div>
         <h4>${t('Ачивки')} · ${u.badges.length}/${BADGES.length}</h4>
