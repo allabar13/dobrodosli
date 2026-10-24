@@ -295,7 +295,7 @@ const I18N = (() => {
     'Покупок не нашлось.': 'No purchases found.',
     '🎁 +10 минут на сегодня. Уживању!': '🎁 +10 minutes for today. Uživaj!',
     'Поддержать проект': 'Support the project',
-    '«Добродошли» делает один человек и один галеб. Донат — это просто «хвала», ни на что не влияет.': '“Dobrodošli” is made by one person and one seagull. A tip is just a “hvala” — it changes nothing in the app.',
+    '«Добродошли» делает один человек и один галеб. Донат — ваше «хвала» для нас: не влияет на процесс, но очень приятно!': '“Dobrodošli” is made by one person and one seagull. A tip is your “hvala” to us: it changes nothing in the app — but it feels great!',
     'Безлимит активен 💙': 'Unlimited active 💙',
     'Хвала лепо! Жарко получил бурек 🐦': 'Hvala lepo! Žarko got his burek 🐦',
     'Все пары собраны': 'All pairs matched',
