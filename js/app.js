@@ -564,12 +564,12 @@ const App = (() => {
     const u = State.U;
     const ids = Object.keys(u.words).filter(id => WORDS[id] && u.words[id].seen > 0);
     const my = u.myWords || [];
-    let html = `<div class="page"><h2>${t('Словарь')} <span class="beta-chip">${t('бета')}</span></h2>`;
+    let html = `<div class="page"><h2>${t('Словарь')}</h2>`;
     if (ids.length || my.length) {
       html += `<input id="dict-q" class="type-in dict-q" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${escAttr(t('Поиск: kafa, кафа или кофе…'))}">`;
     }
     // «Мои слова»: услышал на улице — записал; озвучка синтезом, живут в профиле
-    html += `<h4 class="dict-unit">📝 ${t('Мои слова')}</h4>
+    html += `<h4 class="dict-unit">📝 ${t('Мои слова')} <span class="beta-chip">${t('бета')}</span></h4>
       <div class="card" id="my-add" style="display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;">
         <input id="my-sr" class="type-in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${escAttr(t('Слово по-сербски'))}" style="flex:1 1 120px;min-width:0;">
         <input id="my-ru" class="type-in" autocomplete="off" placeholder="${escAttr(t('Перевод'))}" style="flex:1 1 120px;min-width:0;">
