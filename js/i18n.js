@@ -116,7 +116,7 @@ const I18N = (() => {
     '🎟 Безлимит по промокоду до': '🎟 Promo unlimited until',
     // приветственный пейволл после онбординга (iOS)
     'Делу время — потехе час!': 'Business before pleasure!',
-    '«Добродошли» — бесплатное приложение: 10 минут занятий в день не стоят ни динара, и для прогресса этого правда хватает. Но разработчики тоже хотят кушать 🙂 Хочешь заниматься без ограничений — безлимит навсегда одной покупкой. Никаких подписок и скрытых платежей.': 'Dobrodošli is a free app: 10 minutes of practice a day costs nothing, and it’s genuinely enough to make progress. But the developers need to eat too 🙂 Want no limits — unlimited forever with a single purchase. No subscriptions, no hidden fees.',
+    '«Добродошли» — бесплатное приложение: 10 минут занятий в день не стоят ни динара, и для прогресса этого правда хватает. Но разработчики тоже хотят кушать. Хочешь заниматься без ограничений — безлимит навсегда одной покупкой. Никаких подписок и скрытых платежей.': 'Dobrodošli is a free app: 10 minutes of practice a day costs nothing, and it’s genuinely enough to make progress. But the developers need to eat too. Want no limits — unlimited forever with a single purchase. No subscriptions, no hidden fees.',
     'Учиться 10 минут в день бесплатно': 'Learn free, 10 minutes a day',
     // пре-пермишен пушей (iOS)
     '🔔 Жарко будет напоминать?': '🔔 Want Žarko to remind you?',
@@ -142,6 +142,7 @@ const I18N = (() => {
     'Тренировка': 'Practice',
     'Словарь': 'Dictionary',
     'Мои слова': 'My words',
+    'Слов отсюда пока нет. Полако — дойдём.': 'No words from here yet. Polako — we\u2019ll get there.',
     'Слово по-сербски': 'Word in Serbian',
     'Перевод': 'Translation',
     'Добавить': 'Add',

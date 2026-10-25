@@ -590,10 +590,19 @@ const App = (() => {
     if (!ids.length) {
       html += `<div class="card empty">${mascotSvg('happy', 80)}<p>${t('Здесь появятся выученные слова — с озвучкой и «силой» запоминания.')}</p></div>`;
     } else {
+      // все темы сразу: с выученными словами — сворачиваемые, пустые — честно пустые
       for (const tid of Object.keys(THEMES)) {
         const us = ids.filter(id => (unitById(WORDS[id].unit) || {}).theme === tid);
-        if (!us.length) continue;
-        html += `<h4 class="dict-unit">${THEMES[tid].emoji} ${esc(THEMES[tid].name)}</h4>`;
+        const open = !!dictOpen[tid];
+        if (!us.length) {
+          html += `<h4 class="dict-unit dict-empty">${THEMES[tid].emoji} ${esc(THEMES[tid].name)}</h4>
+            <p class="muted small dict-none">${t('Слов отсюда пока нет. Полако — дойдём.')}</p>`;
+          continue;
+        }
+        html += `<h4 class="dict-unit dict-toggle${open ? ' open' : ''}" data-th="${tid}" role="button" tabindex="0">
+          <span class="dict-chev">${open ? '▾' : '▸'}</span> ${THEMES[tid].emoji} ${esc(THEMES[tid].name)}
+          <span class="dict-count">${us.length}</span></h4>`;
+        html += `<div class="dict-body" data-thbody="${tid}"${open ? '' : ' hidden'}>`;
         html += us.map(id => {
           const w = WORDS[id], r = u.words[id];
           const due = r.due <= Date.now();
@@ -603,6 +612,7 @@ const App = (() => {
             <div class="dict-right">${due ? `<span title="${escAttr(t('пора повторить'))}">⏰</span>` : ''}<span class="strength">${'●'.repeat(r.s)}${'○'.repeat(5 - r.s)}</span></div>
           </div>`;
         }).join('');
+        html += `</div>`;
       }
     }
     html += '</div>';
@@ -619,22 +629,63 @@ const App = (() => {
       TTS.speak(formOf(w, V()));
       row.classList.toggle('open');
     });
+    $$('.dict-toggle').forEach(h => h.onclick = () => {
+      const tid = h.dataset.th;
+      dictOpen[tid] = !dictOpen[tid];
+      const body = document.querySelector(`[data-thbody="${tid}"]`);
+      if (body) body.hidden = !dictOpen[tid];
+      h.classList.toggle('open', !!dictOpen[tid]);
+      const chev = h.querySelector('.dict-chev');
+      if (chev) chev.textContent = dictOpen[tid] ? '▾' : '▸';
+    });
     const mySave = $('#my-save');
     if (mySave) mySave.onclick = () => {
       const sr = ($('#my-sr').value || '').trim();
       const ru = ($('#my-ru').value || '').trim();
       if (!sr) { $('#my-sr').focus(); return; }
       State.U.myWords = State.U.myWords || [];
-      State.U.myWords.unshift({ id: 'm_' + Date.now().toString(36), sr: TR.toLat(sr), ru, ts: Date.now() });
+      const entry = { id: 'm_' + Date.now().toString(36), sr: TR.toLat(sr), ru, ts: Date.now() };
+      State.U.myWords.unshift(entry);
       State.save();
       if (window.Track) Track.send('my_word_added');
       renderDict();
+      // перевода нет — подставим сами: сначала ищем в словаре курса, потом онлайн
+      if (!ru) autoTranslate(entry.sr).then(tr => {
+        if (!tr) return;
+        const w = (State.U.myWords || []).find(x => x.id === entry.id);
+        if (!w || w.ru) return;
+        w.ru = tr;
+        State.save();
+        if (document.querySelector('#my-add')) renderDict();
+      });
     };
     if ($('#dict-q')) $('#dict-q').addEventListener('input', e => {
       const q = e.target.value.trim().toLowerCase();
       $$('.dict-row').forEach(r => r.style.display = !q || r.dataset.text.includes(q) ? '' : 'none');
       $$('.dict-unit').forEach(h => h.style.display = q ? 'none' : '');
+      $$('.dict-none').forEach(p => p.style.display = q ? 'none' : '');
+      // при поиске раскрываем все темы, чтобы совпадения были видны
+      $$('.dict-body').forEach(b => { if (q) b.hidden = false; else { const tid = b.dataset.thbody; b.hidden = !dictOpen[tid]; } });
     });
+  }
+  // карта «раскрыта ли тема» живёт в сессии
+  const dictOpen = {};
+  // автоперевод для «Моих слов»: словарь курса → бесплатный онлайн-словарь
+  async function autoTranslate(sr){
+    const n = TR.norm(sr);
+    for (const id in WORDS) {
+      const w = WORDS[id];
+      if (TR.norm(w.sr) === n || (w.me && TR.norm(w.me) === n)) return w.ru;
+    }
+    try {
+      const lang = (window.I18N && I18N.lang === 'en') ? 'en' : 'ru';
+      const r = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(sr) + '&langpair=sr|' + lang);
+      const d = await r.json();
+      const tr = (d && d.responseData && d.responseData.translatedText || '').trim();
+      // иногда сервис возвращает исходное слово или мусор — такое не подставляем
+      if (!tr || TR.norm(tr) === n || tr.length > 60) return '';
+      return tr.toLowerCase();
+    } catch (e) { return ''; }
   }
 
   // ── профиль и настройки ──

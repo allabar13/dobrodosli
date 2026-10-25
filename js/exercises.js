@@ -411,7 +411,7 @@ const Ex = (() => {
     const left = shuf(ws.map(w => ({ id: w.id, t: disp(formOf(w, ctx.variant), ctx.script) })));
     const right = shuf(ws.map(w => ({ id: w.id, t: w.ru })));
     item._miss = {};
-    let selL = null, selR = null, done = 0;
+    let selL = null, selR = null, done = 0, fails = 0;
     // одна grid-сетка с явными рядами: карточки пары всегда строго напротив
     // и одинаковой высоты, даже если текст в одной из них длиннее
     ctx.area.innerHTML = `
@@ -447,6 +447,13 @@ const Ex = (() => {
           const a = selL, b = selR;
           selL = selR = null;
           setTimeout(() => { a.classList.remove('sel', 'bad'); b.classList.remove('sel', 'bad'); }, 450);
+          fails++;
+          // три промаха — хватит мучиться: раскрываем оставшиеся пары,
+          // промахнувшиеся слова уже записаны в «Ошибки»
+          if (fails >= 3 && done < ws.length) {
+            ctx.area.querySelectorAll('.pair').forEach(b2 => { b2.classList.add('done'); b2.onclick = null; });
+            setTimeout(() => ctx.onAutoDone({ ok: false, misses: item._miss, correct: t('Все пары собраны') }), 600);
+          }
         }
       }
     }

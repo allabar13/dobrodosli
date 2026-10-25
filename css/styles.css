@@ -471,3 +471,10 @@ html.no-tts .spk{ display:none; }
   .big-term{ font-size:24px; }
   .flash{ height:270px; }
 }
+
+/* словарь: сворачиваемые темы (UX-правки 2026-10-25) */
+.dict-toggle{cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none;}
+.dict-toggle .dict-chev{color:var(--muted);font-size:13px;width:14px;}
+.dict-toggle .dict-count{margin-left:auto;color:var(--muted);font-size:13px;font-weight:700;background:var(--card);border:1.5px solid var(--line);border-radius:99px;padding:1px 10px;}
+.dict-empty{opacity:.55;}
+.dict-none{margin:0 2px 14px;}
