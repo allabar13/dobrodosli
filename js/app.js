@@ -564,7 +564,7 @@ const App = (() => {
     const u = State.U;
     const ids = Object.keys(u.words).filter(id => WORDS[id] && u.words[id].seen > 0);
     const my = u.myWords || [];
-    let html = `<div class="page"><h2>${t('Словарь')}</h2>`;
+    let html = `<div class="page"><h2>${t('Словарь')} <span class="beta-chip">${t('бета')}</span></h2>`;
     if (ids.length || my.length) {
       html += `<input id="dict-q" class="type-in dict-q" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${escAttr(t('Поиск: kafa, кафа или кофе…'))}">`;
     }
@@ -649,12 +649,14 @@ const App = (() => {
       State.save();
       if (window.Track) Track.send('my_word_added');
       renderDict();
-      // перевода нет — подставим сами: сначала ищем в словаре курса, потом онлайн
-      if (!ru) autoTranslate(entry.sr).then(tr => {
-        if (!tr) return;
+      // перевода нет — подставим сами; а если ввели русское слово,
+      // найдём сербское и поменяем их местами
+      if (!ru) autoResolve(entry.sr, sr).then(res => {
+        if (!res) return;
         const w = (State.U.myWords || []).find(x => x.id === entry.id);
         if (!w || w.ru) return;
-        w.ru = tr;
+        if (res.sr) w.sr = res.sr;
+        w.ru = res.ru || w.ru;
         State.save();
         if (document.querySelector('#my-add')) renderDict();
       });
@@ -670,21 +672,65 @@ const App = (() => {
   }
   // карта «раскрыта ли тема» живёт в сессии
   const dictOpen = {};
-  // автоперевод для «Моих слов»: словарь курса → бесплатный онлайн-словарь
-  async function autoTranslate(sr){
+  // автоперевод для «Моих слов»: словарь курса → онлайн-перевод.
+  // raw — ввод юзера как есть: если это русское слово, ищем сербское в обратную
+  // сторону и возвращаем {sr, ru}; иначе только {ru}.
+  async function autoResolve(sr, raw){
     const n = TR.norm(sr);
+    // 1. слово курса по сербской стороне
     for (const id in WORDS) {
       const w = WORDS[id];
-      if (TR.norm(w.sr) === n || (w.me && TR.norm(w.me) === n)) return w.ru;
+      if (TR.norm(w.sr) === n || (w.me && TR.norm(w.me) === n)) return { ru: w.ru };
     }
+    // 2. слово курса по русской стороне (вдруг ввели перевод)
+    const rawL = (raw || '').trim().toLowerCase();
+    if (rawL) for (const id in WORDS) {
+      const w = WORDS[id];
+      const parts = String(w.ru).toLowerCase().split(/[,\/;]| — /).map(x => x.trim());
+      if (parts.includes(rawL)) return { sr: w.sr, ru: rawL };
+    }
+    const ru = await autoTranslate(sr, n);
+    if (ru) return { ru };
+    // 3. перевода нет — возможно, ввели русское слово: ищем сербское
+    if (/[а-яё]/i.test(raw) ) {
+      try {
+        const lang = (window.I18N && I18N.lang === 'en') ? 'en' : 'ru';
+        const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + lang + '&tl=sr&dt=t&q=' + encodeURIComponent(raw));
+        const d = await r.json();
+        let srv = (d && d[0] && d[0][0] && d[0][0][0] || '').trim();
+        if (srv) srv = TR.toLat(srv).toLowerCase();
+        if (srv && srv.length <= 60 && TR.norm(srv) !== n && /[a-zčćšžđ]/.test(srv)) {
+          return { sr: srv, ru: rawL };
+        }
+      } catch (e) { /* ничего */ }
+    }
+    return null;
+  }
+  async function autoTranslate(sr, n){
+    const lang = (window.I18N && I18N.lang === 'en') ? 'en' : 'ru';
+    // транслит и прочий мусор переводом не считаем
+    const RU2LAT = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'jo',ж:'z',з:'z',и:'i',й:'j',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'c',ч:'c',џ:'dz',ш:'s',щ:'s',ъ:'',ы:'i',ь:'',э:'e',ю:'ju',я:'ja' };
+    const skel = s => s.toLowerCase().split('').map(c => RU2LAT[c] !== undefined ? RU2LAT[c] : c).join('').replace(/[^a-z]/g, '');
+    const nskel = skel(TR.norm(sr));
+    const sane = tr => {
+      tr = (tr || '').trim();
+      if (!tr || tr.length > 60) return '';
+      if (TR.norm(tr) === n) return '';                      // то же слово в любом алфавите
+      if (skel(tr) === nskel) return '';                     // русский транслит исходника
+      if (lang === 'ru' && !/[а-яё]/i.test(tr)) return '';   // перевод на русский обязан быть кириллицей
+      if (lang === 'en' && /[а-яё]/i.test(tr)) return '';
+      return tr.toLowerCase();
+    };
     try {
-      const lang = (window.I18N && I18N.lang === 'en') ? 'en' : 'ru';
+      const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=sr&tl=' + lang + '&dt=t&q=' + encodeURIComponent(sr));
+      const d = await r.json();
+      const tr = sane(d && d[0] && d[0][0] && d[0][0][0]);
+      if (tr) return tr;
+    } catch (e) { /* падаем на запасной сервис */ }
+    try {
       const r = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(sr) + '&langpair=sr|' + lang);
       const d = await r.json();
-      const tr = (d && d.responseData && d.responseData.translatedText || '').trim();
-      // иногда сервис возвращает исходное слово или мусор — такое не подставляем
-      if (!tr || TR.norm(tr) === n || tr.length > 60) return '';
-      return tr.toLowerCase();
+      return sane(d && d.responseData && d.responseData.translatedText);
     } catch (e) { return ''; }
   }
 

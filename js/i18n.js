@@ -141,6 +141,7 @@ const I18N = (() => {
     'Путь': 'Path',
     'Тренировка': 'Practice',
     'Словарь': 'Dictionary',
+    'бета': 'beta',
     'Мои слова': 'My words',
     'Слов отсюда пока нет. Полако — дойдём.': 'No words from here yet. Polako — we\u2019ll get there.',
     'Слово по-сербски': 'Word in Serbian',
