@@ -401,26 +401,22 @@ const App = (() => {
     applyTheme();
     selectTab('path');
   }
-  // позиции вкладок: путь возвращается туда, где юзер был, — без прыжков
-  const tabScroll = {};
   try { history.scrollRestoration = 'manual'; } catch (e) {}
   function selectTab(t){
-    if (tab) tabScroll[tab] = window.scrollY;
     tab = t;
     renderTopbar();
     ({ path: renderPath, review: renderReview, dict: renderDict, profile: renderProfile })[t]();
     updateTabbar();
     $('#screen').scrollTop = 0;
-    // позиционирование без «рваной» прокрутки: либо возвращаем юзера туда,
-    // где он был, либо приводим к «красивому моменту» — текущая звезда-урок
-    // в верхней трети экрана, ряд целиком, ничего не обрезано краем
-    let deferred = false;
-    if (t === 'path' && tabScroll.path == null) {
-      deferred = true;
-      let applied = 0;
+    // путь всегда открывается на «красивом моменте»: текущая звезда-урок
+    // примерно по центру экрана, ряд целиком, ничего не обрезано краем
+    if (t === 'path') {
       const spot = () => {
         const now = document.querySelector('.node-row.now');
-        if (now) return now.getBoundingClientRect().top + window.scrollY - Math.round(window.innerHeight * 0.3);
+        if (now) {
+          const r = now.getBoundingClientRect();
+          return r.top + window.scrollY + r.height / 2 - Math.round(window.innerHeight * 0.44);
+        }
         const cur = document.querySelector('.level-banner.cur');
         if (cur) return cur.getBoundingClientRect().top + window.scrollY - 68;
         return 0;
@@ -429,13 +425,14 @@ const App = (() => {
       const cancel = () => { cancelled = true; };
       ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev =>
         window.addEventListener(ev, cancel, { once: true, passive: true }));
-      const apply = () => { if (cancelled || tab !== 'path') return; applied = Math.max(0, spot()); window.scrollTo(0, applied); };
+      const apply = () => { if (cancelled || tab !== 'path') return; window.scrollTo(0, Math.max(0, spot())); };
       // первый кадр + пара тихих повторов: браузер и догрузка шрифта любят
       // сдвинуть позицию после нас; первый же жест юзера всё отменяет
       requestAnimationFrame(apply);
       [120, 350, 800].forEach(ms => setTimeout(apply, ms));
+    } else {
+      window.scrollTo(0, 0);
     }
-    if (!deferred) window.scrollTo(0, t === 'path' ? tabScroll.path : 0);
   }
 
   function renderTopbar(){

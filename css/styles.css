@@ -479,3 +479,14 @@ html.no-tts .spk{ display:none; }
 .dict-empty{opacity:.55;}
 .dict-none{margin:0 2px 14px;}
 .beta-chip{display:inline-block;vertical-align:middle;margin-left:6px;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--primary,#1899C2);background:color-mix(in srgb, var(--primary,#1899C2) 12%, transparent);border:1.5px solid color-mix(in srgb, var(--primary,#1899C2) 35%, transparent);}
+
+/* путь: мягкая подсветка доступных уроков (UX-правка 2026-10-26) */
+@keyframes node-breathe{
+  0%,100%{ box-shadow:0 0 0 0 rgba(226,112,79,.45); }
+  50%{ box-shadow:0 0 0 12px rgba(226,112,79,0); }
+}
+.node.open{ animation:node-breathe 2.2s ease-in-out infinite; }
+.node-row.now .node.open{ animation-duration:1.6s; }
+@media (prefers-reduced-motion: reduce){
+  .node.open{ animation:none; }
+}
