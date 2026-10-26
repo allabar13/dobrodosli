@@ -143,6 +143,7 @@ const I18N = (() => {
     'Словарь': 'Dictionary',
     'бета': 'beta',
     'Мои слова': 'My words',
+    '☁️ Готово! Ты в облаке — прогресс синхронизируется между устройствами.': '☁️ Done! You\u2019re in the cloud — progress syncs across devices.',
     'Удалить аккаунт и данные': 'Delete account & data',
     'Удалить аккаунт?': 'Delete account?',
     'Аккаунт и облачные данные будут удалены насовсем. Локальный прогресс на этом устройстве останется — без облака.': 'Your account and cloud data will be deleted for good. Local progress on this device stays — without the cloud.',
