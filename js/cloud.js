@@ -77,6 +77,18 @@ const Cloud = (() => {
       localStorage.removeItem(LINK_KEY);
       return id;
     },
+    // полное удаление аккаунта: серверная функция стирает прогресс и запись
+    // в системе входа (требование App Store 5.1.1: удаление — из приложения)
+    async deleteAccount(){
+      if (!sb || !authUser) return { ok: false };
+      try {
+        const { error } = await sb.rpc('delete_my_account');
+        if (error) return { ok: false, error };
+        try { await sb.auth.signOut(); } catch (e) {}
+        authUser = null;
+        return { ok: true };
+      } catch (e) { return { ok: false, error: e }; }
+    },
     async signOut(){
       try { await sb.auth.signOut(); } catch (e) {}
       authUser = null;

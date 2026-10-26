@@ -143,6 +143,13 @@ const I18N = (() => {
     'Словарь': 'Dictionary',
     'бета': 'beta',
     'Мои слова': 'My words',
+    'Удалить аккаунт и данные': 'Delete account & data',
+    'Удалить аккаунт?': 'Delete account?',
+    'Аккаунт и облачные данные будут удалены насовсем. Локальный прогресс на этом устройстве останется — без облака.': 'Your account and cloud data will be deleted for good. Local progress on this device stays — without the cloud.',
+    'Остаться': 'Keep it',
+    'Аккаунт удалён. Збогом — и добродошли обратно в любой момент.': 'Account deleted. Zbogom — and dobrodošli back any time.',
+    'Не получилось удалить. Проверь интернет и попробуй ещё раз.': 'Couldn\u2019t delete. Check your connection and try again.',
+
     'Слов отсюда пока нет. Полако — дойдём.': 'No words from here yet. Polako — we\u2019ll get there.',
     'Слово по-сербски': 'Word in Serbian',
     'Перевод': 'Translation',

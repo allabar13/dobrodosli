@@ -749,7 +749,8 @@ const App = (() => {
     if (Cloud.active() && Cloud.user() && State.U.cloudId === Cloud.user().id) {
       return `<p>${t('☁️ Вход через Google:')} <b>${esc(Cloud.email() || '')}</b></p>
         <p class="muted small">${t('Прогресс синхронизируется автоматически. Паролей нет, почта живёт только в системе входа — в данных прогресса её нет.')}</p>
-        <button class="btn ghost" id="cl-out">${t('Выйти из облака на этом устройстве')}</button>`;
+        <button class="btn ghost" id="cl-out">${t('Выйти из облака на этом устройстве')}</button>
+        <button class="btn ghost danger" id="cl-del">${t('Удалить аккаунт и данные')}</button>`;
     }
     if (Cloud.active() && Cloud.canOAuth()) {
       return `<p>${t('Привяжи профиль к Google — прогресс уедет в облако и будет доступен с любого устройства.')}</p>
@@ -863,6 +864,25 @@ const App = (() => {
     // облако: привязка текущего профиля через Google (вернёмся сюда после редиректа)
     if ($('#cl-google')) $('#cl-google').onclick = () => googleSignIn(State.U.id);
     if ($('#cl-out')) $('#cl-out').onclick = async () => { await Cloud.flush(); await Cloud.signOut(); toast(t('Вышли из облака на этом устройстве. Профиль и прогресс остались.')); renderProfile(); };
+    // удаление аккаунта: подтверждение → серверное удаление → локальный профиль остаётся
+    if ($('#cl-del')) $('#cl-del').onclick = () => {
+      const m = modal(`<h3>${t('Удалить аккаунт?')}</h3>
+        <p>${t('Аккаунт и облачные данные будут удалены насовсем. Локальный прогресс на этом устройстве останется — без облака.')}</p>
+        <div class="row-btns"><button class="btn ghost" id="m-no">${t('Остаться')}</button>
+        <button class="btn danger" id="m-yes">${t('Удалить')}</button></div>`);
+      m.querySelector('#m-no').onclick = () => m.remove();
+      m.querySelector('#m-yes').onclick = async () => {
+        m.remove();
+        const res = await Cloud.deleteAccount();
+        if (res.ok) {
+          if (State.U) { State.U.cloudId = null; State.save(); }
+          toast(t('Аккаунт удалён. Збогом — и добродошли обратно в любой момент.'));
+        } else {
+          toast(t('Не получилось удалить. Проверь интернет и попробуй ещё раз.'));
+        }
+        renderProfile();
+      };
+    };
   }
 
   // ── проигрыватель урока ──
