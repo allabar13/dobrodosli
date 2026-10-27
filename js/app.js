@@ -71,6 +71,7 @@ const App = (() => {
     applyVariant();
     applyTheme();
     if (window.Track) Track.sendDaily('app_open');
+    loadRemoteFacts(); // фоном; уроки собираются позже — успеет
     // облаку даём 2.5 секунды: без сети (или на медленной) стартуем локально,
     // а когда облако очнётся — тихо доподключаемся фоном
     const cloudReady = Cloud.init();
@@ -92,6 +93,38 @@ const App = (() => {
     }
     if (State.U) return showApp();
     showGate();
+  }
+
+  // Балканские факты из админки (таблица facts): вординг правится онлайн,
+  // без выкатки обновления. Кэш 6 часов; вшитый список — фолбэк без сети.
+  async function loadRemoteFacts(){
+    const cfg = window.DOBRODOSLI_SUPABASE;
+    if (!cfg || !cfg.url || typeof FACTS === 'undefined') return;
+    const lang = (typeof I18N !== 'undefined' && I18N.lang === 'en') ? 'en' : 'ru';
+    const KEY = 'dobrodosli_facts_v1';
+    const apply = rows => {
+      if (!Array.isArray(rows) || !rows.length) return;
+      FACTS.length = 0;
+      rows.forEach(r => { if (r.title && r.body) FACTS.push({ t: r.title, x: r.body }); });
+    };
+    try {
+      const c = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (c && c.lang === lang) {
+        apply(c.rows);
+        if (Date.now() - c.ts < 6 * 3600000) return; // кэш свежий — сеть не дёргаем
+      }
+    } catch (e) {}
+    try {
+      const res = await fetch(cfg.url + '/rest/v1/facts?active=eq.true&lang=eq.' + lang + '&select=title,body&order=sort,id', {
+        headers: { apikey: cfg.key, Authorization: 'Bearer ' + cfg.key },
+      });
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length) {
+        localStorage.setItem(KEY, JSON.stringify({ ts: Date.now(), lang, rows }));
+        apply(rows);
+      }
+    } catch (e) { /* без сети живём на вшитом списке */ }
   }
 
   // надёжная синхронизация: при сворачивании — дослать, при возврате — подтянуть

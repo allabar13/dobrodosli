@@ -599,6 +599,18 @@
     { t:'A hundred bakeries', x:'The pekara is the main institution after the kafana. Burek with yoghurt for breakfast isn’t food — it’s a worldview.' },
     { t:'Summer to winter', x:'In Montenegro you can swim in the sea in the morning and have a snowball fight on Durmitor by noon — the seasons are an hour’s drive apart.' },
     { t:'Whose ćevapi?', x:'Every Balkan nation claims ćevapi as its own. It’s the region’s tastiest argument — and the only one settled by ordering more.' },
+    { t:'Ajvar season', x:'In September Balkan courtyards smell of roasted peppers: families jar ajvar for the whole year. Every family has its own recipe, and it’s the correct one.' },
+    { t:'Gde si?', x:'“Gde si?” isn’t really “where are you?” — it’s “hey, good to see you”. No coordinates needed: smile and ask the same back.' },
+    { t:'Promaja', x:'The Balkans’ greatest enemy is promaja, the draught. Windows close against it in a heatwave; kafa cures it. Don’t argue — promaja predates science.' },
+    { t:'Older than the pyramids', x:'The Vinča culture near Belgrade is one of Europe’s oldest settlements — over seven thousand years old. People enjoyed life by these two rivers long before it was trendy.' },
+    { t:'Tara Canyon', x:'The Tara river canyon in Montenegro runs up to 1,300 metres deep — only the Grand Canyon goes deeper. Rafting the “tear of Europe” is the local way to do polako in reverse.' },
+    { t:'Boka is not a fjord', x:'The Bay of Kotor is called Europe’s southernmost “fjord”. Geographers grumble it’s a drowned river canyon. The beauty doesn’t care.' },
+    { t:'Tesla everywhere', x:'Nikola Tesla is on the dinar notes, in the name of Belgrade’s airport and in every Serbian heart. Arguing over whose Tesla he is — a separate Balkan sport.' },
+    { t:'Slava', x:'Slava is the Serbian family feast of the household patron saint, on the UNESCO list. Guests are fed so well that leaving hungry is technically impossible.' },
+    { t:'The kafana never rushes you', x:'You can sit in a kafana for three hours over one kafa — the bill won’t come until you ask. Rushing a guest is simply bad manners here.' },
+    { t:'The elder olive', x:'Stara Maslina in Bar is over two thousand years old — one of Europe’s oldest olive trees. It outlived empires and still bears olives. Polako works.' },
+    { t:'Four for the price of one', x:'Serbian, Montenegrin, Croatian and Bosnian are mutually intelligible. Learn one — greet people in four countries. Only burek is a better deal.' },
+    { t:'The “?” kafana', x:'Belgrade’s oldest kafana is called “?” — Znak pitanja. Two hundred years and still no proper name. Even better: the question stands, the answer is kafa.' },
   );
   PRAISE.length = 0;
   PRAISE.push(

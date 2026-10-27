@@ -293,3 +293,7 @@ begin
 end $$;
 revoke all on function admin_overview() from public;
 grant execute on function admin_overview() to authenticated;
+
+-- ── Балканские факты ──
+-- Таблица facts и стартовый набор живут в отдельном файле supabase-facts.sql
+-- (24 факта × RU/EN; правятся в админке, приложение кэширует на 6 часов).

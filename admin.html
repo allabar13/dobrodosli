@@ -212,6 +212,18 @@
       </div>
 
       <div class="panel">
+        <h3>🪶 Балканские факты <span class="muted-note">(показываются в уроках; приложения подтянут правки в течение ~6 часов)</span></h3>
+        <div class="inrow">
+          <select id="fa-lang"><option value="ru">RU</option><option value="en">EN</option></select>
+          <input id="fa-title" placeholder="заголовок (до 80)" maxlength="80" style="flex:2;min-width:160px;">
+          <input id="fa-body" placeholder="текст (до 300)" maxlength="300" style="flex:3;min-width:220px;">
+          <button class="abtn" id="fa-create">Добавить</button>
+        </div>
+        <p class="muted-note" id="fa-msg"></p>
+        <table class="adm" id="fa-table"></table>
+      </div>
+
+      <div class="panel">
         <h3>🪜 Облачные юзеры по уровням</h3>
         ${lvls}
         <div class="kpi-grid" style="margin-top:12px;">
@@ -230,7 +242,72 @@
     $('#pc-create').onclick = createPromo;
     $('#gr-create').onclick = createGrant;
     $('#pt-create').onclick = createPushText;
-    loadPromos(); loadGrants(); loadFeedback(); loadPushTexts();
+    $('#fa-create').onclick = createFact;
+    loadPromos(); loadGrants(); loadFeedback(); loadPushTexts(); loadFacts();
+  }
+
+  // ── Балканские факты: правка вординга онлайн, без релиза приложения ──
+  let factEditId = null;
+  async function loadFacts(){
+    const { data, error } = await sb.from('facts').select('*').order('lang').order('sort').order('id');
+    if (error || !data) { $('#fa-msg').innerHTML = error ? `<span class="err">Таблица facts не найдена — запусти supabase-facts.sql.</span>` : ''; return; }
+    $('#fa-table').innerHTML = '<tr><th>Язык</th><th>Заголовок</th><th>Текст</th><th style="width:190px;"></th></tr>' +
+      data.map(r => factEditId === r.id
+        ? `<tr>
+            <td>${r.lang.toUpperCase()}</td>
+            <td><input data-fet="${esc(r.id)}" value="${esc(r.title)}" maxlength="80" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:2px solid var(--primary);"></td>
+            <td><textarea data-feb="${esc(r.id)}" maxlength="300" rows="3" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:2px solid var(--primary);">${esc(r.body)}</textarea></td>
+            <td style="white-space:nowrap;">
+              <button class="reload" data-fsave="${esc(r.id)}">💾 сохранить</button>
+              <button class="reload" data-fcancel="1">отмена</button></td></tr>`
+        : `<tr style="${r.active ? '' : 'opacity:.45;'}">
+            <td>${r.lang.toUpperCase()}</td>
+            <td><b>${esc(r.title)}</b></td>
+            <td class="muted-note" style="max-width:380px;">${esc(r.body)}</td>
+            <td style="white-space:nowrap;">
+              <button class="reload" data-fedit="${esc(r.id)}">✏️</button>
+              ${r.active
+                ? `<button class="reload" data-foff="${esc(r.id)}" title="скрыть из приложения">выкл</button>`
+                : `<button class="reload" data-fon="${esc(r.id)}">вкл</button>`}
+              <button class="reload" data-fdel="${esc(r.id)}" title="удалить насовсем">🗑</button></td></tr>`).join('');
+    document.querySelectorAll('[data-fedit]').forEach(b => b.onclick = () => { factEditId = b.dataset.fedit; loadFacts(); });
+    document.querySelectorAll('[data-fcancel]').forEach(b => b.onclick = () => { factEditId = null; loadFacts(); });
+    document.querySelectorAll('[data-fsave]').forEach(b => b.onclick = async () => {
+      const id = b.dataset.fsave;
+      const title = document.querySelector(`[data-fet="${CSS.escape(id)}"]`).value.trim();
+      const body = document.querySelector(`[data-feb="${CSS.escape(id)}"]`).value.trim();
+      if (!title || !body) return;
+      const { error: e } = await sb.from('facts').update({ title, body }).eq('id', id);
+      $('#fa-msg').innerHTML = e ? `<span class="err">${esc(e.message)}</span>` : '<span class="ok-msg">Сохранено. Приложения подтянут в течение ~6 часов.</span>';
+      if (!e) factEditId = null;
+      loadFacts();
+    });
+    document.querySelectorAll('[data-foff]').forEach(b => b.onclick = async () => {
+      await sb.from('facts').update({ active: false }).eq('id', b.dataset.foff); loadFacts();
+    });
+    document.querySelectorAll('[data-fon]').forEach(b => b.onclick = async () => {
+      await sb.from('facts').update({ active: true }).eq('id', b.dataset.fon); loadFacts();
+    });
+    document.querySelectorAll('[data-fdel]').forEach(b => b.onclick = async () => {
+      if (!confirm('Удалить факт насовсем? Если хочешь просто скрыть — лучше «выкл».')) return;
+      await sb.from('facts').delete().eq('id', b.dataset.fdel); loadFacts();
+    });
+  }
+
+  async function createFact(){
+    const row = {
+      id: 'x-' + Date.now().toString(36),
+      lang: $('#fa-lang').value,
+      title: $('#fa-title').value.trim(),
+      body: $('#fa-body').value.trim(),
+      sort: 500, // добавленные руками — после стартового набора
+    };
+    if (!row.title) { $('#fa-title').focus(); return; }
+    if (!row.body) { $('#fa-body').focus(); return; }
+    const { error } = await sb.from('facts').insert(row);
+    $('#fa-msg').innerHTML = error ? `<span class="err">${esc(error.message)}</span>`
+      : '<span class="ok-msg">Добавлено. Приложения подтянут в течение ~6 часов.</span>';
+    if (!error) { $('#fa-title').value = ''; $('#fa-body').value = ''; loadFacts(); }
   }
 
   async function loadFeedback(){
