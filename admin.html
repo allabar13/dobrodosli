@@ -71,6 +71,9 @@
   const cfg = window.DOBRODOSLI_SUPABASE;
   if (!cfg || !cfg.url) { $('#hint').textContent = 'Облако не настроено (js/config.js).'; return; }
   const sb = window.supabase.createClient(cfg.url, cfg.key);
+  // объявлено ДО первого await: при живой сессии init выходит ранним return,
+  // и let ниже по файлу остался бы в TDZ — loadFacts падал бы молча
+  let factEditId = null;
 
   const FUNNEL = [
     ['app_open', 'Открыли приложение'],
@@ -247,10 +250,20 @@
   }
 
   // ── Балканские факты: правка вординга онлайн, без релиза приложения ──
-  let factEditId = null;
   async function loadFacts(){
-    const { data, error } = await sb.from('facts').select('*').order('lang').order('sort').order('id');
-    if (error || !data) { $('#fa-msg').innerHTML = error ? `<span class="err">Таблица facts не найдена — запусти supabase-facts.sql.</span>` : ''; return; }
+    let data, error;
+    try {
+      ({ data, error } = await sb.from('facts').select('*').order('lang').order('sort').order('id'));
+    } catch (e) { error = e; }
+    if (error || !data) {
+      $('#fa-msg').innerHTML = `<span class="err">Не загрузилось: ${esc((error && error.message) || error)}.
+        Если таблицы ещё нет — запусти supabase-facts.sql в SQL Editor.</span>`;
+      return;
+    }
+    if (!data.length) {
+      $('#fa-table').innerHTML = '<tr><td class="muted-note">Таблица пуста — добавь факт выше или запусти сиды из supabase-facts.sql.</td></tr>';
+      return;
+    }
     $('#fa-table').innerHTML = '<tr><th>Язык</th><th>Заголовок</th><th>Текст</th><th style="width:190px;"></th></tr>' +
       data.map(r => factEditId === r.id
         ? `<tr>
