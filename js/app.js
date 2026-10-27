@@ -469,7 +469,13 @@ const App = (() => {
   function renderPath(){
     const u = State.U;
     const userLvl = u.level || 1;
-    const curLesson = (ALL_LESSONS.find(l => State.isUnlocked(l.id) && !u.lessons[l.id]) || {}).id;
+    const doneIdx = ALL_LESSONS.reduce((m, l, i) => u.lessons[l.id] ? i : m, -1);
+    const anchor = u.flags && u.flags.anchor;
+    const anchorOk = anchor && !u.lessons[anchor] && ALL_LESSONS.some(l => l.id === anchor) && State.isUnlocked(anchor);
+    const curLesson = anchorOk ? anchor
+      : (ALL_LESSONS.find((l, i) => i > doneIdx && State.isUnlocked(l.id) && !u.lessons[l.id])
+        || ALL_LESSONS.find(l => State.isUnlocked(l.id) && !u.lessons[l.id])
+        || ALL_LESSONS[doneIdx] || {}).id;
     let html = '<div class="path">';
     let idx = 0;
     for (const lvl of LEVELS) {
@@ -921,6 +927,7 @@ const App = (() => {
     $('#lesson .lp-fill').style.width = (LS.total ? Math.round(LS.doneCount / LS.total * 100) : 0) + '%';
   }
   function nextItem(){
+    document.body.classList.remove('lesson-wait');
     if (!LS.queue.length) return finishLesson();
     const item = LS.queue.shift();
     LS.item = item;
@@ -947,6 +954,15 @@ const App = (() => {
   function handleResult(res){
     const item = LS.item, ctrl = LS.ctrl;
 
+    // пропуск (например, нечем слушать): не ошибка и не зачёт — просто дальше
+    if (res.skipped) {
+      AudioFX.tap();
+      LS.doneCount++;
+      lessonProgress();
+      nextItem();
+      return;
+    }
+
     // карточки: самооценка, мгновенный переход без плашки
     if (res.instant) {
       LS.attempted[item.uid] = true;
@@ -964,6 +980,7 @@ const App = (() => {
     }
 
     LS.awaitingNext = true;
+    document.body.classList.add('lesson-wait'); // таймер лимита не тикает, пока ждём «Дальше»
     if (!LS.attempted[item.uid]) {
       LS.attempted[item.uid] = true;
       LS.firstTry[item.uid] = !!res.ok;
@@ -1013,7 +1030,7 @@ const App = (() => {
     const perfect = uids.length > 0 && okCount === uids.length;
     const kind = LS.kind;
     let xp, result;
-    if (kind === 'lesson') { xp = (LS.replay ? 10 : 20) + (perfect ? 5 : 0); result = State.completeLesson(LS.lesson.id, stars, xp, perfect); }
+    if (kind === 'lesson') { xp = (LS.replay ? 10 : 20) + (perfect ? 5 : 0); result = State.completeLesson(LS.lesson.id, stars, xp, perfect); delete State.U.flags.anchor; }
     else { xp = kind === 'review' ? 15 : 10; result = State.completeSession(xp, kind); }
     if (window.Track) Track.send('lesson_done', { kind, stars });
     AudioFX.win();
@@ -1051,6 +1068,7 @@ const App = (() => {
   }
   function closeLesson(){
     LS = null;
+    document.body.classList.remove('lesson-wait');
     $('#lesson').classList.add('hidden');
     document.body.classList.remove('lesson-open');
     selectTab(tab);
@@ -1071,7 +1089,14 @@ const App = (() => {
       const m = modal(`<h3>${t('Выйти?')}</h3><p>${t('Выученные слова уже сохранены — незаконченная сессия просто не засчитается. Жарко переживёт.')}</p>
         <div class="row-btns"><button class="btn ghost" id="m-stay">${t('Остаться')}</button><button class="btn danger" id="m-quit">${t('Выйти')}</button></div>`);
       m.querySelector('#m-stay').onclick = () => m.remove();
-      m.querySelector('#m-quit').onclick = () => { m.remove(); closeLesson(); };
+      m.querySelector('#m-quit').onclick = () => {
+        // ушли с заметным прогрессом — путь вернёт к этому уроку
+        if (LS && LS.kind === 'lesson' && LS.total && LS.doneCount / LS.total > 0.3) {
+          State.U.flags.anchor = LS.lesson.id;
+          State.save();
+        }
+        m.remove(); closeLesson();
+      };
     };
     document.addEventListener('keydown', e => {
       if (!LS || $('#lesson').classList.contains('hidden')) return;

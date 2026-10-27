@@ -264,6 +264,9 @@ const Ex = (() => {
       <div class="opts">${opts.map((o, i) => `<button class="opt" data-i="${i}"><span class="opt-key">${i + 1}</span>${esc(disp(o, ctx.script))}</button>`).join('')}</div>`;
     ctx.area.querySelector('#play-big').onclick = () => ctx.speak(form);
     ctx.area.querySelector('#play-slow').onclick = () => ctx.speak(form, 0.6);
+    ctx.area.insertAdjacentHTML('beforeend',
+      `<button class="listen-skip" id="listen-skip">${t('Не слышно? Пропустить')}</button>`);
+    ctx.area.querySelector('#listen-skip').onclick = () => ctx.onAutoDone({ skipped: true });
     wireOpts(item, ctx);
     setTimeout(() => ctx.speak(form), 300);
     return {
@@ -390,14 +393,30 @@ const Ex = (() => {
           }
           // ошибка только в порядке слов (все токены те же) — спорные все
           if (!Object.keys(misses).length) for (const id of ids) misses[id] = true;
+          // для подсказки-глосса стем-матч должен быть почти полным
+          // совпадением — иначе «vrijedilo» глоссится как «vrijeme»
+          const glossWord = tok => {
+            const nn = TR.norm(tok);
+            return Object.values(WORDS).find(w => {
+              for (const f of [w.sr, w.me]) {
+                if (!f) continue;
+                const m = TR.norm(f);
+                if (m === nn) return true;
+                let cp = 0;
+                while (cp < nn.length && cp < m.length && nn[cp] === m[cp]) cp++;
+                if (cp >= 4 && cp >= Math.max(nn.length, m.length) - 2) return true;
+              }
+              return false;
+            }) || null;
+          };
           const seen = new Set();
           const parts = [];
           for (const token of extraW.concat(missing)) {
             const k = TR.norm(token);
             if (seen.has(k) || parts.length >= 4) continue;
             seen.add(k);
-            const ww = tokenWord(token);
-            parts.push(ww ? `${disp(token, ctx.script)} — ${ww.ru}` : glossSr(token, ctx));
+            const ww = glossWord(token);
+            parts.push(ww ? `${disp(token, ctx.script)} — ${ww.ru}` : disp(token, ctx.script));
           }
           gloss = parts.join(' · ');
         }

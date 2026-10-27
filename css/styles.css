@@ -490,3 +490,6 @@ html.no-tts .spk{ display:none; }
 @media (prefers-reduced-motion: reduce){
   .node.open{ animation:none; }
 }
+
+/* аудио-задание: ссылка-пропуск (фикс 2026-10-27) */
+.listen-skip{display:block;margin:14px auto 0;background:none;border:none;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
