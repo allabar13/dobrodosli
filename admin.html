@@ -253,7 +253,7 @@
   async function loadFacts(){
     let data, error;
     try {
-      ({ data, error } = await sb.from('facts').select('*').order('lang').order('sort').order('id'));
+      ({ data, error } = await sb.from('facts').select('*').order('sort').order('id'));
     } catch (e) { error = e; }
     if (error || !data) {
       $('#fa-msg').innerHTML = `<span class="err">Не загрузилось: ${esc((error && error.message) || error)}.
@@ -264,8 +264,17 @@
       $('#fa-table').innerHTML = '<tr><td class="muted-note">Таблица пуста — добавь факт выше или запусти сиды из supabase-facts.sql.</td></tr>';
       return;
     }
-    $('#fa-table').innerHTML = '<tr><th>Язык</th><th>Заголовок</th><th>Текст</th><th style="width:190px;"></th></tr>' +
-      data.map(r => factEditId === r.id
+    // русские сверху (основной язык), английские следом; счётчик — чтобы было
+    // видно, что ничего не пропало
+    const ruRows = data.filter(r => r.lang === 'ru'), enRows = data.filter(r => r.lang === 'en');
+    const offRu = ruRows.filter(r => !r.active).length, offEn = enRows.filter(r => !r.active).length;
+    $('#fa-msg').innerHTML = `<span class="muted-note">В базе: <b>${ruRows.length} RU</b>${offRu ? ` (выкл: ${offRu})` : ''} · <b>${enRows.length} EN</b>${offEn ? ` (выкл: ${offEn})` : ''}.</span>`;
+    const section = (label, rows) => rows.length
+      ? `<tr><td colspan="4" style="padding:14px 8px 6px;font-weight:800;color:var(--muted);letter-spacing:.04em;">${label} · ${rows.length}</td></tr>` + rows.map(rowHtml).join('')
+      : '';
+    $('#fa-table').innerHTML = '<tr><th>Язык</th><th>Заголовок</th><th>Текст</th><th style="width:190px;"></th></tr>'
+      + section('РУССКИЕ · RU', ruRows) + section('ENGLISH · EN', enRows);
+    function rowHtml(r){ return factEditId === r.id
         ? `<tr>
             <td>${r.lang.toUpperCase()}</td>
             <td><input data-fet="${esc(r.id)}" value="${esc(r.title)}" maxlength="80" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:2px solid var(--primary);"></td>
@@ -282,7 +291,8 @@
               ${r.active
                 ? `<button class="reload" data-foff="${esc(r.id)}" title="скрыть из приложения">выкл</button>`
                 : `<button class="reload" data-fon="${esc(r.id)}">вкл</button>`}
-              <button class="reload" data-fdel="${esc(r.id)}" title="удалить насовсем">🗑</button></td></tr>`).join('');
+              <button class="reload" data-fdel="${esc(r.id)}" title="удалить насовсем">🗑</button></td></tr>`;
+    }
     document.querySelectorAll('[data-fedit]').forEach(b => b.onclick = () => { factEditId = b.dataset.fedit; loadFacts(); });
     document.querySelectorAll('[data-fcancel]').forEach(b => b.onclick = () => { factEditId = null; loadFacts(); });
     document.querySelectorAll('[data-fsave]').forEach(b => b.onclick = async () => {
