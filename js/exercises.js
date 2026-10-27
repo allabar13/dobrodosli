@@ -11,6 +11,27 @@ const Ex = (() => {
   function disp(text, script){ return script === 'cyr' ? TR.toCyr(text) : text; }
   function unitWordObjs(unitId){ return Object.values(WORDS).filter(w => w.unit === unitId); }
 
+  // факт без частых повторов: тасуем «колоду» индексов и выдаём по одному,
+  // пока не кончится — только тогда тасуем заново. Колода живёт в localStorage
+  // и пересобирается, если список фактов изменился (например, приехал из админки).
+  function nextFact(){
+    if (typeof FACTS === 'undefined' || !FACTS.length) return null;
+    const KEY = 'dobrodosli_fact_deck_v1';
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+    if (!d || d.n !== FACTS.length || !Array.isArray(d.q) || !d.q.length) {
+      const q = FACTS.map((_, i) => i);
+      for (let i = q.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [q[i], q[j]] = [q[j], q[i]];
+      }
+      d = { n: FACTS.length, q };
+    }
+    const idx = d.q.pop();
+    try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+    return FACTS[idx] || FACTS[0];
+  }
+
   function distractRu(word, n){
     const pool = shuf(unitWordObjs(word.unit).filter(x => x.id !== word.id)).map(x => x.ru);
     const extra = shuf(Object.values(WORDS).filter(x => x.unit !== word.unit)).map(x => x.ru);
@@ -84,8 +105,8 @@ const Ex = (() => {
     if (lesson.situation) queue.push({ type: 'sit', sit: lesson.situation });
     if (lesson.tip) queue.splice(Math.min(4, queue.length), 0, { type: 'tip', tip: lesson.tip });
     // добрый факт о Балканах — передышка ближе к концу урока
-    const f = FACTS[Math.floor(Math.random() * FACTS.length)];
-    queue.splice(Math.max(5, Math.floor(queue.length * 0.7)), 0, { type: 'tip', kicker: 'Балканский факт 🪶', tip: { title: f.t, text: f.x } });
+    const f = nextFact();
+    if (f) queue.splice(Math.max(5, Math.floor(queue.length * 0.7)), 0, { type: 'tip', kicker: 'Балканский факт 🪶', tip: { title: f.t, text: f.x } });
     // самый первый урок (любого стартового уровня) открываем словом «dobrodošli» —
     // тёплый старт. Новичкам оно учится дальше по ходу, профи просто здороваемся.
     if (window.State && State.U && Object.keys(State.U.lessons).length === 0) queue.unshift({ type: 'welcome' });
@@ -111,8 +132,8 @@ const Ex = (() => {
     queue.push(...shuf(checks));
     for (const g of (lesson.grammar || [])) queue.push({ type: 'fill', g });
     for (const s of pickN(lesson.sentences || [], 3)) queue.push({ type: 'bank', s });
-    const f = FACTS[Math.floor(Math.random() * FACTS.length)];
-    queue.splice(Math.max(3, Math.floor(queue.length * 0.6)), 0, { type: 'tip', kicker: 'Балканский факт 🪶', tip: { title: f.t, text: f.x } });
+    const f = nextFact();
+    if (f) queue.splice(Math.max(3, Math.floor(queue.length * 0.6)), 0, { type: 'tip', kicker: 'Балканский факт 🪶', tip: { title: f.t, text: f.x } });
     queue.forEach((it, i) => { it.uid = i; it.retries = 0; });
     return queue;
   }

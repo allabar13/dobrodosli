@@ -1,6 +1,7 @@
 -- ── Балканские факты: правятся в админке, приложение подтягивает онлайн ──
--- Запусти этот файл целиком в Supabase → SQL Editor → Run. Повторный запуск безопасен:
--- твои правки существующих фактов не затираются (on conflict do nothing).
+-- Запусти этот файл целиком в Supabase → SQL Editor → Run. Повторный запуск
+-- безопасен: уже существующие строки (и твои правки в них) не трогаются,
+-- добавляются только новые (on conflict do nothing).
 
 create table if not exists facts (
   id text primary key,
@@ -19,7 +20,7 @@ drop policy if exists facts_admin_all on facts;
 create policy facts_admin_all on facts
   for all to authenticated using (is_admin()) with check (is_admin());
 
--- стартовый набор: 24 факта × RU и EN (те же, что вшиты в приложение как фолбэк)
+-- стартовый набор: 36 фактов × RU и EN (те же, что вшиты в приложение как фолбэк)
 insert into facts (id, lang, title, body, sort) values
   ('f01-ru','ru','Город котов','Котор — кошачья столица Адриатики: котов тут кормит весь город, у них есть свой музей. Жарко подтверждает: с ними лучше дружить.',1),
   ('f02-ru','ru','Кофе — это ритуал','«Домаћа кафа» варится в джезве и пьётся минимум полчаса. Заказать «эспрессо с собой» можно, но бариста погрустнеет.',2),
@@ -45,6 +46,18 @@ insert into facts (id, lang, title, body, sort) values
   ('f22-ru','ru','Олива-долгожитель','Старой маслине в Баре — больше двух тысяч лет, одна из старейших олив Европы. Пережила империи, а оливки даёт до сих пор. Полако работает.',22),
   ('f23-ru','ru','Четыре по цене одного','Сербский, черногорский, хорватский и боснийский взаимопонятны. Учишь один — здороваешься в четырёх странах. Выгоднее только бурек.',23),
   ('f24-ru','ru','Кафана «?»','Старейшая кафана Белграда называется «?» — «Знак питања». Имя не придумали за двести лет, и так даже лучше: вопрос есть, ответ — кафа.',24),
+  ('f25-ru','ru','Скадарлија','Скадарлија — богемный квартал Белграда, местный Монмартр: брусчатка, тамбураши и кафаны, где сто лет назад сидели поэты. Сидят и сейчас.',25),
+  ('f26-ru','ru','Перекус с дерева','В Черногории инжир и гранаты растут прямо вдоль улиц: созрели — угощайся. Сезонный фастфуд, одобренный самой природой.',26),
+  ('f27-ru','ru','Nema na čemu','На «хвала» тут отвечают «nema na čemu» — «не за что». Дословно: «не на чем». Балканская вежливость скромна: добро — это по умолчанию.',27),
+  ('f28-ru','ru','Ракия — это наука','Из сливы — шливовица, из винограда — лозовача, из айвы — дуњевача. Ракию гонят из всего, что растёт, и у каждого деда — лучшая.',28),
+  ('f29-ru','ru','Белградское море','Ада Циганлија — остров-пляж посреди Белграда. Моря у города нет, поэтому его назначили: летом тут полгорода, и все зовут Аду «морем».',29),
+  ('f30-ru','ru','Красное золото','Сербия — один из мировых лидеров по малине: её тут зовут «красным золотом». Так что малиновое варенье к блинам — почти государственное дело.',30),
+  ('f31-ru','ru','Железные ворота','Джердап — ущелье, где Дунай прорезает Карпаты: самое большое речное ущелье Европы. На входе стоит крепость Голубац — как декорация к сказке.',31),
+  ('f32-ru','ru','Выше только небо','Мавзолей Негоша стоит на вершине Ловчена — к нему ведёт 461 ступенька внутри горы. Черногорцы положили любимого владыку поближе к небу.',32),
+  ('f33-ru','ru','Остров из камней','Госпа од Шкрпjела у Пераста — остров, насыпанный моряками вручную: веками каждый бросал камень. Каждый июль лодки везут новые — традиция жива.',33),
+  ('f34-ru','ru','Ајде!','«Ајде» — слово-универсал: «пошли», «давай», «ладно» и «да ну!» одновременно. Интонация решает всё. Освоишь «ајде» — считай, заговорил(а).',34),
+  ('f35-ru','ru','Белый город','Beograd — буквально «белый город». Одно из немногих имён столиц, которое переводится сразу: белые стены крепости над двумя реками.',35),
+  ('f36-ru','ru','Вечернее корзо','Корзо — вечерняя прогулка по главной улице, живой институт: весь город выходит себя показать и других посмотреть. Дресс-код: хорошее настроение.',36),
   ('f01-en','en','The city of cats','Kotor is the cat capital of the Adriatic: the whole town feeds them and they have their own museum. Žarko confirms: better to be friends.',1),
   ('f02-en','en','Coffee is a ritual','“Domaća kafa” is brewed in a džezva and sipped for at least half an hour. You can order espresso to go, but the barista will be sad.',2),
   ('f03-en','en','Slatko for the guest','In a Serbian home a guest is first offered slatko — a spoonful of preserve and a glass of water. Declining isn’t customary. Why would you?',3),
@@ -68,5 +81,17 @@ insert into facts (id, lang, title, body, sort) values
   ('f21-en','en','The kafana never rushes you','You can sit in a kafana for three hours over one kafa — the bill won’t come until you ask. Rushing a guest is simply bad manners here.',21),
   ('f22-en','en','The elder olive','Stara Maslina in Bar is over two thousand years old — one of Europe’s oldest olive trees. It outlived empires and still bears olives. Polako works.',22),
   ('f23-en','en','Four for the price of one','Serbian, Montenegrin, Croatian and Bosnian are mutually intelligible. Learn one — greet people in four countries. Only burek is a better deal.',23),
-  ('f24-en','en','The “?” kafana','Belgrade’s oldest kafana is called “?” — Znak pitanja. Two hundred years and still no proper name. Even better: the question stands, the answer is kafa.',24)
+  ('f24-en','en','The “?” kafana','Belgrade’s oldest kafana is called “?” — Znak pitanja. Two hundred years and still no proper name. Even better: the question stands, the answer is kafa.',24),
+  ('f25-en','en','Skadarlija','Skadarlija is Belgrade’s bohemian quarter, the local Montmartre: cobblestones, tamburaši bands and kafanas where poets sat a century ago. They still do.',25),
+  ('f26-en','en','Snacks off the trees','In Montenegro figs and pomegranates grow right along the streets: when they’re ripe, help yourself. Seasonal fast food, approved by nature itself.',26),
+  ('f27-en','en','Nema na čemu','The reply to “hvala” here is “nema na čemu” — “don’t mention it”. Literally: “there’s nothing on which”. Balkan politeness is modest: kindness is the default.',27),
+  ('f28-en','en','Rakija is a science','Plum makes šljivovica, grapes make lozovača, quince makes dunjevača. Rakija is distilled from everything that grows — and every grandpa’s is the best.',28),
+  ('f29-en','en','Belgrade’s seaside','Ada Ciganlija is an island beach in the middle of Belgrade. The city has no sea, so it appointed one: half the city is here in summer, and everyone calls Ada “the sea”.',29),
+  ('f30-en','en','Red gold','Serbia is one of the world’s top raspberry growers — here they’re called “red gold”. Raspberry jam with pancakes is practically a state matter.',30),
+  ('f31-en','en','The Iron Gates','Đerdap is the gorge where the Danube cuts through the Carpathians — Europe’s largest river gorge. Golubac fortress guards the entrance like a fairy-tale set.',31),
+  ('f32-en','en','Only the sky above','Njegoš’s mausoleum sits on top of Mount Lovćen — 461 steps through the mountain lead up to it. Montenegrins laid their beloved ruler as close to the sky as possible.',32),
+  ('f33-en','en','An island of stones','Gospa od Škrpjela near Perast is an island built by sailors by hand: for centuries everyone dropped a stone. Every July boats still bring new ones — the tradition lives.',33),
+  ('f34-en','en','Ajde!','“Ajde” is the universal word: “let’s go”, “come on”, “fine” and “no way!” all at once. Intonation decides everything. Master “ajde” — and you basically speak the language.',34),
+  ('f35-en','en','The white city','Beograd literally means “white city”. One of the few capital names that translates instantly: white fortress walls above two rivers.',35),
+  ('f36-en','en','The evening korzo','The korzo is the evening stroll down the main street, a living institution: the whole town comes out to see and be seen. Dress code: a good mood.',36)
 on conflict (id) do nothing;

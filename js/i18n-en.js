@@ -611,6 +611,18 @@
     { t:'The elder olive', x:'Stara Maslina in Bar is over two thousand years old — one of Europe’s oldest olive trees. It outlived empires and still bears olives. Polako works.' },
     { t:'Four for the price of one', x:'Serbian, Montenegrin, Croatian and Bosnian are mutually intelligible. Learn one — greet people in four countries. Only burek is a better deal.' },
     { t:'The “?” kafana', x:'Belgrade’s oldest kafana is called “?” — Znak pitanja. Two hundred years and still no proper name. Even better: the question stands, the answer is kafa.' },
+    { t:'Skadarlija', x:'Skadarlija is Belgrade’s bohemian quarter, the local Montmartre: cobblestones, tamburaši bands and kafanas where poets sat a century ago. They still do.' },
+    { t:'Snacks off the trees', x:'In Montenegro figs and pomegranates grow right along the streets: when they’re ripe, help yourself. Seasonal fast food, approved by nature itself.' },
+    { t:'Nema na čemu', x:'The reply to “hvala” here is “nema na čemu” — “don’t mention it”. Literally: “there’s nothing on which”. Balkan politeness is modest: kindness is the default.' },
+    { t:'Rakija is a science', x:'Plum makes šljivovica, grapes make lozovača, quince makes dunjevača. Rakija is distilled from everything that grows — and every grandpa’s is the best.' },
+    { t:'Belgrade’s seaside', x:'Ada Ciganlija is an island beach in the middle of Belgrade. The city has no sea, so it appointed one: half the city is here in summer, and everyone calls Ada “the sea”.' },
+    { t:'Red gold', x:'Serbia is one of the world’s top raspberry growers — here they’re called “red gold”. Raspberry jam with pancakes is practically a state matter.' },
+    { t:'The Iron Gates', x:'Đerdap is the gorge where the Danube cuts through the Carpathians — Europe’s largest river gorge. Golubac fortress guards the entrance like a fairy-tale set.' },
+    { t:'Only the sky above', x:'Njegoš’s mausoleum sits on top of Mount Lovćen — 461 steps through the mountain lead up to it. Montenegrins laid their beloved ruler as close to the sky as possible.' },
+    { t:'An island of stones', x:'Gospa od Škrpjela near Perast is an island built by sailors by hand: for centuries everyone dropped a stone. Every July boats still bring new ones — the tradition lives.' },
+    { t:'Ajde!', x:'“Ajde” is the universal word: “let’s go”, “come on”, “fine” and “no way!” all at once. Intonation decides everything. Master “ajde” — and you basically speak the language.' },
+    { t:'The white city', x:'Beograd literally means “white city”. One of the few capital names that translates instantly: white fortress walls above two rivers.' },
+    { t:'The evening korzo', x:'The korzo is the evening stroll down the main street, a living institution: the whole town comes out to see and be seen. Dress code: a good mood.' },
   );
   PRAISE.length = 0;
   PRAISE.push(
