@@ -4,8 +4,9 @@
    синий. Тема: html[data-theme="light|dark"], вариант: html[data-variant]. */
 
 :root{
-  --bg:#EAF6FA; --bg2:#DCEFF6; --card:#FFFFFF; --ink:#16323F; --muted:#5E7D8C; --line:#D6E9F1;
-  --primary:#EF7856; --primary-deep:#D05636; --primary-soft:#FCE5DD; --glow:rgba(239,120,86,.32);
+  /* muted ≥4.5:1 на фоне, коралл ≥3:1 под белым текстом (WCAG, полиш 2026-10-27) */
+  --bg:#EAF6FA; --bg2:#DCEFF6; --card:#FFFFFF; --ink:#16323F; --muted:#56737F; --line:#D6E9F1;
+  --primary:#E96A42; --primary-deep:#D05636; --primary-soft:#FCE5DD; --glow:rgba(233,106,66,.32);
   /* цвет «выбрано» — всегда спокойный морской, не путается с «неверно» */
   --select:#1899C2; --select-soft:#D9EFF7;
   --green:#2FA56C; --green-deep:#1F7A4D; --green-soft:#DDF3E7;
@@ -217,6 +218,8 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
 .unit-banner h3{ margin:0; font-size:18px; font-weight:900; }
 .unit-banner p{ margin:2px 0 0; font-size:13px; opacity:.92; }
 .unit-emoji{ font-size:30px; }
+/* в ночной теме акцент светлее — баннеру нужен более глубокий градиент под белый текст */
+html[data-theme="dark"] .unit-banner{ background:linear-gradient(135deg, var(--primary-deep), color-mix(in srgb, var(--primary-deep) 72%, #000)); }
 .unit-progress{ margin-left:auto; font-weight:800; background:rgba(255,255,255,.24); border-radius:99px; padding:4px 11px; font-size:14px; }
 .node-row{ position:relative; display:flex; align-items:center; gap:14px; margin:20px 0; min-height:74px; }
 .node-row.left{ padding-left:10%; }
@@ -234,8 +237,11 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
 .node-label b{ font-size:15.5px; display:block; }
 .node-label small{ color:var(--muted); font-weight:700; }
 .stars-line{ color:var(--gold-deep); letter-spacing:.1em; }
-.mascot-float{ position:absolute; right:0; top:-8px; display:flex; align-items:flex-start; gap:4px; max-width:46%; }
-.node-row.right .mascot-float{ right:auto; left:0; flex-direction:row-reverse; }
+/* Жарко с репликой — своей строкой над узлом: не перекрывает название урока */
+.node-row{ flex-wrap:wrap; }
+.mascot-float{ order:-1; flex-basis:100%; display:flex; align-items:flex-end; gap:6px; margin:0 0 4px -4px; }
+.node-row.right .mascot-float{ margin-left:-14%; }
+.mascot-float .bubble{ max-width:78%; }
 .bubble{
   background:var(--card); border:1.5px solid var(--line); border-radius:16px;
   padding:8px 11px; font-size:12.5px; box-shadow:var(--shadow); color:var(--ink); font-weight:600;
@@ -288,6 +294,7 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
 .badge small{ font-size:11.5px; font-weight:800; }
 .badge.off{ filter:grayscale(1); opacity:.4; }
 .settings{ display:flex; flex-direction:column; gap:12px; }
+.settings p{ margin:0; }
 .set-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:800; font-size:14.5px; flex-wrap:wrap; }
 .feedback-line{ color:var(--muted); font-size:13.5px; text-align:center; margin:18px 0 4px; line-height:1.5; }
 .feedback-line a{ color:var(--primary); font-weight:800; text-decoration:none; border-bottom:1.5px solid var(--primary-soft); }
@@ -478,12 +485,20 @@ html.no-tts .spk{ display:none; }
 .dict-toggle .dict-count{margin-left:auto;color:var(--muted);font-size:13px;font-weight:700;background:var(--card);border:1.5px solid var(--line);border-radius:99px;padding:1px 10px;}
 .dict-empty{opacity:.55;}
 .dict-none{margin:0 2px 14px;}
-.beta-chip{display:inline-block;vertical-align:middle;margin-left:6px;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--primary,#1899C2);background:color-mix(in srgb, var(--primary,#1899C2) 12%, transparent);border:1.5px solid color-mix(in srgb, var(--primary,#1899C2) 35%, transparent);}
+.beta-chip{display:inline-block;vertical-align:middle;margin-left:6px;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--primary-deep,#0E6E8C);background:color-mix(in srgb, var(--primary,#1899C2) 12%, transparent);border:1.5px solid color-mix(in srgb, var(--primary,#1899C2) 35%, transparent);}
+
+/* видимый фокус с клавиатуры — не мешает тач-юзерам (полиш 2026-10-27) */
+:focus-visible{ outline:3px solid var(--select); outline-offset:2px; border-radius:6px; }
+button:focus-visible, .btn:focus-visible, .opt:focus-visible, .node:focus-visible, .tab:focus-visible{ outline:3px solid var(--select); outline-offset:2px; }
+
+/* «Мои слова»: крупнее зона удаления, плейсхолдер при пустом переводе */
+.my-row .my-del{ min-width:40px; min-height:40px; }
+.my-noru{ color:var(--muted); font-style:italic; }
 
 /* путь: мягкая подсветка доступных уроков (UX-правка 2026-10-26) */
 @keyframes node-breathe{
-  0%,100%{ box-shadow:0 0 0 0 rgba(226,112,79,.45); }
-  50%{ box-shadow:0 0 0 12px rgba(226,112,79,0); }
+  0%,100%{ box-shadow:0 0 0 0 rgba(233,106,66,.45); }
+  50%{ box-shadow:0 0 0 12px rgba(233,106,66,0); }
 }
 .node.open{ animation:node-breathe 2.2s ease-in-out infinite; }
 .node-row.now .node.open{ animation-duration:1.6s; }

@@ -614,7 +614,7 @@ const App = (() => {
         const search = (w.sr + ' ' + TR.toCyr(w.sr) + ' ' + w.ru).toLowerCase();
         const shown = SC() === 'cyr' ? TR.toCyr(w.sr) : w.sr;
         return `<div class="dict-row my-row" data-my="${escAttr(w.id)}" data-say="${escAttr(w.sr)}" data-text="${escAttr(search)}">
-          <div class="dict-word"><b>${esc(shown)}</b><small>${esc(w.ru)}</small></div>
+          <div class="dict-word"><b>${esc(shown)}</b><small${w.ru ? '' : ' class="my-noru"'}>${w.ru ? esc(w.ru) : t('без перевода')}</small></div>
           <div class="dict-right"><button class="my-del" title="${escAttr(t('Удалить'))}" style="background:none;border:none;color:var(--muted);font-size:16px;padding:4px 6px;cursor:pointer;">✕</button></div>
         </div>`;
       }).join('');

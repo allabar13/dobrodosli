@@ -145,11 +145,13 @@ const Ex = (() => {
   function rNew(item, ctx){
     const w = item.w, form = formOf(w, ctx.variant);
     const other = ctx.script === 'cyr' ? form : TR.toCyr(form);
+    // у слов вроде dva/два кириллица совпадает с переводом — не дублируем строку
+    const dupAlt = other.trim().toLowerCase() === String(w.ru).trim().toLowerCase();
     ctx.area.innerHTML = `
       <p class="ex-kicker">${t('Новое слово')}</p>
       <div class="card word-card pop-in">
         <div class="word-main">${esc(disp(form, ctx.script))} ${speakBtn(form)}</div>
-        <div class="word-alt">${esc(other)}</div>
+        ${dupAlt ? '' : `<div class="word-alt">${esc(other)}</div>`}
         <div class="word-ru">${esc(w.ru)}</div>
         ${w.note ? `<div class="word-note">💡 ${esc(w.note)}</div>` : ''}
       </div>`;
