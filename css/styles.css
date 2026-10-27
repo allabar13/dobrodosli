@@ -493,3 +493,6 @@ html.no-tts .spk{ display:none; }
 
 /* аудио-задание: ссылка-пропуск (фикс 2026-10-27) */
 .listen-skip{display:block;margin:14px auto 0;background:none;border:none;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
+.snd-note{display:block;margin:12px auto 0;background:none;border:none;color:var(--muted);opacity:.55;font:inherit;font-size:13px;cursor:pointer;text-align:center;}
+.snd-note:hover{opacity:.85;}
+.cloud-ok{background:var(--green-soft);color:var(--green-deep);border-radius:12px;padding:10px 12px;font-weight:700;text-align:center;margin:0 0 10px;}

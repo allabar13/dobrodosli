@@ -466,6 +466,17 @@ const App = (() => {
     if (u.settings.motivation === 'love' && Math.random() < 0.2) return t('Любовь любовью, а падежи по расписанию.');
     return MASCOT_LINES[Math.floor(Math.random() * MASCOT_LINES.length)];
   }
+  // якорь пути = последний урок, с которым работали ПОСЛЕДНИМ (а не самый
+  // дальний по курсу): после завершения любого урока ставим якорь на первый
+  // незавершённый после него
+  function setAnchorAfter(lessonId){
+    const u = State.U;
+    const idx = ALL_LESSONS.findIndex(l => l.id === lessonId);
+    const next = ALL_LESSONS.find((l, i) => i > idx && !u.lessons[l.id])
+      || ALL_LESSONS.find(l => !u.lessons[l.id]);
+    u.flags = u.flags || {};
+    if (next) u.flags.anchor = next.id; else delete u.flags.anchor;
+  }
   function renderPath(){
     const u = State.U;
     const userLvl = u.level || 1;
@@ -712,10 +723,13 @@ const App = (() => {
     }
     const ru = await autoTranslate(sr, n);
     if (ru) return { ru };
-    // 3. перевода нет — возможно, ввели русское слово: ищем сербское
-    if (/[а-яё]/i.test(raw) ) {
+    // 3. перевода нет — возможно, ввели слово на языке интерфейса: ищем сербское.
+    // В RU-режиме это кириллица; в EN — чистая латиница без сербских диакритик
+    // (настоящее сербское слово сюда не попадёт: для него сработал бы перевод выше)
+    const lang = (typeof I18N !== 'undefined' && I18N.lang === 'en') ? 'en' : 'ru';
+    const looksNative = lang === 'ru' ? /[а-яё]/i.test(raw) : /^[a-z0-9\s.,'’!?-]+$/i.test(raw || '');
+    if (looksNative) {
       try {
-        const lang = (window.I18N && I18N.lang === 'en') ? 'en' : 'ru';
         const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + lang + '&tl=sr&dt=t&q=' + encodeURIComponent(raw));
         const d = await r.json();
         let srv = (d && d[0] && d[0][0] && d[0][0][0] || '').trim();
@@ -728,7 +742,7 @@ const App = (() => {
     return null;
   }
   async function autoTranslate(sr, n){
-    const lang = (window.I18N && I18N.lang === 'en') ? 'en' : 'ru';
+    const lang = (typeof I18N !== 'undefined' && I18N.lang === 'en') ? 'en' : 'ru';
     // транслит и прочий мусор переводом не считаем
     const RU2LAT = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'jo',ж:'z',з:'z',и:'i',й:'j',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'c',ч:'c',џ:'dz',ш:'s',щ:'s',ъ:'',ы:'i',ь:'',э:'e',ю:'ju',я:'ja' };
     const skel = s => s.toLowerCase().split('').map(c => RU2LAT[c] !== undefined ? RU2LAT[c] : c).join('').replace(/[^a-z]/g, '');
@@ -1030,7 +1044,7 @@ const App = (() => {
     const perfect = uids.length > 0 && okCount === uids.length;
     const kind = LS.kind;
     let xp, result;
-    if (kind === 'lesson') { xp = (LS.replay ? 10 : 20) + (perfect ? 5 : 0); result = State.completeLesson(LS.lesson.id, stars, xp, perfect); delete State.U.flags.anchor; }
+    if (kind === 'lesson') { xp = (LS.replay ? 10 : 20) + (perfect ? 5 : 0); result = State.completeLesson(LS.lesson.id, stars, xp, perfect); setAnchorAfter(LS.lesson.id); }
     else { xp = kind === 'review' ? 15 : 10; result = State.completeSession(xp, kind); }
     if (window.Track) Track.send('lesson_done', { kind, stars });
     AudioFX.win();

@@ -558,7 +558,30 @@ const Ex = (() => {
   }
 
   const R = { new: rNew, tip: rTip, mcq: rMcq, rmcq: rRmcq, type: rType, listen: rListen, fill: rFill, bank: rBank, pairs: rPairs, sit: rSit, flash: rFlash, welcome: rWelcome };
-  function render(item, ctx){ return R[item.type](item, ctx); }
+  // звук выключен в настройках, а задание с озвучкой — ненавязчиво подскажем,
+  // что включить можно прямо отсюда (критично для «Что ты слышишь?»)
+  function soundOffNote(item, ctx){
+    const off = window.State && State.U && State.U.settings && State.U.settings.sound === false;
+    if (!off || !ctx.area.querySelector('.spk, #play-big')) return;
+    ctx.area.insertAdjacentHTML('beforeend',
+      `<button class="snd-note" id="snd-note">🔇 ${t('Звук выключен в настройках. Нажми — включим.')}</button>`);
+    ctx.area.querySelector('#snd-note').onclick = () => {
+      State.U.settings.sound = true;
+      State.save();
+      AudioFX.enabled = true;
+      TTS.enabled = true; // TTS — глобальная константа, на window её нет
+      const b = ctx.area.querySelector('#snd-note');
+      if (b) b.remove();
+      const spk = ctx.area.querySelector('.spk');
+      if (item.w) ctx.speak(formOf(item.w, ctx.variant));
+      else if (spk) ctx.speak(spk.dataset.say);
+    };
+  }
+  function render(item, ctx){
+    const res = R[item.type](item, ctx);
+    soundOffNote(item, ctx);
+    return res;
+  }
 
   return { buildLesson, buildReview, buildCards, render };
 })();
