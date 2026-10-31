@@ -80,6 +80,9 @@ const App = (() => {
     if (cloudLate) cloudReady.then(() => {
       if (!Cloud.active() || !Cloud.user()) return;
       if (!State.U) enterCloudUser();   // так и стоим на гейте — входим в облачный профиль
+      // есть незакрытый запрос «привяжи этот профиль» (вход случился прямо
+      // перед перезагрузкой) — привязываем, даже если профиль уже открыт
+      else if (localStorage.getItem('dobrodosli_link_profile_v1')) enterCloudUser();
       else syncFromCloud();             // локальный профиль уже открыт — просто подтянуть прогресс
     });
     if (Cloud.active() && Cloud.user()) return enterCloudUser();
