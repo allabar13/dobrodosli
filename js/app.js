@@ -155,13 +155,13 @@ const App = (() => {
       State.adopt(merged); State.login(u.id);
       State.save();
       showApp();
-      if (linkId && !window.IOSBridge) toast(`☁️ Профиль привязан к Google: <b>${esc(Cloud.email() || '')}</b>`); // в iOS о успехе говорят плашка и свой тост
+      if (linkId && typeof IOSBridge === 'undefined') toast(`☁️ ${t('Профиль привязан к Google:')} <b>${esc(Cloud.email() || '')}</b>`); // в iOS (IOSBridge — лексическая константа, не window!) о успехе говорят плашка и свой тост
       return;
     }
     if (u && !remote) {
       // в облаке пусто — заливаем локальный профиль
       u.cloudId = uid; State.login(u.id); State.save(); showApp();
-      if (linkId && !window.IOSBridge) toast(`☁️ Профиль привязан к Google: <b>${esc(Cloud.email() || '')}</b>`); // в iOS о успехе говорят плашка и свой тост
+      if (linkId && typeof IOSBridge === 'undefined') toast(`☁️ ${t('Профиль привязан к Google:')} <b>${esc(Cloud.email() || '')}</b>`); // в iOS (IOSBridge — лексическая константа, не window!) о успехе говорят плашка и свой тост
       return;
     }
     if (!u && remote) {
@@ -344,7 +344,8 @@ const App = (() => {
       if (window.Track) Track.send('onboarding_done', { level: data.level, motivation: data.motivation });
       applySound();
       showApp();
-      setTimeout(() => toast(`${t('Добро дошли,')} <b>${esc(data.name)}</b>! ${t('Первый урок — три минуты. Полако')} 🪶`, 3800), 400);
+      // приветствие — после экскурсии, чтобы тост не наезжал на карточку тура
+      helloAfterTour = () => toast(`${t('Добро дошли,')} <b>${esc(data.name)}</b>! ${t('Первый урок — три минуты. Полако')} 🪶`, 3800);
       maybeStartTour();
     }
     render();
@@ -353,8 +354,12 @@ const App = (() => {
   // ── экскурсия по разделам после онбординга (пропускаемая) ──
   // Ждём, пока закроются другие модалки (в iOS сразу после онбординга
   // показывается приветственный пейволл) — и только потом начинаем.
+  let helloAfterTour = null; // приветствие после онбординга ждёт конца экскурсии
   function maybeStartTour(){
-    if (!State.U || (State.U.flags && State.U.flags.tour)) return;
+    if (!State.U || (State.U.flags && State.U.flags.tour)) {
+      if (helloAfterTour) { setTimeout(helloAfterTour, 400); helloAfterTour = null; }
+      return;
+    }
     let tries = 0;
     function wait(){
       if (!State.U) return;
@@ -388,7 +393,11 @@ const App = (() => {
         text:t('Статистика, ачивки, настройки и облако, чтобы прогресс не потерялся.') },
     ];
     let i = 0;
-    const done = () => { document.querySelector('#tour')?.remove(); State.U.flags.tour = 1; State.save(); selectTab('path'); };
+    const done = () => {
+      document.querySelector('#tour')?.remove();
+      State.U.flags.tour = 1; State.save(); selectTab('path');
+      if (helloAfterTour) { setTimeout(helloAfterTour, 400); helloAfterTour = null; }
+    };
     function show(){
       document.querySelector('#tour')?.remove();
       const s = steps[i];
@@ -1115,7 +1124,7 @@ const App = (() => {
     $('#btn-finish').onclick = () => {
       const badges = result.badges || [];
       closeLesson();
-      badges.forEach((b, i) => setTimeout(() => toast(`🏅 Новая ачивка: <b>${b.emoji} ${esc(b.name)}</b><br><small>${esc(b.desc)}</small>`, 4200), 350 + i * 700));
+      badges.forEach((b, i) => setTimeout(() => toast(`🏅 ${t('Новая ачивка:')} <b>${b.emoji} ${esc(b.name)}</b><br><small>${esc(b.desc)}</small>`, 4200), 350 + i * 700));
     };
   }
   function closeLesson(){
