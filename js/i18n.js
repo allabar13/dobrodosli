@@ -150,6 +150,7 @@ const I18N = (() => {
     '☁️ Готово! Ты в облаке — прогресс синхронизируется между устройствами.': '☁️ Done! You\u2019re in the cloud — progress syncs across devices.',
     'Звук выключен в настройках. Нажми — включим.': 'Sound is off in settings. Tap to turn it on.',
     'без перевода': 'no translation',
+    '☁️ Вход через Google выполнен.': '☁️ Signed in with Google.',
     '✅ Профиль привязан к Apple. Прогресс синхронизируется между устройствами.': '✅ Profile linked to Apple. Progress syncs across your devices.',
     'Не получилось войти через Apple. Попробуй ещё раз.': 'Apple sign-in didn’t go through. Try again.',
     'Удалить аккаунт и данные': 'Delete account & data',

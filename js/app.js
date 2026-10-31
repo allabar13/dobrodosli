@@ -155,13 +155,13 @@ const App = (() => {
       State.adopt(merged); State.login(u.id);
       State.save();
       showApp();
-      if (linkId) toast(`☁️ Профиль привязан к Google: <b>${esc(Cloud.email() || '')}</b>`);
+      if (linkId && !window.IOSBridge) toast(`☁️ Профиль привязан к Google: <b>${esc(Cloud.email() || '')}</b>`); // в iOS о успехе говорят плашка и свой тост
       return;
     }
     if (u && !remote) {
       // в облаке пусто — заливаем локальный профиль
       u.cloudId = uid; State.login(u.id); State.save(); showApp();
-      if (linkId) toast(`☁️ Профиль привязан к Google: <b>${esc(Cloud.email() || '')}</b>`);
+      if (linkId && !window.IOSBridge) toast(`☁️ Профиль привязан к Google: <b>${esc(Cloud.email() || '')}</b>`); // в iOS о успехе говорят плашка и свой тост
       return;
     }
     if (!u && remote) {
@@ -818,7 +818,9 @@ const App = (() => {
   }
   function cloudBoxHtml(){
     if (Cloud.active() && Cloud.user() && State.U.cloudId === Cloud.user().id) {
-      return `<p>${t('☁️ Вход через Google:')} <b>${esc(Cloud.email() || '')}</b></p>
+      // Apple может скрывать почту — тогда строка без двоеточия в пустоту
+      const em = Cloud.email();
+      return `<p>${em ? t('☁️ Вход через Google:') + ' <b>' + esc(em) + '</b>' : t('☁️ Вход через Google выполнен.')}</p>
         <p class="muted small">${t('Прогресс синхронизируется автоматически. Паролей нет, почта живёт только в системе входа — в данных прогресса её нет.')}</p>
         <button class="btn ghost" id="cl-out">${t('Выйти из облака на этом устройстве')}</button>
         <button class="btn ghost danger" id="cl-del">${t('Удалить аккаунт и данные')}</button>`;
