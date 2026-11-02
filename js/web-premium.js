@@ -21,7 +21,7 @@
     donate: 'https://web.tribute.tg/d/TpO', // страница доната (любая сумма)
     // товар «Безлимит навсегда» (промокод в ответ на заказ, верифицирован 2026-11-02)
     lifetime: 'https://t.me/tribute/app?startapp=pJ1K',
-    lifetimePrice: '', // цена для кнопки, например '9,99 €' (пусто — без цены)
+    lifetimePrice: '$9.99', // как в iOS-приложении; точную сумму покажет Tribute
   };
   const LIMIT_ON = !!TRIBUTE.lifetime; // продавать нечего — лимит не включаем
 
