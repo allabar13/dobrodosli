@@ -969,6 +969,7 @@ const App = (() => {
 
   // ── проигрыватель урока ──
   function startLesson(lesson, kind = 'lesson'){
+    if (window.Premium && !Premium.gate()) return; // лимит бесплатной версии: web-premium.js (веб) / ios-premium.js (iOS)
     const u = State.U;
     const replay = kind === 'lesson' && !!u.lessons[lesson.id];
     const queue = kind === 'lesson' ? Ex.buildLesson(lesson, V())

@@ -37,6 +37,7 @@ const Cloud = (() => {
   const api = {
     configured(){ return !!cfg(); },
     active(){ return !!sb; },
+    client(){ return sb; }, // авторизованный клиент для RPC (web-premium: claim_grants)
     user(){ return authUser; },
     email(){ return authUser ? authUser.email : null; },
     error(){ return lastErr; },

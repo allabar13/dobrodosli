@@ -330,6 +330,10 @@ const I18N = (() => {
     'Следующая поездка сама себя не закажет. Учим!': 'The next trip won’t book itself. Let’s learn!',
     'Любовь любовью, а падежи по расписанию.': 'Love is love, but grammar cases run on schedule.',
     'Прогресс привяжется к Apple-аккаунту и синхронизируется между устройствами. Паролей нет.': 'Progress links to your Apple account and syncs across devices. No passwords.',
+    // «вечный» безлимит (показывают и iOS-слой, и веб)
+    '♾ Безлимит навсегда активен 💙': '♾ Lifetime unlimited is active 💙',
+    '🎟 Промокод принят! Безлимит навсегда 💙': '🎟 Promo code accepted! Unlimited forever 💙',
+    'навсегда': 'forever',
   };
 
   function t(s){

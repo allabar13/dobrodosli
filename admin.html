@@ -171,7 +171,8 @@
         <h3>🎟 Промокоды</h3>
         <div class="inrow">
           <input id="pc-code" placeholder="код (пусто — сгенерирую)" style="width:200px;" maxlength="24">
-          <input id="pc-days" type="number" value="3" min="1" max="365" style="width:76px;" title="дней безлимита">
+          <input id="pc-days" type="number" value="3" min="1" max="36500" style="width:76px;" title="дней безлимита">
+          <label class="muted-note" style="white-space:nowrap;align-self:center;"><input type="checkbox" id="pc-forever"> ♾ навсегда</label>
           <input id="pc-uses" type="number" value="100" min="1" max="100000" style="width:96px;" title="максимум активаций">
           <input id="pc-note" placeholder="заметка (кому/зачем)" style="flex:1;min-width:150px;">
           <button class="abtn" id="pc-create">Создать</button>
@@ -184,7 +185,8 @@
         <h3>🎁 Начислить дни юзеру <span class="muted-note">(вошедшим — по почте их входа)</span></h3>
         <div class="inrow">
           <input id="gr-email" type="email" placeholder="почта юзера" style="flex:1;min-width:200px;">
-          <input id="gr-days" type="number" value="3" min="1" max="365" style="width:76px;">
+          <input id="gr-days" type="number" value="3" min="1" max="36500" style="width:76px;">
+          <label class="muted-note" style="white-space:nowrap;align-self:center;"><input type="checkbox" id="gr-forever"> ♾ навсегда</label>
           <input id="gr-note" placeholder="заметка" style="flex:1;min-width:130px;">
           <button class="abtn" id="gr-create">Начислить</button>
         </div>
@@ -388,7 +390,7 @@
     if (error || !data) return;
     $('#pc-table').innerHTML = '<tr><th>Код</th><th>Дней</th><th>Активаций</th><th>Заметка</th><th></th></tr>' +
       data.map(r => `<tr>
-        <td><b>${esc(r.code)}</b></td><td>${r.days}</td><td>${r.used_count}/${r.max_uses}</td>
+        <td><b>${esc(r.code)}</b></td><td>${r.days >= 36500 ? '♾' : r.days}</td><td>${r.used_count}/${r.max_uses}</td>
         <td class="muted-note">${esc(r.note)}</td>
         <td>${r.active
           ? `<button class="reload" data-off="${esc(r.code)}">выключить</button>`
@@ -402,11 +404,12 @@
   async function createPromo(){
     let code = $('#pc-code').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (!code) code = 'DOBRO' + Math.random().toString(36).slice(2, 6).toUpperCase();
-    const row = { code, days: +$('#pc-days').value || 3, max_uses: +$('#pc-uses').value || 100, note: $('#pc-note').value.trim() };
+    const foreverDays = $('#pc-forever') && $('#pc-forever').checked;
+    const row = { code, days: foreverDays ? 36500 : (+$('#pc-days').value || 3), max_uses: +$('#pc-uses').value || 100, note: $('#pc-note').value.trim() };
     const { error } = await sb.from('promo_codes').insert(row);
     $('#pc-msg').innerHTML = error
       ? `<span class="err">${error.code === '23505' ? 'Такой код уже есть.' : esc(error.message)}</span>`
-      : `<span class="ok-msg">Код <b>${esc(row.code)}</b> создан: ${row.days} дн. безлимита, ${row.max_uses} активаций.</span>`;
+      : `<span class="ok-msg">Код <b>${esc(row.code)}</b> создан: ${row.days >= 36500 ? '♾ безлимит навсегда' : row.days + ' дн. безлимита'}, ${row.max_uses} активаций.</span>`;
     if (!error) { $('#pc-code').value = ''; $('#pc-note').value = ''; loadPromos(); }
   }
 
@@ -415,7 +418,7 @@
     if (error || !data) return;
     $('#gr-table').innerHTML = '<tr><th>Почта</th><th>Дней</th><th>Статус</th><th>Заметка</th></tr>' +
       data.map(r => `<tr>
-        <td>${esc(r.email)}</td><td>${r.days}</td>
+        <td>${esc(r.email)}</td><td>${r.days >= 36500 ? '♾' : r.days}</td>
         <td>${r.claimed_at ? '<span class="pill on">получено</span>' : '<span class="pill">ждёт входа</span>'}</td>
         <td class="muted-note">${esc(r.note)}</td></tr>`).join('');
   }
@@ -423,7 +426,8 @@
   async function createGrant(){
     const email = $('#gr-email').value.trim();
     if (!email) { $('#gr-email').focus(); return; }
-    const { error } = await sb.from('premium_grants').insert({ email, days: +$('#gr-days').value || 3, note: $('#gr-note').value.trim() });
+    const grForever = $('#gr-forever') && $('#gr-forever').checked;
+    const { error } = await sb.from('premium_grants').insert({ email, days: grForever ? 36500 : (+$('#gr-days').value || 3), note: $('#gr-note').value.trim() });
     $('#gr-msg').innerHTML = error ? `<span class="err">${esc(error.message)}</span>`
       : '<span class="ok-msg">Начислено. Дни приедут юзеру при следующем открытии приложения (вход по этой почте).</span>';
     if (!error) { $('#gr-email').value = ''; loadGrants(); }
