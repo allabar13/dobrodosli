@@ -232,9 +232,14 @@ const App = (() => {
 
     function dots(){ return `<div class="ob-dots">${Array.from({ length: TOTAL }, (_, i) => `<i class="${i <= step ? 'on' : ''}"></i>`).join('')}</div>`; }
     function shell(inner){
-      $('#screen').innerHTML = `<div class="ob"><button class="link-back" id="ob-back">${t('← Назад')}</button>${dots()}${inner}</div>`;
+      // первые шаги: заметный путь для вернувшихся — вход в облако мимо онбординга
+      // (после входа enterCloudUser подтянет облачный профиль и пропустит регистрацию)
+      const haveAcc = step <= 1 && !data.cloudId && Cloud.active() && Cloud.canOAuth()
+        ? `<button class="ob-have" id="ob-have"><span class="g-mark">G</span> ${t('Уже есть аккаунт? Войти')}</button>` : '';
+      $('#screen').innerHTML = `<div class="ob"><button class="link-back" id="ob-back">${t('← Назад')}</button>${dots()}${inner}${haveAcc}</div>`;
       // с первого шага «назад» возвращает на стартовый экран — вдруг передумал(а) и хочет войти в существующий профиль
       $('#ob-back').onclick = () => { AudioFX.tap(); if (step === 0) return showGate(); step--; render(); };
+      if ($('#ob-have')) $('#ob-have').onclick = () => { if (window.Track) Track.send('onboarding_signin'); googleSignIn(null); };
     }
     function cards(list){
       return `<div class="ob-cards">${list.map(o => `<button class="ob-card" data-k="${o.k}"><span class="ob-emoji">${o.emoji}</span><div><b>${o.t}</b><small>${o.d}</small></div></button>`).join('')}</div>`;

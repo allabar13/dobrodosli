@@ -334,6 +334,7 @@ const I18N = (() => {
     '♾ Безлимит навсегда активен 💙': '♾ Lifetime unlimited is active 💙',
     '🎟 Промокод принят! Безлимит навсегда 💙': '🎟 Promo code accepted! Unlimited forever 💙',
     'навсегда': 'forever',
+    'Уже есть аккаунт? Войти': 'Already have an account? Sign in',
   };
 
   function t(s){

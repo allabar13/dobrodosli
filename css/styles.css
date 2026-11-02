@@ -156,6 +156,11 @@ input.in-bad{ border-color:var(--red); background:var(--red-soft); }
 
 /* ── онбординг ── */
 .ob{ display:flex; flex-direction:column; gap:12px; padding-top:3vh; }
+/* онбординг: «уже есть аккаунт» — вход в облако мимо регистрации */
+.ob-have{ display:flex; align-items:center; justify-content:center; margin:14px auto 0;
+  background:none; border:none; color:var(--muted); font-family:inherit; font-size:14.5px;
+  font-weight:700; cursor:pointer; padding:8px 12px; }
+.ob-have:hover{ color:var(--ink); }
 .ob-dots{ display:flex; gap:6px; justify-content:center; margin:4px 0 8px; }
 .ob-dots i{ width:8px; height:8px; border-radius:99px; background:var(--line); transition:background .2s; }
 .ob-dots i.on{ background:var(--primary); }
