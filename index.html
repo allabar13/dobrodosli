@@ -29,29 +29,30 @@ const applyTheme = () => {
 applyTheme(); dark.addEventListener('change', applyTheme);
 </script>
 <style>
-  /* мини-лендинг: только раскладка, весь вид — из токенов styles.css */
+  /* мини-лендинг «открытка»: всё по центру, весь вид — из токенов styles.css */
   body{ display:flex; min-height:100dvh; align-items:center; justify-content:center; padding:16px; }
-  .go{ width:100%; max-width:430px; text-align:center; display:flex; flex-direction:column; gap:10px; }
-  .go .mascot{ width:88px; height:auto; }
-  .go h1{ font-size:32px; margin:4px 0 0; letter-spacing:-.5px; }
-  .go .tagline{ margin:0; font-size:15.5px; }
-  .go-about{ margin:2px 0 0; padding:12px 16px; text-align:left; font-size:14.5px; }
-  .go-about p{ margin:0 0 8px; }
-  .go-about ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; font-weight:700; }
-  .go-btns{ display:flex; flex-direction:column; gap:8px; margin-top:2px; }
-  @media (max-height:700px){
-    .go .mascot{ width:64px; }
-    .go h1{ font-size:26px; }
-    .go-about{ font-size:13.5px; }
-  }
+  .go{ width:100%; max-width:430px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .go .mascot{ width:96px; height:auto; }
+  .go h1{ font-size:34px; margin:2px 0 0; letter-spacing:-.5px; }
+  .tagline{ margin:0; font-size:16.5px; font-weight:700; color:var(--ink); }
+  .byline{ margin:0; max-width:360px; }
+  .chips{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:6px 0 2px; }
+  .chip{ background:var(--card); border:1.5px solid var(--line); border-radius:999px;
+    padding:8px 13px; font-size:13.5px; font-weight:800; box-shadow:var(--shadow); }
+  .go-btns{ display:flex; flex-direction:column; gap:8px; margin-top:6px; width:100%; }
   .go-btns .btn{ width:100%; text-decoration:none; display:block; box-sizing:border-box; }
   .btn.soon{ opacity:.6; cursor:default; pointer-events:none; }
-  .go-note{ margin:2px 0 0; }
+  .go-note{ margin:0; }
   .lang-sw{ position:fixed; top:calc(14px + env(safe-area-inset-top)); right:16px; z-index:5;
-    background:var(--card, #fff); color:var(--muted, #5E7480); border:1.5px solid var(--line, #D9E6EC);
+    background:var(--card); color:var(--muted); border:1.5px solid var(--line);
     border-radius:999px; padding:7px 14px; font-family:inherit; font-weight:800; font-size:13px;
     letter-spacing:.4px; cursor:pointer; }
-  .lang-sw:hover{ color:var(--ink, #1B2B33); }
+  .lang-sw:hover{ color:var(--ink); }
+  @media (max-height:700px){
+    .go .mascot{ width:68px; }
+    .go h1{ font-size:27px; }
+    .go{ gap:9px; }
+  }
 </style>
 </head>
 <body>
@@ -61,8 +62,9 @@ applyTheme(); dark.addEventListener('change', applyTheme);
 <div class="go">
   <div id="go-mascot"></div>
   <h1>Добродошли!</h1>
-  <p class="tagline muted" id="go-tagline"></p>
-  <div class="go-about card" id="go-about"></div>
+  <p class="tagline" id="go-tagline"></p>
+  <p class="byline muted small" id="go-byline"></p>
+  <div class="chips" id="go-chips"></div>
   <div class="go-btns" id="go-btns"></div>
   <p class="go-note muted small" id="go-note"></p>
 </div>
@@ -73,7 +75,7 @@ const APP_STORE_URL = '';
 const WEB_URL = './app/';
 
 // галеб Жарко (копия mascotSvg('happy') из app/js/data.js — чтобы не грузить весь курс)
-document.getElementById('go-mascot').innerHTML = `<svg viewBox="0 0 80 84" width="120" height="126" class="mascot" aria-hidden="true">
+document.getElementById('go-mascot').innerHTML = `<svg viewBox="0 0 80 84" class="mascot" aria-hidden="true">
   <path d="M33 11 Q36 5 39 10" stroke="#C9D9E1" stroke-width="2" fill="none" stroke-linecap="round"/>
   <path d="M41 10 Q44 5 47 11" stroke="#C9D9E1" stroke-width="2" fill="none" stroke-linecap="round"/>
   <line x1="34" y1="64" x2="33" y2="76" stroke="#F2A93B" stroke-width="3" stroke-linecap="round"/>
@@ -93,22 +95,24 @@ document.getElementById('go-mascot').innerHTML = `<svg viewBox="0 0 80 84" width
 // тексты лендинга: ru по умолчанию, кнопка переключает на en и обратно
 const L = {
   ru: {
-    tagline: 'Прокачивай сербский<br>для жизни на Балканах',
-    about: '<p>Трушная лексика от черногорского галеба Жарко и одного разработчика-эмигранта. Сделано с любовью и буреком.</p><ul><li>🎯 уроки из реальной жизни — кафана, пияца, МУП</li><li>🗣 живая озвучка слов</li><li>🔤 кириллица и латиница — на выбор</li><li>🏆 мотивирующие ачивки и несгораемые стрики</li><li>📒 собственный словарь</li><li>🧩 упражнения на разбор ошибок</li></ul>',
+    tagline: 'Прокачивай сербский для жизни на Балканах',
+    byline: 'Трушная лексика от черногорского галеба Жарко и одного разработчика-эмигранта. Сделано с любовью и буреком.',
+    chips: ['уроки из реальной жизни', 'кафана, пияца, МУП', 'живая озвучка', 'кириллица и латиница', 'ачивки и стрики', 'свой словарь', 'разбор ошибок'],
     web: '🌐 Заниматься в браузере',
     store: ' Скачать в App Store',
     soon: ' Скоро в App Store 🕊',
-    note: 'Чтобы прогресс синхронизировался между устройствами, войди через Google- или Apple-аккаунт',
+    note: 'Чтобы прогресс синхронизировался между устройствами,\nвойди через Google- или Apple-аккаунт',
     btn: 'EN', lang: 'ru',
     title: 'Добродошли! — сербский для жизни на Балканах',
   },
   en: {
-    tagline: 'Level up your Serbian<br>for life in the Balkans',
-    about: '<p>True-to-life vocab from Žarko the Montenegrin seagull and one expat developer. Made with love and burek.</p><ul><li>🎯 lessons from real life — kafana, pijaca, MUP</li><li>🗣 every word voiced</li><li>🔤 Cyrillic and Latin — your choice</li><li>🏆 motivating achievements and streaks that don’t burn out</li><li>📒 your own vocabulary book</li><li>🧩 mistake-review exercises</li></ul>',
+    tagline: 'Level up your Serbian for life in the Balkans',
+    byline: 'True-to-life vocab from Žarko the Montenegrin seagull and one expat developer. Made with love and burek.',
+    chips: ['lessons from real life', 'kafana, pijaca, MUP', 'every word voiced', 'Cyrillic and Latin', 'achievements & streaks', 'your own vocabulary', 'mistake review'],
     web: '🌐 Practice in the browser',
     store: ' Download on the App Store',
     soon: ' Coming soon to the App Store 🕊',
-    note: 'Sign in with your Google or Apple account to sync progress across devices',
+    note: 'Sign in with your Google or Apple account\nto sync progress across devices',
     btn: 'RU', lang: 'en',
     title: 'Dobrodošli! — Serbian for life in the Balkans',
   },
@@ -121,13 +125,16 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
 let lang = 'ru';
 try { if (localStorage.getItem('go_lang') === 'en') lang = 'en'; } catch (e) {}
 
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
 function render() {
   const s = L[lang];
   document.documentElement.lang = s.lang;
   document.title = s.title;
-  document.getElementById('go-tagline').innerHTML = s.tagline;
-  document.getElementById('go-about').innerHTML = s.about;
-  document.getElementById('go-note').textContent = s.note;
+  document.getElementById('go-tagline').textContent = s.tagline;
+  document.getElementById('go-byline').textContent = s.byline;
+  document.getElementById('go-chips').innerHTML = s.chips.map(c => `<span class="chip">${esc(c)}</span>`).join('');
+  document.getElementById('go-note').innerHTML = esc(s.note).replace('\n', '<br>');
   document.getElementById('go-lang').textContent = s.btn;
   const appBtn = APP_STORE_URL
     ? `<a class="btn ${isIOS ? 'primary big' : 'ghost'}" href="${APP_STORE_URL}">${s.store}</a>`
