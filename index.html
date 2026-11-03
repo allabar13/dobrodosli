@@ -34,9 +34,9 @@ applyTheme(); dark.addEventListener('change', applyTheme);
   .go{ width:100%; max-width:430px; text-align:center; display:flex; flex-direction:column; gap:14px; }
   .go h1{ font-size:40px; margin:10px 0 0; letter-spacing:-.5px; }
   .go .tagline{ margin:0; font-size:17px; }
-  .go-about{ margin:4px 0 0; padding:16px 18px; text-align:left; font-size:15.5px; line-height:1.5; }
-  .go-about p{ margin:0; }
-  .go-about p + p{ margin-top:8px; font-weight:700; }
+  .go-about{ margin:4px 0 0; padding:16px 18px; text-align:left; font-size:15.5px; }
+  .go-about p{ margin:0 0 10px; }
+  .go-about ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; font-weight:700; }
   .go-btns{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
   .go-btns .btn{ width:100%; text-decoration:none; display:block; box-sizing:border-box; }
   .btn.soon{ opacity:.6; cursor:default; pointer-events:none; }
@@ -90,7 +90,7 @@ document.getElementById('go-mascot').innerHTML = `<svg viewBox="0 0 80 84" width
 const L = {
   ru: {
     tagline: 'Прокачивай сербский<br>для жизни на Балканах',
-    about: '<p>Приложение, которое поможет довести базовые фразы до автоматизма.</p><p>Прикольная статистика, несгорающие стрики, собственный словарь и упражнения на разбор ошибок.</p>',
+    about: '<p>Доводим базовые фразы до автоматизма. А ещё тут:</p><ul><li>📊 прикольная статистика</li><li>🔥 несгорающие стрики</li><li>📒 собственный словарь</li><li>🧩 упражнения на разбор ошибок</li></ul>',
     web: '🌐 Заниматься в браузере',
     store: ' Скачать в App Store',
     soon: ' Скоро в App Store 🕊',
@@ -101,7 +101,7 @@ const L = {
   },
   en: {
     tagline: 'Level up your Serbian<br>for life in the Balkans',
-    about: '<p>An app that helps you drill everyday phrases until they come automatically.</p><p>Fun stats, streaks that never burn out, your own vocabulary book and mistake-review exercises.</p>',
+    about: '<p>We drill everyday phrases until they stick. Also inside:</p><ul><li>📊 fun stats</li><li>🔥 streaks that don’t burn out</li><li>📒 your own vocabulary book</li><li>🧩 mistake-review exercises</li></ul>',
     web: '🌐 Practice in the browser',
     store: ' Download on the App Store',
     soon: ' Coming soon to the App Store 🕊',
