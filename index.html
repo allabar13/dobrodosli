@@ -95,7 +95,7 @@ const L = {
     store: ' Скачать в App Store',
     soon: ' Скоро в App Store 🕊',
     note: 'Чтобы прогресс синхронизировался между устройствами, войди через Google- или Apple-аккаунт',
-    foot: 'сделано с ♥ и буреком',
+    foot: 'Трушная лексика черногорского — от галеба Жарко и одного разработчика-эмигранта.<br>Сделано с ♥ и буреком',
     btn: 'EN', lang: 'ru',
     title: 'Добродошли! — сербский для жизни на Балканах',
   },
@@ -106,7 +106,7 @@ const L = {
     store: ' Download on the App Store',
     soon: ' Coming soon to the App Store 🕊',
     note: 'Sign in with your Google or Apple account to sync progress across devices',
-    foot: 'made with ♥ and burek',
+    foot: 'True-to-life Montenegrin vocab — from Žarko the seagull and one expat developer.<br>Made with ♥ and burek',
     btn: 'RU', lang: 'en',
     title: 'Dobrodošli! — Serbian for life in the Balkans',
   },
@@ -126,7 +126,7 @@ function render() {
   document.getElementById('go-tagline').innerHTML = s.tagline;
   document.getElementById('go-about').innerHTML = s.about;
   document.getElementById('go-note').textContent = s.note;
-  document.getElementById('go-foot').textContent = s.foot;
+  document.getElementById('go-foot').innerHTML = s.foot;
   document.getElementById('go-lang').textContent = s.btn;
   const appBtn = APP_STORE_URL
     ? `<a class="btn ${isIOS ? 'primary big' : 'ghost'}" href="${APP_STORE_URL}">${s.store}</a>`
