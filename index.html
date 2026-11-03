@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EAF6FA">
 <title>Добродошли! — сербский для жизни на Балканах</title>
-<meta name="description" content="Короткие уроки сербского из реальной балканской жизни. Без стриков и давления — полако. iPhone или браузер, бесплатно.">
+<meta name="description" content="Прокачивай сербский для жизни на Балканах: короткие уроки, статистика, собственный словарь и упражнения на разбор ошибок. iPhone или браузер, бесплатно.">
 <link rel="canonical" href="https://dobrodosli-app.org/">
 <!-- превью при шаринге ссылки в мессенджерах -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Добродошли! — сербский для жизни на Балканах">
-<meta property="og:description" content="Короткие уроки из реальной жизни, галеб Жарко и никакого давления. 10 минут в день достаточно. Полако!">
+<meta property="og:description" content="Доведи базовые фразы до автоматизма: прикольная статистика, несгорающие стрики, словарь и галеб Жарко.">
 <meta property="og:url" content="https://dobrodosli-app.org/">
 <meta property="og:image" content="https://dobrodosli-app.org/app/icons/icon-512.png">
 <meta name="twitter:card" content="summary">
@@ -33,32 +33,34 @@ applyTheme(); dark.addEventListener('change', applyTheme);
   body{ display:flex; min-height:100dvh; align-items:center; justify-content:center; padding:24px 16px; }
   .go{ width:100%; max-width:430px; text-align:center; display:flex; flex-direction:column; gap:14px; }
   .go h1{ font-size:40px; margin:10px 0 0; letter-spacing:-.5px; }
-  .go .tagline{ margin:0; }
-  .go-list{ list-style:none; margin:4px 0 0; padding:16px 18px; text-align:left;
-    display:flex; flex-direction:column; gap:10px; font-weight:700; font-size:15.5px; }
-  .go-cta{ margin:2px 0 0; font-size:15px; }
+  .go .tagline{ margin:0; font-size:17px; }
+  .go-about{ margin:4px 0 0; padding:16px 18px; text-align:left; font-size:15.5px; line-height:1.5; }
+  .go-about p{ margin:0; }
+  .go-about p + p{ margin-top:8px; font-weight:700; }
   .go-btns{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
   .go-btns .btn{ width:100%; text-decoration:none; display:block; box-sizing:border-box; }
   .btn.soon{ opacity:.6; cursor:default; pointer-events:none; }
   .go-note{ margin:2px 0 0; }
   .go-foot{ margin-top:10px; }
+  .lang-sw{ position:fixed; top:calc(14px + env(safe-area-inset-top)); right:16px; z-index:5;
+    background:var(--card, #fff); color:var(--muted, #5E7480); border:1.5px solid var(--line, #D9E6EC);
+    border-radius:999px; padding:7px 14px; font-family:inherit; font-weight:800; font-size:13px;
+    letter-spacing:.4px; cursor:pointer; }
+  .lang-sw:hover{ color:var(--ink, #1B2B33); }
 </style>
 </head>
 <body>
 
+<button class="lang-sw" id="go-lang" type="button" aria-label="Switch language">EN</button>
+
 <div class="go">
   <div id="go-mascot"></div>
   <h1>Добродошли!</h1>
-  <p class="tagline muted">Сербский для жизни на Балканах.<br>Без паники. Полако.</p>
-  <ul class="go-list card">
-    <li>🎯 Короткие уроки из реальной балканской жизни</li>
-    <li>📚 Считаем выученные слова, а не стрики — без давления</li>
-    <li>🪶 Галеб Жарко и добрые факты о Балканах по пути</li>
-  </ul>
-  <p class="go-cta muted">10 минут в день достаточно. Первый урок — прямо сейчас, без регистрации.</p>
+  <p class="tagline muted" id="go-tagline"></p>
+  <div class="go-about card" id="go-about"></div>
   <div class="go-btns" id="go-btns"></div>
-  <p class="go-note muted small">Бесплатно · есть English · прогресс синхронизируется между устройствами</p>
-  <p class="go-foot muted small">сделано с ♥ и буреком</p>
+  <p class="go-note muted small" id="go-note"></p>
+  <p class="go-foot muted small" id="go-foot"></p>
 </div>
 
 <script>
@@ -84,14 +86,61 @@ document.getElementById('go-mascot').innerHTML = `<svg viewBox="0 0 80 84" width
   <path d="M26 41 Q40 51 54 41 L54 49 Q40 59 26 49 Z" fill="var(--primary, #1899C2)"/>
 </svg>`;
 
+// тексты лендинга: ru по умолчанию, кнопка переключает на en и обратно
+const L = {
+  ru: {
+    tagline: 'Прокачивай сербский<br>для жизни на Балканах',
+    about: '<p>Приложение, которое поможет довести базовые фразы до автоматизма.</p><p>Прикольная статистика, несгорающие стрики, собственный словарь и упражнения на разбор ошибок.</p>',
+    web: '🌐 Заниматься в браузере',
+    store: ' Скачать в App Store',
+    soon: ' Скоро в App Store 🕊',
+    note: 'Чтобы прогресс синхронизировался между устройствами, войди через Google- или Apple-аккаунт',
+    foot: 'сделано с ♥ и буреком',
+    btn: 'EN', lang: 'ru',
+    title: 'Добродошли! — сербский для жизни на Балканах',
+  },
+  en: {
+    tagline: 'Level up your Serbian<br>for life in the Balkans',
+    about: '<p>An app that helps you drill everyday phrases until they come automatically.</p><p>Fun stats, streaks that never burn out, your own vocabulary book and mistake-review exercises.</p>',
+    web: '🌐 Practice in the browser',
+    store: ' Download on the App Store',
+    soon: ' Coming soon to the App Store 🕊',
+    note: 'Sign in with your Google or Apple account to sync progress across devices',
+    foot: 'made with ♥ and burek',
+    btn: 'RU', lang: 'en',
+    title: 'Dobrodošli! — Serbian for life in the Balkans',
+  },
+};
+
 // кнопки: на iPhone/iPad первым — App Store (когда ссылка появится), иначе веб
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
   || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const appBtn = APP_STORE_URL
-  ? `<a class="btn ${isIOS ? 'primary big' : 'ghost'}" href="${APP_STORE_URL}"> Скачать в App Store</a>`
-  : `<span class="btn ghost soon"> Скоро в App Store 🕊</span>`;
-const webBtn = `<a class="btn ${APP_STORE_URL && isIOS ? 'ghost' : 'primary big'}" href="${WEB_URL}">🌐 Заниматься в браузере</a>`;
-document.getElementById('go-btns').innerHTML = (APP_STORE_URL && isIOS) ? appBtn + webBtn : webBtn + appBtn;
+
+let lang = 'ru';
+try { if (localStorage.getItem('go_lang') === 'en') lang = 'en'; } catch (e) {}
+
+function render() {
+  const s = L[lang];
+  document.documentElement.lang = s.lang;
+  document.title = s.title;
+  document.getElementById('go-tagline').innerHTML = s.tagline;
+  document.getElementById('go-about').innerHTML = s.about;
+  document.getElementById('go-note').textContent = s.note;
+  document.getElementById('go-foot').textContent = s.foot;
+  document.getElementById('go-lang').textContent = s.btn;
+  const appBtn = APP_STORE_URL
+    ? `<a class="btn ${isIOS ? 'primary big' : 'ghost'}" href="${APP_STORE_URL}">${s.store}</a>`
+    : `<span class="btn ghost soon">${s.soon}</span>`;
+  const webBtn = `<a class="btn ${APP_STORE_URL && isIOS ? 'ghost' : 'primary big'}" href="${WEB_URL}">${s.web}</a>`;
+  document.getElementById('go-btns').innerHTML = (APP_STORE_URL && isIOS) ? appBtn + webBtn : webBtn + appBtn;
+}
+
+document.getElementById('go-lang').addEventListener('click', () => {
+  lang = lang === 'ru' ? 'en' : 'ru';
+  try { localStorage.setItem('go_lang', lang); } catch (e) {}
+  render();
+});
+render();
 </script>
 </body>
 </html>
