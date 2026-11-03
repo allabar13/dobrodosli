@@ -30,14 +30,20 @@ applyTheme(); dark.addEventListener('change', applyTheme);
 </script>
 <style>
   /* мини-лендинг: только раскладка, весь вид — из токенов styles.css */
-  body{ display:flex; min-height:100dvh; align-items:center; justify-content:center; padding:24px 16px; }
-  .go{ width:100%; max-width:430px; text-align:center; display:flex; flex-direction:column; gap:14px; }
-  .go h1{ font-size:40px; margin:10px 0 0; letter-spacing:-.5px; }
-  .go .tagline{ margin:0; font-size:17px; }
-  .go-about{ margin:4px 0 0; padding:16px 18px; text-align:left; font-size:15.5px; }
-  .go-about p{ margin:0 0 10px; }
-  .go-about ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; font-weight:700; }
-  .go-btns{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+  body{ display:flex; min-height:100dvh; align-items:center; justify-content:center; padding:16px; }
+  .go{ width:100%; max-width:430px; text-align:center; display:flex; flex-direction:column; gap:10px; }
+  .go .mascot{ width:88px; height:auto; }
+  .go h1{ font-size:32px; margin:4px 0 0; letter-spacing:-.5px; }
+  .go .tagline{ margin:0; font-size:15.5px; }
+  .go-about{ margin:2px 0 0; padding:12px 16px; text-align:left; font-size:14.5px; }
+  .go-about p{ margin:0 0 8px; }
+  .go-about ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; font-weight:700; }
+  .go-btns{ display:flex; flex-direction:column; gap:8px; margin-top:2px; }
+  @media (max-height:700px){
+    .go .mascot{ width:64px; }
+    .go h1{ font-size:26px; }
+    .go-about{ font-size:13.5px; }
+  }
   .go-btns .btn{ width:100%; text-decoration:none; display:block; box-sizing:border-box; }
   .btn.soon{ opacity:.6; cursor:default; pointer-events:none; }
   .go-note{ margin:2px 0 0; }
@@ -88,7 +94,7 @@ document.getElementById('go-mascot').innerHTML = `<svg viewBox="0 0 80 84" width
 const L = {
   ru: {
     tagline: 'Прокачивай сербский<br>для жизни на Балканах',
-    about: '<p>Трушная лексика от черногорского галеба Жарко и одного разработчика-эмигранта. Сделано с любовью и буреком.</p><ul><li>🎯 уроки из реальной жизни — кафана, пияца, МУП</li><li>🗣 живая озвучка слов</li><li>🔤 кириллица и латиница — как тебе удобнее</li><li>🏆 мотивирующие ачивки и несгораемые стрики</li><li>📒 собственный словарь</li><li>🧩 упражнения на разбор ошибок</li></ul>',
+    about: '<p>Трушная лексика от черногорского галеба Жарко и одного разработчика-эмигранта. Сделано с любовью и буреком.</p><ul><li>🎯 уроки из реальной жизни — кафана, пияца, МУП</li><li>🗣 живая озвучка слов</li><li>🔤 кириллица и латиница — на выбор</li><li>🏆 мотивирующие ачивки и несгораемые стрики</li><li>📒 собственный словарь</li><li>🧩 упражнения на разбор ошибок</li></ul>',
     web: '🌐 Заниматься в браузере',
     store: ' Скачать в App Store',
     soon: ' Скоро в App Store 🕊',
