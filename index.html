@@ -61,7 +61,7 @@ applyTheme(); dark.addEventListener('change', applyTheme);
 
 <div class="go">
   <div id="go-mascot"></div>
-  <h1>Добродошли!</h1>
+  <h1 id="go-title">Добродошли!</h1>
   <p class="tagline" id="go-tagline"></p>
   <p class="byline muted small" id="go-byline"></p>
   <div class="chips" id="go-chips"></div>
@@ -95,6 +95,7 @@ document.getElementById('go-mascot').innerHTML = `<svg viewBox="0 0 80 84" class
 // тексты лендинга: ru по умолчанию, кнопка переключает на en и обратно
 const L = {
   ru: {
+    h1: 'Добродошли!',
     tagline: 'Прокачивай сербский для жизни на Балканах',
     byline: 'Трушная лексика от черногорского галеба Жарко и одного разработчика-эмигранта. Сделано с любовью и буреком.',
     chips: ['уроки из реальной жизни', 'кафана, пияца, МУП', 'живая озвучка', 'кириллица и латиница', 'ачивки и стрики', 'свой словарь', 'разбор ошибок'],
@@ -106,6 +107,7 @@ const L = {
     title: 'Добродошли! — сербский для жизни на Балканах',
   },
   en: {
+    h1: 'Dobrodošli!',
     tagline: 'Level up your Serbian for life in the Balkans',
     byline: 'True-to-life vocab from Žarko the Montenegrin seagull and one expat developer. Made with love and burek.',
     chips: ['lessons from real life', 'kafana, pijaca, MUP', 'every word voiced', 'Cyrillic and Latin', 'achievements & streaks', 'your own vocabulary', 'mistake review'],
@@ -131,6 +133,7 @@ function render() {
   const s = L[lang];
   document.documentElement.lang = s.lang;
   document.title = s.title;
+  document.getElementById('go-title').textContent = s.h1;
   document.getElementById('go-tagline').textContent = s.tagline;
   document.getElementById('go-byline').textContent = s.byline;
   document.getElementById('go-chips').innerHTML = s.chips.map(c => `<span class="chip">${esc(c)}</span>`).join('');
