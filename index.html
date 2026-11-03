@@ -142,7 +142,8 @@ function render() {
   const appBtn = APP_STORE_URL
     ? `<a class="btn ${isIOS ? 'primary big' : 'ghost'}" href="${APP_STORE_URL}">${s.store}</a>`
     : `<span class="btn ghost soon">${s.soon}</span>`;
-  const webBtn = `<a class="btn ${APP_STORE_URL && isIOS ? 'ghost' : 'primary big'}" href="${WEB_URL}">${s.web}</a>`;
+  // выбранный на лендинге язык уезжает в приложение (?lang= там главнее и сам сохраняется)
+  const webBtn = `<a class="btn ${APP_STORE_URL && isIOS ? 'ghost' : 'primary big'}" href="${WEB_URL}?lang=${lang}">${s.web}</a>`;
   document.getElementById('go-btns').innerHTML = (APP_STORE_URL && isIOS) ? appBtn + webBtn : webBtn + appBtn;
 }
 
