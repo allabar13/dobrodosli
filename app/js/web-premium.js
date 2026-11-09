@@ -28,6 +28,17 @@
   // переводы веб-монетизации живут здесь, а не в i18n.js: этот файл не попадает
   // в iOS-бандл, и упоминаний внешней оплаты в приложении нет вовсе (Apple 3.1.1)
   Object.assign(I18N.UI, {
+    // промокоды — только веб: ключи переехали из i18n.js, чтобы не попадать в iOS-бандл (3.1.1)
+    'Промокод': 'Promo code',
+    'Есть промокод? Введи его.': 'Got a promo code? Enter it.',
+    'Активировать': 'Activate',
+    'Код не найден или больше не действует.': 'Code not found or no longer active.',
+    'У этого кода закончились активации.': 'This code has run out of activations.',
+    'Этот код уже активирован на этом устройстве.': 'This code is already active on this device.',
+    'Не получилось проверить код. Проверь интернет и попробуй ещё раз.': 'Couldn’t check the code. Check your connection and try again.',
+    '🎟 Промокод принят! Безлимит до': '🎟 Promo code accepted! Unlimited until',
+    '🎟 Промокод принят! Безлимит навсегда 💙': '🎟 Promo code accepted! Unlimited forever 💙',
+    '🎟 Безлимит по промокоду до': '🎟 Promo unlimited until',
     'Бесплатные 10 минут на сегодня закончились. Хочешь без пауз — безлимит навсегда: после оплаты пришлём промокод, введёшь его здесь, и никаких ограничений.': 'Your free 10 minutes for today are up. Want no pauses — lifetime unlimited: after payment we’ll send you a promo code, you enter it here, and that’s it, no limits.',
     'Купить безлимит навсегда': 'Buy lifetime unlimited',
     'Оплата откроется в новой вкладке (сервис Tribute). После оплаты мы отправим промокод — введи его в профиле, и безлимит включится навсегда.': 'Payment opens in a new tab (Tribute). After payment we’ll send you a promo code — enter it in your profile and unlimited stays on forever.',

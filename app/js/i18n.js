@@ -103,17 +103,10 @@ const I18N = (() => {
     'Нажми на ачивку — расскажем, за что она даётся.': 'Tap an achievement to see how to earn it.',
     '✅ Уже твоя': '✅ Already yours',
     '🔒 Ещё впереди': '🔒 Still ahead',
-    // промокоды (iOS, используется ios-premium.js)
-    'Промокод': 'Promo code',
-    'Есть промокод? Введи его.': 'Got a promo code? Enter it.',
-    'Активировать': 'Activate',
-    'Код не найден или больше не действует.': 'Code not found or no longer active.',
-    'У этого кода закончились активации.': 'This code has run out of activations.',
-    'Этот код уже активирован на этом устройстве.': 'This code is already active on this device.',
-    'Не получилось проверить код. Проверь интернет и попробуй ещё раз.': 'Couldn’t check the code. Check your connection and try again.',
-    '🎟 Промокод принят! Безлимит до': '🎟 Promo code accepted! Unlimited until',
+    // безлимит (нейтральные ключи; ввод промокодов — только в вебе, его
+    // переводы живут в web-premium.js и в iOS-бандл не попадают)
+    'Безлимит активен до': 'Unlimited active until',
     '🎁 Тебе начислили дни безлимита! Действует до': '🎁 You’ve been granted unlimited days! Active until',
-    '🎟 Безлимит по промокоду до': '🎟 Promo unlimited until',
     // приветственный пейволл после онбординга (iOS)
     'Делу время — потехе час!': 'Business before pleasure!',
     '«Добродошли» — бесплатное приложение: 10 минут занятий в день не стоят ни динара, и для прогресса этого правда хватает. Но разработчики тоже хотят кушать. Хочешь заниматься без ограничений — безлимит навсегда одной покупкой. Никаких подписок и скрытых платежей.': 'Dobrodošli is a free app: 10 minutes of practice a day costs nothing, and it’s genuinely enough to make progress. But the developers need to eat too. Want no limits — unlimited forever with a single purchase. No subscriptions, no hidden fees.',
@@ -332,7 +325,6 @@ const I18N = (() => {
     'Прогресс привяжется к Apple-аккаунту и синхронизируется между устройствами. Паролей нет.': 'Progress links to your Apple account and syncs across devices. No passwords.',
     // «вечный» безлимит (показывают и iOS-слой, и веб)
     '♾ Безлимит навсегда активен 💙': '♾ Lifetime unlimited is active 💙',
-    '🎟 Промокод принят! Безлимит навсегда 💙': '🎟 Promo code accepted! Unlimited forever 💙',
     'навсегда': 'forever',
     'Уже есть аккаунт? Войти': 'Already have an account? Sign in',
   };
